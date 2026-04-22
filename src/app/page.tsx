@@ -83,13 +83,14 @@ export default function FormularioPage() {
   return (
     <>
       <div
+        role="presentation"
         style={{
           width: "100%",
           height: 6,
           background: "linear-gradient(90deg, #FFD100 0%, #E91E8C 33%, #00BFFF 66%, #1B2A6B 100%)",
         }}
       />
-      <div
+      <main
         style={{
           width: "100%",
           maxWidth: 580,
@@ -139,7 +140,7 @@ export default function FormularioPage() {
               <p
                 style={{
                   textAlign: "center",
-                  color: "#64748B",
+                  color: "#546178",
                   fontSize: ".875rem",
                   marginBottom: 32,
                   lineHeight: 1.5,
@@ -449,8 +450,8 @@ export default function FormularioPage() {
             </div>
           )}
         </div>
-      </div>
-      <footer style={{ textAlign: "center", padding: "24px 20px", fontSize: ".75rem", color: "#94A3B8" }}>
+      </main>
+      <footer style={{ textAlign: "center", padding: "24px 20px", fontSize: ".75rem", color: "#6B7A8D" }}>
         PrintUp.cl — Tu impresión, nuestra huella
       </footer>
 

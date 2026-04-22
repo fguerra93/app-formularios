@@ -41,7 +41,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
+    <main
       className="flex min-h-screen items-center justify-center"
       style={{ backgroundColor: "#F7F8FC" }}
     >
@@ -129,6 +129,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }
