@@ -65,15 +65,60 @@ export default function FormularioPage() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    const fd = new FormData();
-    fd.append("nombre", (document.getElementById("nombre") as HTMLInputElement).value.trim());
-    fd.append("email", (document.getElementById("email") as HTMLInputElement).value.trim());
-    fd.append("telefono", (document.getElementById("telefono") as HTMLInputElement).value.trim());
-    fd.append("material", (document.getElementById("material") as HTMLSelectElement).value);
-    fd.append("mensaje", (document.getElementById("mensaje") as HTMLTextAreaElement).value.trim());
-    files.forEach((f) => fd.append("archivos", f.file));
+
+    const nombre = (document.getElementById("nombre") as HTMLInputElement).value.trim();
+    const email = (document.getElementById("email") as HTMLInputElement).value.trim();
+    const telefono = (document.getElementById("telefono") as HTMLInputElement).value.trim();
+    const material = (document.getElementById("material") as HTMLSelectElement).value;
+    const mensaje = (document.getElementById("mensaje") as HTMLTextAreaElement).value.trim();
+
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      // 1. Upload files directly to Supabase Storage (bypasses Vercel 4.5MB limit)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const safeName = nombre.replace(/[^a-zA-Z0-9]/g, "_");
+      const folderName = `${dateStr}_${safeName}`;
+
+      const archivos: { nombre: string; tamaño: number; tipo: string; url: string }[] = [];
+
+      for (const f of files) {
+        const filePath = `${folderName}/${f.file.name}`;
+        const uploadRes = await fetch(
+          `${supabaseUrl}/storage/v1/object/formularios-archivos/${filePath}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${supabaseKey}`,
+              "x-upsert": "false",
+            },
+            body: f.file,
+          }
+        );
+
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json().catch(() => ({}));
+          console.error("Upload error:", err);
+          alert(`Error subiendo "${f.file.name}". Intenta de nuevo.`);
+          setLoading(false);
+          return;
+        }
+
+        const publicUrl = `${supabaseUrl}/storage/v1/object/public/formularios-archivos/${filePath}`;
+        archivos.push({
+          nombre: f.file.name,
+          tamaño: f.file.size,
+          tipo: f.file.type,
+          url: publicUrl,
+        });
+      }
+
+      // 2. Send only metadata to API route (tiny JSON, no files)
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nombre, email, telefono, material, mensaje, archivos, folderName }),
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setSuccess(true);

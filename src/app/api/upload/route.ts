@@ -5,18 +5,18 @@ import { getNextcloudFileUrl } from "@/lib/nextcloud";
 import type { ArchivoInfo } from "@/lib/types";
 
 const MAX_FILES = 5;
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    const body = await request.json();
 
-    const nombre = formData.get("nombre") as string | null;
-    const email = formData.get("email") as string | null;
-    const telefono = (formData.get("telefono") as string) || null;
-    const material = (formData.get("material") as string) || null;
-    const mensaje = (formData.get("mensaje") as string) || null;
-    const archivosFiles = formData.getAll("archivos") as File[];
+    const nombre: string | null = body.nombre || null;
+    const email: string | null = body.email || null;
+    const telefono: string | null = body.telefono || null;
+    const material: string | null = body.material || null;
+    const mensaje: string | null = body.mensaje || null;
+    const archivos: ArchivoInfo[] = body.archivos || [];
+    const folderName: string = body.folderName || "";
 
     if (!nombre || !email) {
       return NextResponse.json(
@@ -25,60 +25,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (archivosFiles.length > MAX_FILES) {
+    if (archivos.length > MAX_FILES) {
       return NextResponse.json(
         { error: `Maximo ${MAX_FILES} archivos permitidos` },
         { status: 400 }
       );
     }
 
-    for (const file of archivosFiles) {
-      if (file instanceof File && file.size > MAX_FILE_SIZE) {
-        return NextResponse.json(
-          { error: `El archivo "${file.name}" excede el limite de 50 MB` },
-          { status: 400 }
-        );
-      }
+    if (!folderName) {
+      return NextResponse.json(
+        { error: "folderName es requerido" },
+        { status: 400 }
+      );
     }
 
     const supabase = getSupabaseAdmin();
-    const dateStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-    const safeName = nombre.replace(/[^a-zA-Z0-9]/g, "_");
-    const folderName = `${dateStr}_${safeName}`;
-    const archivos: ArchivoInfo[] = [];
-
-    // Upload files to Supabase Storage
-    for (const file of archivosFiles) {
-      if (!(file instanceof File) || file.size === 0) continue;
-
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const filePath = `${folderName}/${file.name}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("formularios-archivos")
-        .upload(filePath, buffer, {
-          contentType: file.type,
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-        continue;
-      }
-
-      const {
-        data: { publicUrl },
-      } = supabase.storage
-        .from("formularios-archivos")
-        .getPublicUrl(filePath);
-
-      archivos.push({
-        nombre: file.name,
-        tamaño: file.size,
-        tipo: file.type,
-        url: publicUrl,
-      });
-    }
 
     // Insert record into formularios table
     const { data: formulario, error: insertError } = await supabase
