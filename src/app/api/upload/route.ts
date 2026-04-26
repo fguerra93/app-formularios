@@ -78,8 +78,15 @@ export async function POST(request: NextRequest) {
       if (config) apiKey = config.valor;
     } catch {}
 
-    const notifyTo =
-      process.env.NOTIFY_TO || "guerrafelipe93@gmail.com";
+    let notifyTo = process.env.NOTIFY_TO || "guerrafelipe93@gmail.com";
+    try {
+      const { data: notifyConfig } = await supabase
+        .from("configuracion")
+        .select("*")
+        .eq("clave", "notification_email")
+        .single();
+      if (notifyConfig?.valor) notifyTo = notifyConfig.valor;
+    } catch {}
     const fromName = process.env.FROM_NAME || "PrintUp Formulario";
     const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";

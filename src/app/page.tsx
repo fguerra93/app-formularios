@@ -73,9 +73,7 @@ export default function FormularioPage() {
     const mensaje = (document.getElementById("mensaje") as HTMLTextAreaElement).value.trim();
 
     try {
-      // 1. Upload files directly to Supabase Storage (bypasses Vercel 4.5MB limit)
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      // 1. Get signed upload URLs from backend, then upload directly to Supabase
       const dateStr = new Date().toISOString().slice(0, 10);
       const safeName = nombre.replace(/[^a-zA-Z0-9]/g, "_");
       const folderName = `${dateStr}_${safeName}`;
@@ -83,28 +81,40 @@ export default function FormularioPage() {
       const archivos: { nombre: string; tamaño: number; tipo: string; url: string }[] = [];
 
       for (const f of files) {
-        const filePath = `${folderName}/${f.file.name}`;
-        const uploadRes = await fetch(
-          `${supabaseUrl}/storage/v1/object/formularios-archivos/${filePath}`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${supabaseKey}`,
-              "x-upsert": "false",
-            },
-            body: f.file,
-          }
-        );
+        // Get signed URL from our API (small JSON request, no file data)
+        const urlRes = await fetch("/api/upload-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: f.file.name,
+            folderName,
+            contentType: f.file.type,
+          }),
+        });
+
+        if (!urlRes.ok) {
+          alert(`Error preparando subida de "${f.file.name}".`);
+          setLoading(false);
+          return;
+        }
+
+        const { signedUrl, token, publicUrl } = await urlRes.json();
+
+        // Upload file directly to Supabase Storage using signed URL
+        const uploadRes = await fetch(signedUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": f.file.type || "application/octet-stream",
+          },
+          body: f.file,
+        });
 
         if (!uploadRes.ok) {
-          const err = await uploadRes.json().catch(() => ({}));
-          console.error("Upload error:", err);
           alert(`Error subiendo "${f.file.name}". Intenta de nuevo.`);
           setLoading(false);
           return;
         }
 
-        const publicUrl = `${supabaseUrl}/storage/v1/object/public/formularios-archivos/${filePath}`;
         archivos.push({
           nombre: f.file.name,
           tamaño: f.file.size,
