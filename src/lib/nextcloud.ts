@@ -139,6 +139,6 @@ export async function checkConnection(): Promise<NextcloudResult> {
 
 export function getNextcloudFileUrl(folderName: string): string {
   const url = process.env.NEXTCLOUD_URL || "https://printup.internos";
-  const folder = process.env.NEXTCLOUD_FOLDER || "/PrintUp/Pedidos_Nuevos";
-  return `${url}/apps/files/?dir=${folder}/${folderName}`;
+  const browseFolder = process.env.NEXTCLOUD_BROWSE_FOLDER || "/Shared/PrintUp/Pedidos_Nuevos";
+  return `${url}/apps/files/?dir=${browseFolder}/${folderName}`;
 }
