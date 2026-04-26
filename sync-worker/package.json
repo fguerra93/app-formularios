@@ -1,0 +1,13 @@
+{
+  "name": "nextcloud-sync-worker",
+  "version": "1.0.0",
+  "description": "Sincroniza archivos de Supabase Storage a NextCloud y los elimina de Supabase",
+  "main": "sync.js",
+  "type": "module",
+  "scripts": {
+    "start": "node sync.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4"
+  }
+}

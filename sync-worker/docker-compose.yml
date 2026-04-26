@@ -1,0 +1,8 @@
+services:
+  sync-worker:
+    build: .
+    container_name: nextcloud-sync-worker
+    restart: always
+    env_file: .env
+    extra_hosts:
+      - "printup.internos:host-gateway"

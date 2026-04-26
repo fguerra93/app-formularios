@@ -281,55 +281,55 @@ function ConfigContent() {
               <CardTitle className="flex items-center gap-2" style={{ color: "#1E293B" }}>
                 <Server className="size-5" />
                 Nextcloud
-                <span
-                  className="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                  style={{ backgroundColor: "#FFD10020", color: "#B8960A" }}
-                >
-                  Proximamente
-                </span>
+                <Badge variant="outline" className="ml-2" style={{ borderColor: "#10B981", color: "#10B981" }}>
+                  Activo
+                </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-5 opacity-50">
+            <CardContent className="flex flex-col gap-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5">
-                  <Label style={{ color: "#64748B" }}>URL</Label>
+                  <Label style={{ color: "#1E293B" }}>URL</Label>
                   <Input
-                    disabled
                     value={config.nextcloud_url}
-                    placeholder="https://nextcloud.example.com"
+                    onChange={(e) => updateField("nextcloud_url", e.target.value)}
+                    placeholder="https://printup.internos"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label style={{ color: "#64748B" }}>Usuario</Label>
+                  <Label style={{ color: "#1E293B" }}>Usuario</Label>
                   <Input
-                    disabled
                     value={config.nextcloud_user}
-                    placeholder="admin"
+                    onChange={(e) => updateField("nextcloud_user", e.target.value)}
+                    placeholder="bot-formularios"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label style={{ color: "#64748B" }}>Contrasena</Label>
+                  <Label style={{ color: "#1E293B" }}>Contrasena de App</Label>
                   <Input
-                    disabled
                     type="password"
                     value={config.nextcloud_password}
-                    placeholder="••••••••"
+                    onChange={(e) => updateField("nextcloud_password", e.target.value)}
+                    placeholder="xxxxx-xxxxx-xxxxx-xxxxx-xxxxx"
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label style={{ color: "#64748B" }}>Carpeta Base</Label>
+                  <Label style={{ color: "#1E293B" }}>Carpeta Base</Label>
                   <Input
-                    disabled
                     value={config.nextcloud_folder}
-                    placeholder="/PrintUp/Formularios"
+                    onChange={(e) => updateField("nextcloud_folder", e.target.value)}
+                    placeholder="/PrintUp/Pedidos_Nuevos"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <Button disabled className="gap-2" variant="outline">
-                  <Plug className="size-4" />
-                  Probar Conexion
+              <div className="flex items-center justify-between">
+                <p className="text-xs" style={{ color: "#64748B" }}>
+                  El worker sincroniza archivos cada 30 segundos desde Supabase a NextCloud.
+                </p>
+                <Button onClick={handleSave} disabled={saving} className="gap-2" style={{ backgroundColor: "#1B2A6B" }}>
+                  <Save className="size-4" />
+                  {saving ? "Guardando..." : "Guardar"}
                 </Button>
               </div>
             </CardContent>

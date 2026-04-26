@@ -15,12 +15,14 @@ export default function FormularioPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const MAX_FILES = 5;
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+
   const addFiles = useCallback((newFiles: File[]) => {
-    const max = 100 * 1024 * 1024;
     const toAdd: FileItem[] = [];
     for (const f of newFiles) {
-      if (f.size > max) {
-        alert(`"${f.name}" excede los 100 MB.`);
+      if (f.size > MAX_FILE_SIZE) {
+        alert(`"${f.name}" excede los 50 MB.`);
         continue;
       }
       toAdd.push({ file: f, id: crypto.randomUUID() });
@@ -28,7 +30,12 @@ export default function FormularioPage() {
     setFiles((prev) => {
       const existing = new Set(prev.map((p) => `${p.file.name}_${p.file.size}`));
       const filtered = toAdd.filter((t) => !existing.has(`${t.file.name}_${t.file.size}`));
-      return [...prev, ...filtered];
+      const combined = [...prev, ...filtered];
+      if (combined.length > MAX_FILES) {
+        alert(`Maximo ${MAX_FILES} archivos permitidos.`);
+        return combined.slice(0, MAX_FILES);
+      }
+      return combined;
     });
     setErrors((e) => ({ ...e, file: "" }));
   }, []);
@@ -344,7 +351,7 @@ export default function FormularioPage() {
                     Arrastra o selecciona tus archivos aquí
                   </div>
                   <div style={{ fontSize: ".8125rem", color: "#64748B" }}>
-                    PDF, JPG, PNG, AI, PSD — máx. 100 MB por archivo
+                    PDF, JPG, PNG, AI, PSD — max. 50 MB por archivo, max. 5 archivos
                   </div>
                   <input
                     ref={fileInputRef}

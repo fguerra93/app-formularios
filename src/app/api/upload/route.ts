@@ -4,6 +4,9 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import { getNextcloudFileUrl } from "@/lib/nextcloud";
 import type { ArchivoInfo } from "@/lib/types";
 
+const MAX_FILES = 5;
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -22,8 +25,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (archivosFiles.length > MAX_FILES) {
+      return NextResponse.json(
+        { error: `Maximo ${MAX_FILES} archivos permitidos` },
+        { status: 400 }
+      );
+    }
+
+    for (const file of archivosFiles) {
+      if (file instanceof File && file.size > MAX_FILE_SIZE) {
+        return NextResponse.json(
+          { error: `El archivo "${file.name}" excede el limite de 50 MB` },
+          { status: 400 }
+        );
+      }
+    }
+
     const supabase = getSupabaseAdmin();
-    const folderName = `${Date.now()}_${nombre.replace(/[^a-zA-Z0-9]/g, "_")}`;
+    const dateStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const safeName = nombre.replace(/[^a-zA-Z0-9]/g, "_");
+    const folderName = `${dateStr}_${safeName}`;
     const archivos: ArchivoInfo[] = [];
 
     // Upload files to Supabase Storage
