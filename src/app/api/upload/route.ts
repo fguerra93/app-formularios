@@ -80,12 +80,17 @@ export async function POST(request: NextRequest) {
 
     let notifyTo = process.env.NOTIFY_TO || "guerrafelipe93@gmail.com";
     try {
-      const { data: notifyConfig } = await supabase
+      // Try both possible config keys
+      const { data: configs } = await supabase
         .from("configuracion")
         .select("*")
-        .eq("clave", "notification_email")
-        .single();
-      if (notifyConfig?.valor) notifyTo = notifyConfig.valor;
+        .in("clave", ["notification_email", "notify_to"]);
+      if (configs && configs.length > 0) {
+        // Prefer notification_email over notify_to
+        const preferred = configs.find((c: { clave: string }) => c.clave === "notification_email")
+          || configs.find((c: { clave: string }) => c.clave === "notify_to");
+        if (preferred?.valor) notifyTo = preferred.valor;
+      }
     } catch {}
     const fromName = process.env.FROM_NAME || "PrintUp Formulario";
     const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
