@@ -38,7 +38,13 @@ export async function PUT(request: NextRequest) {
   const body = await request.json();
   const supabase = getSupabaseAdmin();
 
-  const entries = Object.entries(body) as [string, string][];
+  // Support both formats: array [{clave, valor}] or object {clave: valor}
+  let entries: [string, string][];
+  if (Array.isArray(body)) {
+    entries = body.map((item: { clave: string; valor: string }) => [item.clave, item.valor]);
+  } else {
+    entries = Object.entries(body) as [string, string][];
+  }
 
   for (const [clave, valor] of entries) {
     const { error } = await supabase
