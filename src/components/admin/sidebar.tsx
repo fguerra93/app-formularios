@@ -10,14 +10,45 @@ import {
   LogOut,
   Menu,
   X,
+  ShoppingBag,
+  Package,
+  FolderTree,
+  Warehouse,
+  Users,
+  Truck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/historial", label: "Historial", icon: ClipboardList },
-  { href: "/admin/configuracion", label: "Configuracion", icon: Settings },
+interface NavSection {
+  label: string;
+  items: { href: string; label: string; icon: React.ComponentType<{ className?: string }> }[];
+}
+
+const navSections: NavSection[] = [
+  {
+    label: "TIENDA",
+    items: [
+      { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+      { href: "/admin/productos", label: "Productos", icon: Package },
+      { href: "/admin/categorias", label: "Categorias", icon: FolderTree },
+      { href: "/admin/inventario", label: "Inventario", icon: Warehouse },
+    ],
+  },
+  {
+    label: "FORMULARIOS",
+    items: [
+      { href: "/admin/historial", label: "Historial", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "SISTEMA",
+    items: [
+      { href: "/admin/contactos", label: "Contactos", icon: Users },
+      { href: "/admin/envios", label: "Envios", icon: Truck },
+      { href: "/admin/configuracion", label: "Configuracion", icon: Settings },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -39,56 +70,95 @@ export function Sidebar() {
     <div className="flex h-full flex-col">
       {/* Brand */}
       <div className="px-5 py-6">
-        <h1
-          className="text-xl font-bold"
-          style={{
-            background: "linear-gradient(135deg, #1B2A6B, #00B4D8, #E91E8C)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          PrintUp Admin
-        </h1>
+        <Link href="/admin">
+          <h1
+            className="text-xl font-bold"
+            style={{
+              background: "linear-gradient(135deg, #1B2A6B, #00B4D8, #E91E8C)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            PrintUp Admin
+          </h1>
+        </Link>
       </div>
 
       <Separator />
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4">
+      {/* Dashboard link */}
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
         <ul className="flex flex-col gap-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
-                  style={{
-                    backgroundColor: active ? "#1B2A6B" : "transparent",
-                    color: active ? "#FFFFFF" : "#64748B",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.backgroundColor = "#F1F5F9";
-                      e.currentTarget.style.color = "#1E293B";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!active) {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.color = "#64748B";
-                    }
-                  }}
-                >
-                  <Icon className="size-4" />
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
+          <li>
+            <Link
+              href="/admin"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
+              style={{
+                backgroundColor: isActive("/admin") ? "#1B2A6B" : "transparent",
+                color: isActive("/admin") ? "#FFFFFF" : "#64748B",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive("/admin")) {
+                  e.currentTarget.style.backgroundColor = "#F1F5F9";
+                  e.currentTarget.style.color = "#1E293B";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive("/admin")) {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "#64748B";
+                }
+              }}
+            >
+              <LayoutDashboard className="size-4" />
+              Dashboard
+            </Link>
+          </li>
         </ul>
+
+        {/* Sections */}
+        {navSections.map((section) => (
+          <div key={section.label} className="mt-5">
+            <p className="mb-2 px-3 text-[10px] font-semibold tracking-wider" style={{ color: "#94A3B8" }}>
+              {section.label}
+            </p>
+            <ul className="flex flex-col gap-1">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors"
+                      style={{
+                        backgroundColor: active ? "#1B2A6B" : "transparent",
+                        color: active ? "#FFFFFF" : "#64748B",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!active) {
+                          e.currentTarget.style.backgroundColor = "#F1F5F9";
+                          e.currentTarget.style.color = "#1E293B";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!active) {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = "#64748B";
+                        }
+                      }}
+                    >
+                      <Icon className="size-4" />
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
       </nav>
 
       <Separator />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Save, Eye, EyeOff, Plug, Mail, Server, Settings } from "lucide-react";
+import { Save, Eye, EyeOff, Plug, Mail, Server, Settings, Store, CreditCard, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,17 +22,40 @@ import { AuthGuard } from "@/components/admin/auth-guard";
 import type { StatsResponse } from "@/lib/types";
 
 interface ConfigValues {
+  // Email
   email_provider: string;
   email_api_key: string;
   email_from_address: string;
   email_from_name: string;
+  // Nextcloud
   nextcloud_url: string;
   nextcloud_user: string;
   nextcloud_password: string;
   nextcloud_folder: string;
+  // General
   notification_email: string;
   max_files: string;
   max_file_size_mb: string;
+  // Tienda
+  tienda_nombre: string;
+  tienda_slogan: string;
+  tienda_logo_url: string;
+  tienda_redes_instagram: string;
+  tienda_redes_facebook: string;
+  tienda_redes_tiktok: string;
+  // Pagos
+  mercadopago_access_token: string;
+  mercadopago_public_key: string;
+  transferencia_banco: string;
+  transferencia_tipo_cuenta: string;
+  transferencia_numero: string;
+  transferencia_titular: string;
+  transferencia_rut: string;
+  transferencia_email: string;
+  // WhatsApp
+  whatsapp_numero: string;
+  whatsapp_mensaje: string;
+  whatsapp_boton_activo: string;
 }
 
 const defaultConfig: ConfigValues = {
@@ -47,6 +70,23 @@ const defaultConfig: ConfigValues = {
   notification_email: "guerrafelipe93@gmail.com",
   max_files: "5",
   max_file_size_mb: "10",
+  tienda_nombre: "PrintUp",
+  tienda_slogan: "Tu impresion, nuestra huella",
+  tienda_logo_url: "",
+  tienda_redes_instagram: "",
+  tienda_redes_facebook: "",
+  tienda_redes_tiktok: "",
+  mercadopago_access_token: "",
+  mercadopago_public_key: "",
+  transferencia_banco: "",
+  transferencia_tipo_cuenta: "",
+  transferencia_numero: "",
+  transferencia_titular: "Servicios Graficos Spa",
+  transferencia_rut: "78.114.353-7",
+  transferencia_email: "",
+  whatsapp_numero: "56966126645",
+  whatsapp_mensaje: "Hola! Me interesa conocer mas sobre sus servicios de impresion.",
+  whatsapp_boton_activo: "true",
 };
 
 function ConfigContent() {
@@ -143,8 +183,20 @@ function ConfigContent() {
         </p>
       </div>
 
-      <Tabs defaultValue="email">
-        <TabsList>
+      <Tabs defaultValue="tienda">
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="tienda" className="gap-1.5">
+            <Store className="size-3.5" />
+            Tienda
+          </TabsTrigger>
+          <TabsTrigger value="pagos" className="gap-1.5">
+            <CreditCard className="size-3.5" />
+            Pagos
+          </TabsTrigger>
+          <TabsTrigger value="whatsapp" className="gap-1.5">
+            <MessageCircle className="size-3.5" />
+            WhatsApp
+          </TabsTrigger>
           <TabsTrigger value="email" className="gap-1.5">
             <Mail className="size-3.5" />
             Email
@@ -158,6 +210,232 @@ function ConfigContent() {
             General
           </TabsTrigger>
         </TabsList>
+
+        {/* Tienda Tab */}
+        <TabsContent value="tienda">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: "#1E293B" }}>
+                <Store className="size-5" />
+                Configuracion de Tienda
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Nombre de la Tienda</Label>
+                  <Input
+                    value={config.tienda_nombre}
+                    onChange={(e) => updateField("tienda_nombre", e.target.value)}
+                    placeholder="PrintUp"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Slogan</Label>
+                  <Input
+                    value={config.tienda_slogan}
+                    onChange={(e) => updateField("tienda_slogan", e.target.value)}
+                    placeholder="Tu impresion, nuestra huella"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5 sm:col-span-2">
+                  <Label style={{ color: "#1E293B" }}>URL del Logo</Label>
+                  <Input
+                    value={config.tienda_logo_url}
+                    onChange={(e) => updateField("tienda_logo_url", e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+              <Separator />
+              <h3 className="text-sm font-medium" style={{ color: "#1E293B" }}>Redes Sociales</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Instagram</Label>
+                  <Input
+                    value={config.tienda_redes_instagram}
+                    onChange={(e) => updateField("tienda_redes_instagram", e.target.value)}
+                    placeholder="@printup.cl"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Facebook</Label>
+                  <Input
+                    value={config.tienda_redes_facebook}
+                    onChange={(e) => updateField("tienda_redes_facebook", e.target.value)}
+                    placeholder="printup.cl"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>TikTok</Label>
+                  <Input
+                    value={config.tienda_redes_tiktok}
+                    onChange={(e) => updateField("tienda_redes_tiktok", e.target.value)}
+                    placeholder="@printup.cl"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={saving} className="gap-2" style={{ backgroundColor: "#1B2A6B" }}>
+                  <Save className="size-4" />
+                  {saving ? "Guardando..." : "Guardar"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Pagos Tab */}
+        <TabsContent value="pagos">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: "#1E293B" }}>
+                <CreditCard className="size-5" />
+                Configuracion de Pagos
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-5">
+              <h3 className="text-sm font-medium" style={{ color: "#1E293B" }}>MercadoPago</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Access Token</Label>
+                  <Input
+                    type="password"
+                    value={config.mercadopago_access_token}
+                    onChange={(e) => updateField("mercadopago_access_token", e.target.value)}
+                    placeholder="APP_USR-..."
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Public Key</Label>
+                  <Input
+                    value={config.mercadopago_public_key}
+                    onChange={(e) => updateField("mercadopago_public_key", e.target.value)}
+                    placeholder="APP_USR-..."
+                  />
+                </div>
+              </div>
+              <Separator />
+              <h3 className="text-sm font-medium" style={{ color: "#1E293B" }}>Datos para Transferencia Bancaria</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Banco</Label>
+                  <Input
+                    value={config.transferencia_banco}
+                    onChange={(e) => updateField("transferencia_banco", e.target.value)}
+                    placeholder="Banco Estado"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Tipo de Cuenta</Label>
+                  <Input
+                    value={config.transferencia_tipo_cuenta}
+                    onChange={(e) => updateField("transferencia_tipo_cuenta", e.target.value)}
+                    placeholder="Cuenta Corriente"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Numero de Cuenta</Label>
+                  <Input
+                    value={config.transferencia_numero}
+                    onChange={(e) => updateField("transferencia_numero", e.target.value)}
+                    placeholder="12345678"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Titular</Label>
+                  <Input
+                    value={config.transferencia_titular}
+                    onChange={(e) => updateField("transferencia_titular", e.target.value)}
+                    placeholder="Servicios Graficos Spa"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>RUT</Label>
+                  <Input
+                    value={config.transferencia_rut}
+                    onChange={(e) => updateField("transferencia_rut", e.target.value)}
+                    placeholder="78.114.353-7"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Email para Comprobantes</Label>
+                  <Input
+                    type="email"
+                    value={config.transferencia_email}
+                    onChange={(e) => updateField("transferencia_email", e.target.value)}
+                    placeholder="pagos@printup.cl"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={saving} className="gap-2" style={{ backgroundColor: "#1B2A6B" }}>
+                  <Save className="size-4" />
+                  {saving ? "Guardando..." : "Guardar"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* WhatsApp Tab */}
+        <TabsContent value="whatsapp">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2" style={{ color: "#1E293B" }}>
+                <MessageCircle className="size-5" />
+                Configuracion de WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Numero WhatsApp</Label>
+                  <Input
+                    value={config.whatsapp_numero}
+                    onChange={(e) => updateField("whatsapp_numero", e.target.value)}
+                    placeholder="56966126645"
+                  />
+                  <p className="text-xs" style={{ color: "#64748B" }}>
+                    Sin +, sin espacios. Ej: 56966126645
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Boton Flotante</Label>
+                  <Select
+                    value={config.whatsapp_boton_activo}
+                    onValueChange={(val) => updateField("whatsapp_boton_activo", val)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Activado</SelectItem>
+                      <SelectItem value="false">Desactivado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5 sm:col-span-2">
+                  <Label style={{ color: "#1E293B" }}>Mensaje Predeterminado</Label>
+                  <Input
+                    value={config.whatsapp_mensaje}
+                    onChange={(e) => updateField("whatsapp_mensaje", e.target.value)}
+                    placeholder="Hola! Me interesa conocer mas..."
+                  />
+                  <p className="text-xs" style={{ color: "#64748B" }}>
+                    Este mensaje se pre-llena al hacer click en el boton flotante de WhatsApp.
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={saving} className="gap-2" style={{ backgroundColor: "#1B2A6B" }}>
+                  <Save className="size-4" />
+                  {saving ? "Guardando..." : "Guardar"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Email Tab */}
         <TabsContent value="email">

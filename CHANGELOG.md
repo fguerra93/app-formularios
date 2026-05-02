@@ -2,6 +2,63 @@
 
 Todos los cambios notables de este proyecto se documentan aqui.
 
+## [2.0.0] - 2026-05-02
+
+### Tienda Online Completa (E-Commerce)
+
+- **Catalogo de productos**: pagina publica con busqueda, filtros por categoria, ordenamiento y paginacion
+- **Pagina de producto**: detalle con imagenes, variantes (talla, color, tamanio), selector de cantidad, productos relacionados
+- **Carrito de compras**: agregar/quitar items, modificar cantidades, tipo de entrega (retiro o despacho), calculo de envio en tiempo real
+- **Checkout**: datos del cliente, direccion de envio, seleccion de metodo de pago, resumen del pedido
+- **5 categorias de productos**: Articulos Publicitarios, Grafica Publicitaria, Poleras Personalizadas, Transferibles, Pendones y Banderas
+
+### Pagos
+
+- **MercadoPago**: integracion completa con redirect, webhook para confirmacion automatica, email al cliente, boton de reintentar pago
+- **Transferencia Bancaria**: muestra datos bancarios, boton copiar, confirmacion por WhatsApp
+- **Pago al Retirar**: para retiro en tienda, pago al momento
+- **Confirmacion inteligente**: detecta estado del pago (?pago=ok/error/pendiente) y muestra mensaje apropiado
+
+### Panel de Administracion Ampliado
+
+- **Dashboard**: ventas hoy, pedidos pendientes, formularios hoy, ingresos del mes, graficos de ventas 7 dias
+- **Pedidos**: lista con filtros (estado, busqueda, fecha), detalle, cambio de estado con email automatico, exportar CSV
+- **Productos**: CRUD completo, subir imagenes, variantes con precios, SEO (meta title/description)
+- **Categorias**: CRUD con conteo de productos
+- **Inventario**: vista de stock con alertas bajo/agotado, edicion inline
+- **Contactos (CRM)**: clientes unificados de pedidos y formularios, historial, WhatsApp directo
+- **Zonas de envio**: CRUD con comunas, precios, envio gratis, dias de despacho
+
+### Configuracion Extendida
+
+- **Tab Tienda**: nombre, slogan, logo, redes sociales
+- **Tab Pagos**: MercadoPago credentials + datos transferencia bancaria
+- **Tab WhatsApp**: numero, mensaje, activar/desactivar boton flotante
+
+### SEO y Metadata
+
+- **sitemap.xml dinamico**: URLs de paginas, categorias y productos
+- **robots.txt**: bloquea /admin, /api, /checkout
+- **Metadata por pagina**: Open Graph, Twitter Cards, titulo template
+- **JSON-LD**: Schema.org en productos (Product, Offer)
+
+### WhatsApp
+
+- **Boton flotante** en toda la tienda con animacion
+- **En confirmacion de pedido**: link directo con mensaje pre-llenado
+- **En admin**: boton para contactar clientes
+
+### Pagina Sobre Nosotros
+
+- Historia de PrintUp, servicios, Google Maps, contacto
+
+### UX y Polish
+
+- Animaciones stagger en grids con framer-motion
+- Empty states mejorados con iconos
+- Accesibilidad: aria-labels, focus rings
+- Emails de confirmacion mejorados
+
 ## [1.2.0] - 2026-04-27
 
 ### NextCloud Sync Integration

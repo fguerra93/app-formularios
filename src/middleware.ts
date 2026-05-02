@@ -8,11 +8,16 @@ const SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip login page and auth API routes
+  // Skip login page, auth API routes, and public API routes
   if (
     pathname === "/admin/login" ||
     pathname.startsWith("/api/auth/") ||
-    pathname.startsWith("/api/upload")
+    pathname.startsWith("/api/upload") ||
+    pathname.startsWith("/api/productos") ||
+    pathname.startsWith("/api/categorias") ||
+    pathname.startsWith("/api/pedidos") ||
+    pathname.startsWith("/api/zonas-envio") ||
+    pathname.startsWith("/api/pagos")
   ) {
     return NextResponse.next();
   }
@@ -42,10 +47,10 @@ export async function middleware(request: NextRequest) {
 }
 
 function isProtectedApi(pathname: string): boolean {
-  const protectedPaths = ["/api/formularios", "/api/stats", "/api/config"];
+  const protectedPaths = ["/api/formularios", "/api/stats", "/api/config", "/api/admin"];
   return protectedPaths.some((p) => pathname.startsWith(p));
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/formularios/:path*", "/api/stats/:path*", "/api/config/:path*"],
+  matcher: ["/admin/:path*", "/api/formularios/:path*", "/api/stats/:path*", "/api/config/:path*", "/api/admin/:path*"],
 };

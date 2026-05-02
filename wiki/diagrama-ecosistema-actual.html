@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosistema PrintUp - Arquitectura Actual</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #F0F2F5; color: #1E293B; }
+
+  .page { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1B2A6B 0%, #2D3F9E 60%, #00B4D8 100%);
+    border-radius: 16px 16px 0 0;
+    padding: 32px 40px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #FFD100, #E91E8C, #00B4D8, #1B2A6B);
+  }
+  .header h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+  .header .sub { color: #93C5FD; font-size: 0.875rem; margin-top: 4px; }
+  .header .badge {
+    position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px; padding: 8px 16px; font-size: 0.8rem; color: #E0E7FF;
+  }
+  .header .badge strong { color: #FFD100; font-size: 1.1rem; }
+
+  .body-wrap {
+    background: white;
+    border-radius: 0 0 16px 16px;
+    padding: 32px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  }
+
+  /* Layers */
+  .layer {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .layer-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .layer-label .dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  }
+
+  /* Client Layer */
+  .layer-clients { background: #EFF6FF; border: 1px solid #BFDBFE; }
+  .layer-clients .layer-label { color: #1E40AF; }
+  .layer-clients .layer-label .dot { background: #3B82F6; }
+
+  /* Frontend Layer */
+  .layer-frontend { background: #F8FAFC; border: 1px solid #E2E8F0; }
+  .layer-frontend .layer-label { color: #334155; }
+  .layer-frontend .layer-label .dot { background: #64748B; }
+
+  /* API Layer */
+  .layer-api { background: #ECFDF5; border: 1px solid #A7F3D0; }
+  .layer-api .layer-label { color: #065F46; }
+  .layer-api .layer-label .dot { background: #10B981; }
+
+  /* Services Layer */
+  .layer-services { background: #FFFBEB; border: 1px solid #FDE68A; }
+  .layer-services .layer-label { color: #92400E; }
+  .layer-services .layer-label .dot { background: #F59E0B; }
+
+  /* Worker Layer */
+  .layer-worker { background: #FFF7ED; border: 1px solid #FDBA74; }
+  .layer-worker .layer-label { color: #9A3412; }
+  .layer-worker .layer-label .dot { background: #F97316; }
+
+  /* Not built layer */
+  .layer-notbuilt { background: #F9FAFB; border: 2px dashed #D1D5DB; }
+  .layer-notbuilt .layer-label { color: #6B7280; }
+  .layer-notbuilt .layer-label .dot { background: #9CA3AF; }
+
+  /* Cards grid */
+  .cards { display: grid; gap: 12px; }
+  .cards-2 { grid-template-columns: 1fr 1fr; }
+  .cards-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cards-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .cards-7 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+  .card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 16px;
+    position: relative;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .card-accent { border-left: 3px solid; }
+
+  .card h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.75rem;
+    color: #64748B;
+    line-height: 1.7;
+  }
+  .card ul li::before {
+    content: '>';
+    color: #94A3B8;
+    margin-right: 4px;
+    font-family: monospace;
+    font-weight: bold;
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 4px;
+    margin-bottom: 3px;
+  }
+  .tag-green { background: #DCFCE7; color: #166534; }
+  .tag-blue { background: #DBEAFE; color: #1E40AF; }
+  .tag-purple { background: #EDE9FE; color: #5B21B6; }
+  .tag-orange { background: #FFEDD5; color: #9A3412; }
+  .tag-pink { background: #FCE7F3; color: #9D174D; }
+  .tag-gray { background: #F3F4F6; color: #6B7280; }
+
+  /* Not built cards */
+  .card-ghost {
+    background: #F9FAFB;
+    border: 2px dashed #D1D5DB;
+    opacity: 0.7;
+  }
+  .card-ghost h3 { color: #9CA3AF; }
+  .card-ghost ul li { color: #9CA3AF; }
+  .card-ghost .nb-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #FEE2E2;
+    color: #DC2626;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Arrows section */
+  .arrows {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 12px 0;
+    flex-wrap: wrap;
+  }
+  .arrow-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    color: #64748B;
+    font-weight: 500;
+  }
+  .arrow-line {
+    width: 32px;
+    height: 2px;
+    position: relative;
+  }
+  .arrow-line::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -3px;
+    border: 4px solid transparent;
+  }
+  .arrow-solid { background: #1B2A6B; }
+  .arrow-solid::after { border-left-color: #1B2A6B; }
+  .arrow-dashed { background: repeating-linear-gradient(90deg, #00B4D8 0, #00B4D8 4px, transparent 4px, transparent 8px); }
+  .arrow-dashed::after { border-left-color: #00B4D8; }
+  .arrow-sync { background: #F97316; }
+  .arrow-sync::after { border-left-color: #F97316; }
+
+  /* Flow connector lines between layers */
+  .flow-connectors {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0;
+  }
+  .flow-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-v { width: 2px; height: 14px; background: #CBD5E1; }
+  .flow-arrow-down {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #CBD5E1;
+  }
+  .flow-label {
+    font-size: 0.6rem;
+    color: #94A3B8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* DB Schema mini */
+  .schema-table {
+    width: 100%;
+    font-size: 0.7rem;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .schema-table th {
+    text-align: left;
+    padding: 3px 6px;
+    background: #F1F5F9;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .schema-table td {
+    padding: 3px 6px;
+    color: #64748B;
+    border-bottom: 1px solid #F1F5F9;
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.65rem;
+  }
+
+  /* Progress bar */
+  .progress-section {
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: #F8FAFC;
+    border-radius: 12px;
+    border: 1px solid #E2E8F0;
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-header h3 { font-size: 0.85rem; font-weight: 700; color: #1E293B; }
+  .progress-header span { font-size: 0.85rem; font-weight: 800; color: #1B2A6B; }
+  .progress-bar {
+    height: 12px;
+    background: #E2E8F0;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #1B2A6B, #00B4D8);
+    transition: width 1s ease;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.65rem;
+    color: #94A3B8;
+    font-weight: 500;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    color: #64748B;
+  }
+  .legend-box {
+    width: 20px; height: 14px;
+    border-radius: 3px;
+  }
+  .legend-built { background: #DCFCE7; border: 1px solid #86EFAC; }
+  .legend-ghost { background: #F9FAFB; border: 2px dashed #D1D5DB; }
+  .legend-line-solid { width: 20px; height: 2px; background: #1B2A6B; }
+  .legend-line-dashed { width: 20px; height: 2px; background: repeating-linear-gradient(90deg, #00B4D8 0, #00B4D8 3px, transparent 3px, transparent 6px); }
+
+  /* Tech stack badges */
+  .tech-stack {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .tech-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+
+  /* File tree */
+  .file-tree {
+    font-family: 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 0.65rem;
+    color: #64748B;
+    line-height: 1.6;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border-radius: 6px;
+    border: 1px solid #E2E8F0;
+  }
+  .file-tree .dir { color: #1B2A6B; font-weight: 600; }
+  .file-tree .file { color: #64748B; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .cards-3, .cards-4 { grid-template-columns: 1fr 1fr; }
+    .cards-7 { grid-template-columns: 1fr 1fr; }
+    .header .badge { position: static; transform: none; margin-top: 12px; display: inline-block; }
+  }
+  @media (max-width: 600px) {
+    .cards-2, .cards-3, .cards-4 { grid-template-columns: 1fr; }
+    .page { padding: 12px; }
+    .body-wrap { padding: 16px; }
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 0; max-width: none; }
+    .layer { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>ECOSISTEMA PRINTUP.CL</h1>
+  <div class="sub">Arquitectura Actual &mdash; Mayo 2026 &nbsp;|&nbsp; Next.js 16 + Supabase + NextCloud</div>
+  <div class="badge">Progreso: <strong>~25%</strong> del ecosistema propuesto</div>
+</div>
+
+<div class="body-wrap">
+
+<!-- ============================================ -->
+<!-- LAYER 1: CLIENTES -->
+<!-- ============================================ -->
+<div class="layer layer-clients">
+  <div class="layer-label"><span class="dot"></span> CAPA 1 &mdash; CLIENTES (Puntos de Entrada)</div>
+  <div class="cards cards-2">
+
+    <div class="card card-accent" style="border-left-color: #00B4D8;">
+      <h3 style="color: #0284C7;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Formulario Publico
+      </h3>
+      <div><span class="tag tag-green">CONSTRUIDO</span><span class="tag tag-blue">printup.cl/</span></div>
+      <ul>
+        <li>Drag & drop hasta 5 archivos (50MB c/u)</li>
+        <li>Campos: nombre*, email*, telefono, material, mensaje</li>
+        <li>Upload directo a Supabase Storage (signed URLs)</li>
+        <li>Validacion client-side + feedback visual</li>
+        <li>Mensaje de exito post-envio</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #1B2A6B;">
+      <h3 style="color: #1B2A6B;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B2A6B" stroke-width="2"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/></svg>
+        Panel Admin
+      </h3>
+      <div><span class="tag tag-green">CONSTRUIDO</span><span class="tag tag-purple">/admin/*</span></div>
+      <ul>
+        <li>Login JWT con middleware protector</li>
+        <li>Dashboard: 4 metricas + grafico 7 dias (recharts)</li>
+        <li>Historial: tabla paginada, busqueda, filtro estado</li>
+        <li>Detalle: ver datos, archivos, cambiar estado, link NextCloud</li>
+        <li>Configuracion: Email (Resend) + NextCloud + General</li>
+        <li>Sidebar responsive (mobile hamburger + desktop fixed)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Connector -->
+<div class="flow-connectors">
+  <div class="flow-connector"><div class="flow-v"></div><div class="flow-arrow-down"></div><div class="flow-label">HTTP Requests</div></div>
+</div>
+
+<!-- ============================================ -->
+<!-- LAYER 2: FRONTEND / NEXT.JS -->
+<!-- ============================================ -->
+<div class="layer layer-frontend">
+  <div class="layer-label"><span class="dot"></span> CAPA 2 &mdash; FRONTEND (Next.js 16 App Router)</div>
+
+  <div class="tech-stack">
+    <span class="tech-badge" style="color: #1B2A6B; border-color: #1B2A6B; background: #EFF6FF;">Next.js 16</span>
+    <span class="tech-badge" style="color: #0284C7; border-color: #0284C7; background: #E0F2FE;">React 19</span>
+    <span class="tech-badge" style="color: #0891B2; border-color: #0891B2; background: #ECFEFF;">Tailwind v4</span>
+    <span class="tech-badge" style="color: #1E293B; border-color: #1E293B; background: #F8FAFC;">shadcn/ui</span>
+    <span class="tech-badge" style="color: #7C3AED; border-color: #7C3AED; background: #F5F3FF;">framer-motion</span>
+    <span class="tech-badge" style="color: #DC2626; border-color: #DC2626; background: #FEF2F2;">recharts</span>
+    <span class="tech-badge" style="color: #EA580C; border-color: #EA580C; background: #FFF7ED;">lucide-react</span>
+    <span class="tech-badge" style="color: #0D9488; border-color: #0D9488; background: #F0FDFA;">sonner</span>
+    <span class="tech-badge" style="color: #4338CA; border-color: #4338CA; background: #EEF2FF;">jose (JWT)</span>
+    <span class="tech-badge" style="color: #059669; border-color: #059669; background: #ECFDF5;">TypeScript</span>
+  </div>
+
+  <div class="cards cards-2">
+    <div class="card" style="border-top: 3px solid #00B4D8;">
+      <h3 style="color: #0284C7;">Estructura de Archivos</h3>
+      <div class="file-tree">
+        <span class="dir">src/</span><br>
+        &nbsp;&nbsp;<span class="dir">app/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">page.tsx</span> &larr; formulario publico<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">layout.tsx</span> + <span class="file">globals.css</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">admin/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">page.tsx</span> &larr; dashboard<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">historial/</span><span class="file">page.tsx</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">configuracion/</span><span class="file">page.tsx</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">formularios/[id]/</span><span class="file">page.tsx</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">login/</span><span class="file">page.tsx</span> + <span class="file">layout.tsx</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">api/</span> &larr; 7 route handlers<br>
+        &nbsp;&nbsp;<span class="dir">components/</span> &larr; ui/ (16) + admin/ (2)<br>
+        &nbsp;&nbsp;<span class="dir">lib/</span> &larr; supabase, auth, nextcloud, types<br>
+        &nbsp;&nbsp;<span class="file">middleware.ts</span> &larr; JWT guard
+      </div>
+    </div>
+    <div class="card" style="border-top: 3px solid #1B2A6B;">
+      <h3 style="color: #1B2A6B;">Middleware &amp; Auth</h3>
+      <ul>
+        <li>JWT via jose (sign + verify)</li>
+        <li>Cookie: admin_token (httpOnly)</li>
+        <li>Protege: /admin/* y /api/formularios, /api/stats, /api/config</li>
+        <li>Excluye: /admin/login, /api/auth/*, /api/upload*</li>
+        <li>Redirect a /admin/login si no autenticado</li>
+        <li>401 JSON para APIs protegidas sin token</li>
+      </ul>
+      <div style="margin-top: 12px;">
+        <h3 style="color: #1B2A6B;">UI Components (shadcn)</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;">
+          <span class="tag tag-gray">Button</span><span class="tag tag-gray">Card</span>
+          <span class="tag tag-gray">Input</span><span class="tag tag-gray">Label</span>
+          <span class="tag tag-gray">Select</span><span class="tag tag-gray">Table</span>
+          <span class="tag tag-gray">Tabs</span><span class="tag tag-gray">Dialog</span>
+          <span class="tag tag-gray">Badge</span><span class="tag tag-gray">Separator</span>
+          <span class="tag tag-gray">Skeleton</span><span class="tag tag-gray">Tooltip</span>
+          <span class="tag tag-gray">Progress</span><span class="tag tag-gray">Textarea</span>
+          <span class="tag tag-gray">DropdownMenu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Connector -->
+<div class="flow-connectors">
+  <div class="flow-connector"><div class="flow-v"></div><div class="flow-arrow-down"></div><div class="flow-label">Route Handlers (Server-side)</div></div>
+</div>
+
+<!-- ============================================ -->
+<!-- LAYER 3: API ROUTES -->
+<!-- ============================================ -->
+<div class="layer layer-api">
+  <div class="layer-label"><span class="dot"></span> CAPA 3 &mdash; API ROUTES (Next.js Route Handlers)</div>
+  <div class="cards cards-7">
+
+    <div class="card card-accent" style="border-left-color: #10B981;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-green" style="font-size: 0.55rem;">POST</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/upload</div>
+      <ul>
+        <li>Recibe metadata JSON</li>
+        <li>Inserta en BD</li>
+        <li>Envia email Resend</li>
+        <li>Log en email_log</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #10B981;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-green" style="font-size: 0.55rem;">POST</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/upload-url</div>
+      <ul>
+        <li>Genera signed URL</li>
+        <li>Supabase Storage</li>
+        <li>Retorna publicUrl</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #0284C7;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-blue" style="font-size: 0.55rem;">GET</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/formularios</div>
+      <ul>
+        <li>Paginacion</li>
+        <li>Busqueda nombre/email</li>
+        <li>Filtro por estado</li>
+        <li>Auth requerida</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #7C3AED;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-blue" style="font-size: 0.55rem;">GET</span>
+        <span class="tag tag-orange" style="font-size: 0.55rem;">PATCH</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/formularios/[id]</div>
+      <ul>
+        <li>Detalle formulario</li>
+        <li>Actualizar estado</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #E91E8C;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-blue" style="font-size: 0.55rem;">GET</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/stats</div>
+      <ul>
+        <li>Hoy / mes / total</li>
+        <li>Emails restantes</li>
+        <li>Grafico 7 dias</li>
+        <li>Tasa de exito</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #FFD100;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-blue" style="font-size: 0.55rem;">GET</span>
+        <span class="tag tag-orange" style="font-size: 0.55rem;">PUT</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/config</div>
+      <ul>
+        <li>Lee config key-value</li>
+        <li>Upsert config</li>
+        <li>Auth requerida</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #DC2626;">
+      <h3 style="color: #065F46; font-size: 0.75rem;">
+        <span class="tag tag-green" style="font-size: 0.55rem;">POST</span>
+        <span class="tag tag-blue" style="font-size: 0.55rem;">GET</span>
+      </h3>
+      <div style="font-size: 0.7rem; font-weight: 700; color: #065F46; font-family: monospace; margin-bottom: 6px;">/api/auth/*</div>
+      <ul>
+        <li>login (JWT cookie)</li>
+        <li>logout (clear cookie)</li>
+        <li>me (verify token)</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- Connector -->
+<div class="flow-connectors">
+  <div class="flow-connector"><div class="flow-v"></div><div class="flow-arrow-down"></div><div class="flow-label">Queries &amp; Storage API</div></div>
+</div>
+
+<!-- ============================================ -->
+<!-- LAYER 4: SERVICIOS EXTERNOS -->
+<!-- ============================================ -->
+<div class="layer layer-services">
+  <div class="layer-label"><span class="dot"></span> CAPA 4 &mdash; SERVICIOS EXTERNOS</div>
+  <div class="cards cards-3">
+
+    <!-- Supabase -->
+    <div class="card card-accent" style="border-left-color: #3ECF8E;">
+      <h3 style="color: #065F46;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Supabase
+      </h3>
+      <div><span class="tag tag-green">ACTIVO</span><span class="tag tag-blue">Free Tier</span></div>
+
+      <table class="schema-table">
+        <tr><th colspan="2">PostgreSQL - 3 Tablas</th></tr>
+        <tr><td>formularios</td><td>id, nombre, email, tel, material, mensaje, archivos (JSONB), estado, nextcloud_path, synced, email_enviado, timestamps</td></tr>
+        <tr><td>configuracion</td><td>clave (unique), valor &mdash; key-value store</td></tr>
+        <tr><td>email_log</td><td>formulario_id (FK), destinatario, asunto, estado, error, proveedor</td></tr>
+      </table>
+
+      <div style="margin-top: 8px;">
+        <span class="tag tag-green">Storage</span>
+        <span style="font-size: 0.7rem; color: #64748B;">Bucket: formularios-archivos (publico)</span>
+      </div>
+      <div style="margin-top: 4px;">
+        <span class="tag tag-purple">RLS</span>
+        <span style="font-size: 0.7rem; color: #64748B;">Public insert, service role read/update</span>
+      </div>
+    </div>
+
+    <!-- Resend -->
+    <div class="card card-accent" style="border-left-color: #7C3AED;">
+      <h3 style="color: #5B21B6;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Resend
+      </h3>
+      <div><span class="tag tag-green">ACTIVO</span><span class="tag tag-purple">Email API</span></div>
+      <ul>
+        <li>Email HTML con datos del formulario</li>
+        <li>Links a Admin Panel + NextCloud</li>
+        <li>From: configurable via BD</li>
+        <li>To: configurable (notification_email)</li>
+        <li>Free tier: 100/dia, 3,000/mes</li>
+        <li>Log completo en tabla email_log</li>
+        <li>Tracking uso en dashboard admin</li>
+      </ul>
+    </div>
+
+    <!-- NextCloud -->
+    <div class="card card-accent" style="border-left-color: #0082C9;">
+      <h3 style="color: #0369A1;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0082C9" stroke-width="2"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+        NextCloud (Local)
+      </h3>
+      <div><span class="tag tag-green">ACTIVO</span><span class="tag tag-orange">printup.internos</span></div>
+      <ul>
+        <li>Servidor local (red interna)</li>
+        <li>WebDAV API (MKCOL, PUT, DELETE, PROPFIND)</li>
+        <li>Carpeta: /PrintUp/Pedidos_Nuevos</li>
+        <li>Auth: Basic (user + app password)</li>
+        <li>Recibe archivos via sync-worker</li>
+        <li>Link directo desde email y admin</li>
+        <li>Almacenamiento definitivo de archivos</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- Connector -->
+<div class="flow-connectors">
+  <div class="flow-connector"><div class="flow-v"></div><div class="flow-arrow-down"></div><div class="flow-label">Sync Worker (cada 30s)</div></div>
+</div>
+
+<!-- ============================================ -->
+<!-- LAYER 5: SYNC WORKER -->
+<!-- ============================================ -->
+<div class="layer layer-worker">
+  <div class="layer-label"><span class="dot"></span> CAPA 5 &mdash; SYNC WORKER (Docker Container)</div>
+  <div class="cards cards-2">
+
+    <div class="card card-accent" style="border-left-color: #F97316;">
+      <h3 style="color: #9A3412;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 6V4a2 2 0 014 0v2"/><path d="M14 6V4a2 2 0 014 0v2"/></svg>
+        sync-worker/sync.js
+      </h3>
+      <div>
+        <span class="tag tag-green">CONSTRUIDO</span>
+        <span class="tag tag-orange">Docker</span>
+        <span class="tag tag-blue">Node.js</span>
+      </div>
+      <ul>
+        <li>Poll cada 30s: Supabase formularios WHERE nextcloud_synced = false</li>
+        <li>Download archivos desde Supabase Storage (public URLs)</li>
+        <li>MKCOL: crea carpeta en NextCloud (recursivo)</li>
+        <li>PUT: sube cada archivo via WebDAV</li>
+        <li>DELETE: elimina de Supabase Storage post-sync</li>
+        <li>UPDATE: marca nextcloud_synced = true</li>
+        <li>Retry parcial: si falla un archivo, reintenta proximo ciclo</li>
+        <li>Test de conexion NextCloud al arrancar</li>
+      </ul>
+    </div>
+
+    <div class="card card-accent" style="border-left-color: #F97316;">
+      <h3 style="color: #9A3412;">Flujo Completo del Formulario</h3>
+      <div style="font-size: 0.75rem; color: #64748B; line-height: 2.2;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-blue">1</span> Cliente llena formulario y sube archivos
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-blue">2</span> Browser obtiene signed URL del API
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-blue">3</span> Browser sube directo a Supabase Storage
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-green">4</span> API guarda metadata en PostgreSQL
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-purple">5</span> API envia email via Resend al admin
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-orange">6</span> Sync Worker detecta nuevo (cada 30s)
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-orange">7</span> Worker descarga &rarr; sube a NextCloud &rarr; borra de Supabase
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="tag tag-green">8</span> Admin revisa en panel, cambia estado
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- LAYER 6: NO CONSTRUIDO -->
+<!-- ============================================ -->
+<div class="layer layer-notbuilt">
+  <div class="layer-label"><span class="dot"></span> PENDIENTE &mdash; Modulos del Ecosistema Propuesto (No Construido)</div>
+  <div class="cards cards-4">
+
+    <div class="card card-ghost">
+      <span class="nb-badge">NO CONSTRUIDO</span>
+      <h3>Tienda E-Commerce</h3>
+      <ul>
+        <li>Catalogo de productos</li>
+        <li>Personalizador</li>
+        <li>Carrito de compras</li>
+        <li>Checkout</li>
+        <li>Pagos (MercadoPago/Flow)</li>
+        <li>Shopify Storefront API o backend propio</li>
+      </ul>
+    </div>
+
+    <div class="card card-ghost">
+      <span class="nb-badge">NO CONSTRUIDO</span>
+      <h3>Marketing &amp; Automation</h3>
+      <ul>
+        <li>Plantillas email marketing</li>
+        <li>Campanas automatizadas</li>
+        <li>IA Agent (Claude/DeepSeek)</li>
+        <li>Multi-canal (WhatsApp, SMS)</li>
+        <li>CRM / Contactos</li>
+      </ul>
+    </div>
+
+    <div class="card card-ghost">
+      <span class="nb-badge">NO CONSTRUIDO</span>
+      <h3>Delivery</h3>
+      <ul>
+        <li>Zonas y tarifas</li>
+        <li>Gestion repartidores</li>
+        <li>WhatsApp notificaciones</li>
+        <li>Tracking pedidos</li>
+        <li>Foto de entrega</li>
+      </ul>
+    </div>
+
+    <div class="card card-ghost">
+      <span class="nb-badge">NO CONSTRUIDO</span>
+      <h3>Infra Faltante</h3>
+      <ul>
+        <li>Cloudflare (WAF + CDN)</li>
+        <li>Redis (cache)</li>
+        <li>n8n (automatizacion)</li>
+        <li>Minio (backup)</li>
+        <li>SES / WhatsApp API</li>
+        <li>Vercel deploy (aun local)</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- ARROWS LEGEND -->
+<!-- ============================================ -->
+<div class="arrows">
+  <div class="arrow-item">
+    <div class="arrow-line arrow-solid"></div>
+    API call (server-side)
+  </div>
+  <div class="arrow-item">
+    <div class="arrow-line arrow-dashed"></div>
+    Upload directo (client &rarr; Supabase)
+  </div>
+  <div class="arrow-item">
+    <div class="arrow-line arrow-sync"></div>
+    Sync Worker (Supabase &rarr; NextCloud)
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PROGRESS BAR -->
+<!-- ============================================ -->
+<div class="progress-section">
+  <div class="progress-header">
+    <h3>Progreso del Ecosistema Completo Propuesto</h3>
+    <span>~25%</span>
+  </div>
+  <div class="progress-bar">
+    <div class="progress-fill" style="width: 25%;"></div>
+  </div>
+  <div class="progress-labels">
+    <span>Formularios 100%</span>
+    <span>Admin Panel ~70%</span>
+    <span>Infra ~50%</span>
+    <span style="color: #DC2626;">E-Commerce 0% | Marketing 0% | Delivery 0%</span>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-box legend-built"></div>
+    Construido y funcionando
+  </div>
+  <div class="legend-item">
+    <div class="legend-box legend-ghost"></div>
+    No construido (propuesto)
+  </div>
+  <div class="legend-item">
+    <div class="legend-line-solid"></div>
+    Flujo server-side
+  </div>
+  <div class="legend-item">
+    <div class="legend-line-dashed"></div>
+    Upload directo client-side
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 20px; font-size: 0.7rem; color: #94A3B8;">
+  PrintUp.cl &mdash; Diagrama generado Mayo 2026 &nbsp;|&nbsp; Stack: Next.js 16 + React 19 + Supabase + NextCloud + Resend + Docker
+</div>
+
+</div><!-- body-wrap -->
+</div><!-- page -->
+</body>
+</html>

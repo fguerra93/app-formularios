@@ -22,24 +22,22 @@ export async function GET() {
     1
   ).toISOString();
 
-  // Count formularios created today
+  // --- Formularios stats ---
   const { count: hoy } = await supabase
     .from("formularios")
     .select("*", { count: "exact", head: true })
     .gte("created_at", todayStart);
 
-  // Count formularios created this month
   const { count: mes } = await supabase
     .from("formularios")
     .select("*", { count: "exact", head: true })
     .gte("created_at", monthStart);
 
-  // Count total formularios
   const { count: total } = await supabase
     .from("formularios")
     .select("*", { count: "exact", head: true });
 
-  // Email success rate
+  // Email stats
   const { count: emailsTotal } = await supabase
     .from("email_log")
     .select("*", { count: "exact", head: true });
@@ -54,13 +52,11 @@ export async function GET() {
       ? Math.round(((emailsExitosos || 0) / emailsTotal) * 100)
       : 100;
 
-  // Emails sent today (for Resend free tier limit)
   const { count: emailsHoy } = await supabase
     .from("email_log")
     .select("*", { count: "exact", head: true })
     .gte("created_at", todayStart);
 
-  // Emails sent this month
   const { count: emailsMes } = await supabase
     .from("email_log")
     .select("*", { count: "exact", head: true })
@@ -69,19 +65,11 @@ export async function GET() {
   const emails_restantes_dia = 100 - (emailsHoy || 0);
   const emails_restantes_mes = 3000 - (emailsMes || 0);
 
-  // Last 7 days with count per day
+  // Formularios last 7 days
   const diarios: { fecha: string; count: number }[] = [];
   for (let i = 6; i >= 0; i--) {
-    const dayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - i
-    );
-    const dayEnd = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() - i + 1
-    );
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i + 1);
 
     const { count: dayCount } = await supabase
       .from("formularios")
@@ -95,7 +83,59 @@ export async function GET() {
     });
   }
 
+  // --- Pedidos / Ventas stats ---
+  // Ventas de hoy
+  const { data: pedidosHoy } = await supabase
+    .from("pedidos")
+    .select("total")
+    .gte("created_at", todayStart)
+    .in("pago_estado", ["pagado", "pendiente"]);
+
+  const ventas_hoy = (pedidosHoy || []).reduce((sum, p) => sum + (p.total || 0), 0);
+
+  // Pedidos pendientes (pendiente + confirmado)
+  const { count: pedidos_pendientes } = await supabase
+    .from("pedidos")
+    .select("*", { count: "exact", head: true })
+    .in("estado", ["pendiente", "confirmado"]);
+
+  // Ingresos del mes
+  const { data: pedidosMes } = await supabase
+    .from("pedidos")
+    .select("total")
+    .gte("created_at", monthStart)
+    .in("pago_estado", ["pagado", "pendiente"]);
+
+  const ingresos_mes = (pedidosMes || []).reduce((sum, p) => sum + (p.total || 0), 0);
+
+  // Ventas ultimos 7 dias
+  const ventas_diarias: { fecha: string; total: number; count: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    const dayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i + 1);
+
+    const { data: dayPedidos } = await supabase
+      .from("pedidos")
+      .select("total")
+      .gte("created_at", dayStart.toISOString())
+      .lt("created_at", dayEnd.toISOString());
+
+    ventas_diarias.push({
+      fecha: dayStart.toISOString().split("T")[0],
+      total: (dayPedidos || []).reduce((sum, p) => sum + (p.total || 0), 0),
+      count: dayPedidos?.length || 0,
+    });
+  }
+
+  // Pedidos recientes (ultimos 5)
+  const { data: pedidos_recientes } = await supabase
+    .from("pedidos")
+    .select("id, numero_pedido, cliente_nombre, total, estado, pago_estado, created_at")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
   return NextResponse.json({
+    // Formularios
     hoy: hoy || 0,
     mes: mes || 0,
     total: total || 0,
@@ -103,5 +143,11 @@ export async function GET() {
     emails_restantes_mes,
     tasa_exito,
     diarios,
+    // Pedidos / Ventas
+    ventas_hoy,
+    pedidos_pendientes: pedidos_pendientes || 0,
+    ingresos_mes,
+    ventas_diarias,
+    pedidos_recientes: pedidos_recientes || [],
   });
 }
