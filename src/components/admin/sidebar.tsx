@@ -22,6 +22,7 @@ import {
   MessageCircle,
   Mail,
   Image,
+  Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -54,6 +55,7 @@ const navSections: NavSection[] = [
     label: "MARKETING",
     items: [
       { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
+      { href: "/admin/campanas", label: "Campanas", icon: Megaphone },
       { href: "/admin/portafolio", label: "Portafolio", icon: Image },
     ],
   },
@@ -66,9 +68,9 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "AUTOMATIZACION",
+    label: "COMUNICACION",
     items: [
-      { href: "/admin/whatsapp", label: "WhatsApp Bot", icon: MessageSquare },
+      { href: "/admin/mensajeria", label: "Mensajeria", icon: MessageSquare },
     ],
   },
 ];
