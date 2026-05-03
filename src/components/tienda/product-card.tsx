@@ -1,22 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Package } from "lucide-react";
+import { ShoppingCart, Package, Heart, Star } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { formatCLP } from "@/lib/format";
+import { ProductBadges } from "./product-badge";
 import type { Producto, Categoria } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
   producto: Producto & { categoria?: Categoria };
+  rating?: number;
+  reviewCount?: number;
 }
 
-export function ProductCard({ producto }: ProductCardProps) {
+export function ProductCard({ producto, rating, reviewCount }: ProductCardProps) {
   const { addItem } = useCart();
+  const { toggleItem, isInWishlist } = useWishlist();
   const categoriaSlug = producto.categoria?.slug || "productos";
   const hasOffer = producto.precio_oferta !== null && producto.precio_oferta < producto.precio;
   const displayPrice = hasOffer ? producto.precio_oferta! : producto.precio;
   const mainImage = producto.imagenes?.[0];
+  const wishlisted = isInWishlist(producto.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -31,6 +36,12 @@ export function ProductCard({ producto }: ProductCardProps) {
       variante: null,
       precio_extra: 0,
     });
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleItem(producto.id);
   };
 
   return (
@@ -51,16 +62,26 @@ export function ProductCard({ producto }: ProductCardProps) {
             <Package className="size-16 text-[#00B4D8]/30" />
           </div>
         )}
-        {hasOffer && (
-          <Badge className="absolute top-3 left-3 bg-[#F97316] text-white border-0">
-            Oferta
-          </Badge>
-        )}
-        {producto.stock === 0 && (
-          <Badge className="absolute top-3 right-3 bg-gray-500 text-white border-0">
-            Agotado
-          </Badge>
-        )}
+
+        {/* Badges */}
+        <div className="absolute top-3 left-3">
+          <ProductBadges producto={producto} />
+        </div>
+
+        {/* Wishlist button */}
+        <button
+          onClick={handleToggleWishlist}
+          aria-label={wishlisted ? "Quitar de favoritos" : "Agregar a favoritos"}
+          className="absolute top-3 right-3 p-1.5 rounded-full bg-white/70 hover:bg-white transition-all duration-200"
+        >
+          <Heart
+            className={`size-5 transition-all duration-200 ${
+              wishlisted
+                ? "fill-red-500 text-red-500"
+                : "text-white drop-shadow"
+            }`}
+          />
+        </button>
       </div>
 
       {/* Info */}
@@ -68,6 +89,28 @@ export function ProductCard({ producto }: ProductCardProps) {
         <p className="text-xs text-[#64748B] mb-1">
           {producto.categoria?.nombre || "Producto"}
         </p>
+
+        {/* Rating */}
+        {rating !== undefined && rating > 0 && (
+          <div className="flex items-center gap-1 mb-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`size-3 ${
+                  i < Math.round(rating)
+                    ? "fill-[#FFD100] text-[#FFD100]"
+                    : "fill-none text-[#E2E8F0]"
+                }`}
+              />
+            ))}
+            {reviewCount !== undefined && reviewCount > 0 && (
+              <span className="text-xs text-[#64748B] ml-0.5">
+                ({reviewCount})
+              </span>
+            )}
+          </div>
+        )}
+
         <h3 className="font-semibold text-[#1E293B] text-sm leading-snug line-clamp-2 min-h-[2.5rem]">
           {producto.nombre}
         </h3>
