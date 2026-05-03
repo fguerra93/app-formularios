@@ -12,7 +12,7 @@ import { ProductCard } from "@/components/tienda/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown } from "lucide-react";
+import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown, Palette } from "lucide-react";
 import { toast } from "sonner";
 import type { Producto, PrecioCantidad, PreguntaProducto } from "@/lib/types";
 
@@ -563,6 +563,17 @@ export default function ProductoPage() {
               {producto.stock === 0 ? "Agotado" : "Agregar al Carrito"}
             </Button>
           </div>
+
+          {/* Personalizar button */}
+          <Button
+            variant="outline"
+            className="w-full gap-2 border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8]/10 mb-4"
+            nativeButton={false}
+            render={<Link href={`/productos/${categoriaSlug}/${slug}/personalizar`} />}
+          >
+            <Palette className="size-5" />
+            Personalizar este producto
+          </Button>
 
           {/* Stock info */}
           <div className="flex items-center gap-2 text-sm text-[#64748B] mb-6">

@@ -23,6 +23,7 @@ import {
   Mail,
   Image,
   Megaphone,
+  Palette,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -43,6 +44,7 @@ const navSections: NavSection[] = [
       { href: "/admin/cupones", label: "Cupones", icon: Ticket },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
       { href: "/admin/preguntas", label: "Preguntas", icon: MessageCircle },
+      { href: "/admin/designer", label: "Disenador", icon: Palette },
     ],
   },
   {
