@@ -4,12 +4,13 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/components/auth/auth-provider";
 import { formatCLP } from "@/lib/format";
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Banknote, Store, Loader2, Package } from "lucide-react";
+import { CreditCard, Banknote, Store, Loader2, Package, User } from "lucide-react";
 import type { ZonaEnvio } from "@/lib/types";
 
 export default function CheckoutPage() {
@@ -24,6 +25,7 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { items, getSubtotal, clearCart } = useCart();
+  const { user, cliente } = useAuth();
 
   const tipoEntrega = (searchParams.get("tipo") as "retiro_tienda" | "despacho") || "retiro_tienda";
   const zonaId = searchParams.get("zona") || "";
@@ -35,6 +37,7 @@ function CheckoutContent() {
     tipoEntrega === "retiro_tienda" ? "retiro" : "mercadopago"
   );
 
+  const [newsletterOptIn, setNewsletterOptIn] = useState(true);
   const [form, setForm] = useState({
     nombre: "",
     email: "",
@@ -47,6 +50,28 @@ function CheckoutContent() {
     region: "O'Higgins",
     notas: "",
   });
+
+  // Pre-fill form data for logged-in users
+  useEffect(() => {
+    if (cliente) {
+      setForm((prev) => ({
+        ...prev,
+        nombre: cliente.nombre || prev.nombre,
+        email: cliente.email || prev.email,
+        telefono: cliente.telefono || prev.telefono,
+        rut: cliente.rut || prev.rut,
+        ...(cliente.direccion_default
+          ? {
+              calle: cliente.direccion_default.calle || prev.calle,
+              numero: cliente.direccion_default.numero || prev.numero,
+              comuna: cliente.direccion_default.comuna || prev.comuna,
+              ciudad: cliente.direccion_default.ciudad || prev.ciudad,
+              region: cliente.direccion_default.region || prev.region,
+            }
+          : {}),
+      }));
+    }
+  }, [cliente]);
 
   useEffect(() => {
     fetch("/api/zonas-envio")
@@ -117,6 +142,7 @@ function CheckoutContent() {
         costo_envio: costoEnvio,
         total,
         pago_metodo: pagoMetodo === "mercadopago" ? "mercadopago" : pagoMetodo === "transferencia" ? "transferencia" : "pago_retiro",
+        cliente_id: user?.id || null,
       };
 
       const res = await fetch("/api/pedidos", {
@@ -129,6 +155,15 @@ function CheckoutContent() {
 
       if (res.ok && data.success) {
         const pedidoId = data.pedido.id;
+
+        // Newsletter subscription
+        if (newsletterOptIn && form.email) {
+          fetch("/api/newsletter/suscribir", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: form.email, nombre: form.nombre, fuente: "checkout" }),
+          }).catch(() => {});
+        }
 
         if (pagoMetodo === "mercadopago") {
           // Create MercadoPago preference and redirect
@@ -186,6 +221,20 @@ function CheckoutContent() {
       <h1 className="text-2xl font-extrabold text-[#1E293B] mb-8" style={{ letterSpacing: "-0.02em" }}>
         Finalizar Compra
       </h1>
+
+      {/* Login banner for guests */}
+      {!user && (
+        <div className="mb-6 p-4 bg-[#F0F7FF] rounded-xl border border-[#E2E8F0] flex items-center gap-3">
+          <User className="size-5 text-[#1B2A6B] shrink-0" />
+          <p className="text-sm text-[#1E293B]">
+            Tienes cuenta?{" "}
+            <Link href="/login" className="font-semibold text-[#00B4D8] hover:underline">
+              Inicia sesion
+            </Link>{" "}
+            para un checkout mas rapido
+          </p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -399,6 +448,21 @@ function CheckoutContent() {
                   </label>
                 )}
               </div>
+            </div>
+
+            {/* Newsletter opt-in */}
+            <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newsletterOptIn}
+                  onChange={(e) => setNewsletterOptIn(e.target.checked)}
+                  className="mt-0.5 accent-[#00B4D8]"
+                />
+                <span className="text-sm text-[#1E293B]">
+                  Quiero recibir ofertas y novedades por email
+                </span>
+              </label>
             </div>
           </div>
 

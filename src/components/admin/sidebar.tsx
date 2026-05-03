@@ -16,6 +16,12 @@ import {
   Warehouse,
   Users,
   Truck,
+  Ticket,
+  Star,
+  MessageSquare,
+  MessageCircle,
+  Mail,
+  Image,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -33,6 +39,9 @@ const navSections: NavSection[] = [
       { href: "/admin/productos", label: "Productos", icon: Package },
       { href: "/admin/categorias", label: "Categorias", icon: FolderTree },
       { href: "/admin/inventario", label: "Inventario", icon: Warehouse },
+      { href: "/admin/cupones", label: "Cupones", icon: Ticket },
+      { href: "/admin/reviews", label: "Reviews", icon: Star },
+      { href: "/admin/preguntas", label: "Preguntas", icon: MessageCircle },
     ],
   },
   {
@@ -42,11 +51,24 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    label: "MARKETING",
+    items: [
+      { href: "/admin/newsletter", label: "Newsletter", icon: Mail },
+      { href: "/admin/portafolio", label: "Portafolio", icon: Image },
+    ],
+  },
+  {
     label: "SISTEMA",
     items: [
       { href: "/admin/contactos", label: "Contactos", icon: Users },
       { href: "/admin/envios", label: "Envios", icon: Truck },
       { href: "/admin/configuracion", label: "Configuracion", icon: Settings },
+    ],
+  },
+  {
+    label: "AUTOMATIZACION",
+    items: [
+      { href: "/admin/whatsapp", label: "WhatsApp Bot", icon: MessageSquare },
     ],
   },
 ];

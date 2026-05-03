@@ -1,9 +1,88 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
+import { toast } from "sonner";
 
 export function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleNewsletter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Ingresa un email valido");
+      return;
+    }
+    setSubscribing(true);
+    try {
+      const res = await fetch("/api/newsletter/suscribir", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        toast.success("Te has suscrito exitosamente");
+        setEmail("");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || "Error al suscribirse");
+      }
+    } catch {
+      toast.error("Error de conexion. Intenta nuevamente.");
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   return (
     <footer className="bg-[#1B2A6B] text-white">
+      {/* Newsletter bar */}
+      <div
+        className="py-8"
+        style={{
+          background: "linear-gradient(135deg, #1B2A6B 0%, #00B4D8 100%)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-center md:text-left">
+              <h3 className="text-lg font-extrabold">
+                Suscribete y recibe ofertas exclusivas
+              </h3>
+              <p className="text-sm text-white/70 mt-1">
+                Promociones, novedades y descuentos directo a tu correo.
+              </p>
+            </div>
+            <form
+              onSubmit={handleNewsletter}
+              className="flex w-full md:w-auto max-w-md gap-2"
+            >
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Tu correo electronico"
+                className="flex-1 min-w-0 px-4 py-2.5 rounded-lg text-sm text-[#1E293B] bg-white outline-none placeholder:text-[#94A3B8] focus:ring-2 focus:ring-white/30"
+              />
+              <button
+                type="submit"
+                disabled={subscribing}
+                className="px-5 py-2.5 rounded-lg bg-white text-[#1B2A6B] font-bold text-sm hover:bg-white/90 disabled:opacity-60 transition-all flex items-center gap-2 shrink-0"
+              >
+                {subscribing ? (
+                  <span className="w-4 h-4 border-2 border-[#1B2A6B]/30 border-t-[#1B2A6B] rounded-full animate-spin" />
+                ) : (
+                  <Send className="size-4" />
+                )}
+                Suscribir
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Col 1: Brand */}
         <div>
@@ -70,7 +149,32 @@ export function Footer() {
                 Mi Carrito
               </Link>
             </li>
+            <li>
+              <Link href="/portafolio" className="text-sm text-white/70 hover:text-white transition-colors">
+                Portafolio
+              </Link>
+            </li>
           </ul>
+          {/* Politicas */}
+          <div className="border-t border-white/10 mt-4 pt-4">
+            <ul className="space-y-2.5">
+              <li>
+                <Link href="/politicas/envio" className="text-sm text-white/70 hover:text-white transition-colors">
+                  Politica de Envio
+                </Link>
+              </li>
+              <li>
+                <Link href="/politicas/devoluciones" className="text-sm text-white/70 hover:text-white transition-colors">
+                  Devoluciones
+                </Link>
+              </li>
+              <li>
+                <Link href="/politicas/privacidad" className="text-sm text-white/70 hover:text-white transition-colors">
+                  Privacidad
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Col 3: Info */}

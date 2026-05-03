@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       total,
       pago_metodo,
       notas,
+      cliente_id,
     } = body;
 
     if (!cliente_nombre || !cliente_email || !items || !Array.isArray(items) || items.length === 0) {
@@ -47,6 +48,7 @@ export async function POST(request: NextRequest) {
         pago_estado: "pendiente",
         pago_metodo: pago_metodo || "transferencia",
         notas: notas || null,
+        cliente_id: cliente_id || null,
       })
       .select()
       .single();

@@ -56,6 +56,9 @@ interface ConfigValues {
   whatsapp_numero: string;
   whatsapp_mensaje: string;
   whatsapp_boton_activo: string;
+  // Analytics & Social Proof
+  ga4_measurement_id: string;
+  social_proof_activo: string;
 }
 
 const defaultConfig: ConfigValues = {
@@ -87,6 +90,8 @@ const defaultConfig: ConfigValues = {
   whatsapp_numero: "56966126645",
   whatsapp_mensaje: "Hola! Me interesa conocer mas sobre sus servicios de impresion.",
   whatsapp_boton_activo: "true",
+  ga4_measurement_id: "",
+  social_proof_activo: "true",
 };
 
 function ConfigContent() {
@@ -275,6 +280,39 @@ function ConfigContent() {
                   />
                 </div>
               </div>
+              <Separator />
+              <h3 className="text-sm font-medium" style={{ color: "#1E293B" }}>Analytics y Social Proof</h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Google Analytics ID</Label>
+                  <Input
+                    value={config.ga4_measurement_id}
+                    onChange={(e) => updateField("ga4_measurement_id", e.target.value)}
+                    placeholder="G-XXXXXXXXXX"
+                  />
+                  <p className="text-xs" style={{ color: "#64748B" }}>
+                    ID de medicion de GA4. Dejalo vacio para desactivar.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label style={{ color: "#1E293B" }}>Popup Compras Recientes</Label>
+                  <Select
+                    value={config.social_proof_activo || "true"}
+                    onValueChange={(val) => updateField("social_proof_activo", val ?? "true")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Activado</SelectItem>
+                      <SelectItem value="false">Desactivado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs" style={{ color: "#64748B" }}>
+                    Muestra notificaciones de compras recientes a los visitantes.
+                  </p>
+                </div>
+              </div>
               <div className="flex justify-end">
                 <Button onClick={handleSave} disabled={saving} className="gap-2" style={{ backgroundColor: "#1B2A6B" }}>
                   <Save className="size-4" />
@@ -403,8 +441,8 @@ function ConfigContent() {
                 <div className="flex flex-col gap-1.5">
                   <Label style={{ color: "#1E293B" }}>Boton Flotante</Label>
                   <Select
-                    value={config.whatsapp_boton_activo}
-                    onValueChange={(val) => updateField("whatsapp_boton_activo", val)}
+                    value={config.whatsapp_boton_activo || "true"}
+                    onValueChange={(val) => updateField("whatsapp_boton_activo", val ?? "true")}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue />

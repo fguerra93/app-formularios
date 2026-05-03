@@ -97,6 +97,8 @@ export interface Producto {
   tags: string[];
   peso_gramos: number | null;
   sku: string | null;
+  precios_cantidad: PrecioCantidad[];
+  ficha_tecnica_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -161,4 +163,165 @@ export interface ItemCarrito {
   categoria_slug: string;
   variante: Record<string, string> | null;
   precio_extra: number;
+}
+
+// Fase 4: Cupones
+export interface Cupon {
+  id: string;
+  codigo: string;
+  tipo: "porcentaje" | "monto_fijo";
+  valor: number;
+  minimo_compra: number;
+  maximo_descuento: number | null;
+  usos_maximos: number | null;
+  usos_actuales: number;
+  fecha_inicio: string;
+  fecha_expiracion: string | null;
+  activo: boolean;
+  aplica_a: "todo" | "categoria" | "producto";
+  aplica_ids: string[];
+  created_at: string;
+}
+
+// Fase 4: Reviews
+export interface Review {
+  id: string;
+  producto_id: string;
+  pedido_id: string | null;
+  cliente_id: string | null;
+  autor_nombre: string;
+  autor_email: string;
+  rating: number;
+  titulo: string | null;
+  comentario: string | null;
+  fotos: { url: string; alt: string }[];
+  verificada: boolean;
+  aprobada: boolean;
+  created_at: string;
+}
+
+// Fase 5: Clientes
+export interface Cliente {
+  id: string;
+  email: string;
+  nombre: string;
+  telefono: string | null;
+  rut: string | null;
+  direccion_default: DireccionEnvio | null;
+  preferencias: { newsletter: boolean; notificaciones: boolean };
+  created_at: string;
+  updated_at: string;
+}
+
+// Fase 5: Precios por cantidad
+export interface PrecioCantidad {
+  cantidad_min: number;
+  cantidad_max: number | null;
+  precio: number;
+}
+
+// Fase 5: Notificaciones de stock
+export interface NotificacionStock {
+  id: string;
+  producto_id: string;
+  email: string;
+  notificado: boolean;
+  created_at: string;
+}
+
+// Fase 5: Carrito Guardado
+export interface CarritoGuardado {
+  id: string;
+  cliente_id: string;
+  items: ItemCarrito[];
+  cupon_codigo: string | null;
+  email_enviado: boolean;
+  email_enviado_at: string | null;
+  recuperado: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Fase 5: WhatsApp Bot
+export interface ConversacionWhatsApp {
+  id: string;
+  whatsapp_phone: string;
+  cliente_id: string | null;
+  estado: "activa" | "escalada" | "cerrada";
+  ultimo_mensaje_at: string;
+  contexto: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface MensajeWhatsApp {
+  id: string;
+  conversacion_id: string;
+  direccion: "entrante" | "saliente";
+  tipo: "texto" | "imagen" | "documento" | "audio" | "interactivo" | "template";
+  contenido: string;
+  metadata: Record<string, unknown>;
+  procesado_por: "bot" | "ia" | "humano";
+  created_at: string;
+}
+
+export interface CotizacionWhatsApp {
+  id: string;
+  conversacion_id: string | null;
+  cliente_nombre: string | null;
+  cliente_email: string | null;
+  producto_tipo: string | null;
+  cantidad: number | null;
+  tiene_diseno: boolean | null;
+  urgencia: string | null;
+  estimado_precio: number | null;
+  estado: "pendiente" | "respondida" | "convertida";
+  notas: string | null;
+  created_at: string;
+}
+
+// Fase 6: Portafolio
+export interface Trabajo {
+  id: string;
+  titulo: string;
+  descripcion: string | null;
+  cliente_nombre: string | null;
+  categoria: string | null;
+  imagenes: { url: string; alt: string; orden: number }[];
+  destacado: boolean;
+  orden: number;
+  activo: boolean;
+  created_at: string;
+}
+
+export interface ClienteDestacado {
+  id: string;
+  nombre: string;
+  logo_url: string;
+  url_web: string | null;
+  orden: number;
+  activo: boolean;
+}
+
+// Fase 6: Preguntas de producto
+export interface PreguntaProducto {
+  id: string;
+  producto_id: string;
+  cliente_id: string | null;
+  autor_nombre: string;
+  autor_email: string;
+  pregunta: string;
+  respuesta: string | null;
+  respuesta_at: string | null;
+  publica: boolean;
+  created_at: string;
+}
+
+// Fase 6: Newsletter
+export interface Suscriptor {
+  id: string;
+  email: string;
+  nombre: string | null;
+  activo: boolean;
+  fuente: string;
+  created_at: string;
 }

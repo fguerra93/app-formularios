@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
+import { WishlistProvider } from "@/components/tienda/wishlist-provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
+import { GAProvider } from "@/components/analytics/ga-provider";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -47,10 +50,15 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${plusJakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[var(--font-sans)]">
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <WishlistProvider>
+              {children}
+            </WishlistProvider>
+          </CartProvider>
+        </AuthProvider>
         <Toaster richColors position="top-right" />
+        <GAProvider />
       </body>
     </html>
   );

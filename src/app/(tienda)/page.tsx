@@ -6,23 +6,29 @@ import { Hero } from "@/components/tienda/hero";
 import { CategoryCard } from "@/components/tienda/category-card";
 import { ProductCard } from "@/components/tienda/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Categoria, Producto } from "@/lib/types";
-import { Package, Truck, MousePointerClick } from "lucide-react";
+import type { Categoria, Producto, Trabajo, ClienteDestacado } from "@/lib/types";
+import { Package, Truck, MousePointerClick, ArrowRight, Image as ImageIcon } from "lucide-react";
 import { StaggerContainer, StaggerItem, FadeIn } from "@/components/tienda/motion";
 
 export default function HomePage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [trabajos, setTrabajos] = useState<Trabajo[]>([]);
+  const [clientes, setClientes] = useState<ClienteDestacado[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/categorias").then((r) => r.json()),
       fetch("/api/productos?destacado=true&limit=8").then((r) => r.json()),
+      fetch("/api/portafolio?destacado=true&limit=4").then((r) => r.json()),
+      fetch("/api/portafolio/clientes").then((r) => r.json()),
     ])
-      .then(([cats, prods]) => {
+      .then(([cats, prods, trab, cli]) => {
         setCategorias(Array.isArray(cats) ? cats : []);
         setProductos(Array.isArray(prods?.productos) ? prods.productos : []);
+        setTrabajos(Array.isArray(trab) ? trab : []);
+        setClientes(Array.isArray(cli) ? cli : []);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -81,6 +87,101 @@ export default function HomePage() {
           </StaggerContainer>
         )}
       </section>
+
+      {/* Trabajos Recientes */}
+      {trabajos.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 pb-16">
+          <h2 className="text-2xl font-extrabold text-[#1E293B] text-center mb-2" style={{ letterSpacing: "-0.02em" }}>
+            Trabajos Recientes
+          </h2>
+          <p className="text-[#64748B] text-center mb-8">
+            Lo ultimo que hemos creado
+          </p>
+          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {trabajos.map((trabajo) => (
+              <StaggerItem key={trabajo.id}>
+                <Link
+                  href="/portafolio"
+                  className="group block bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-lg transition-all duration-200"
+                >
+                  <div className="relative aspect-[4/3] bg-[#F0F7FF] overflow-hidden">
+                    {trabajo.imagenes?.[0]?.url ? (
+                      <img
+                        src={trabajo.imagenes[0].url}
+                        alt={trabajo.imagenes[0].alt || trabajo.titulo}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ImageIcon className="size-16 text-[#00B4D8]/30" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    {trabajo.categoria && (
+                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#00B4D8]/10 text-[#00B4D8] text-xs font-medium mb-2">
+                        {trabajo.categoria}
+                      </span>
+                    )}
+                    <h3 className="font-semibold text-[#1E293B] text-sm leading-snug line-clamp-2">
+                      {trabajo.titulo}
+                    </h3>
+                  </div>
+                </Link>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <div className="text-center mt-8">
+            <Link
+              href="/portafolio"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#1B2A6B] text-white font-semibold text-sm hover:bg-[#152259] transition-colors"
+            >
+              Ver todos
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Confian en nosotros */}
+      {clientes.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 pb-16">
+          <h2 className="text-2xl font-extrabold text-[#1E293B] text-center mb-8" style={{ letterSpacing: "-0.02em" }}>
+            Confian en Nosotros
+          </h2>
+          <div className="overflow-hidden relative">
+            <div className="flex animate-marquee-home whitespace-nowrap">
+              {[...clientes, ...clientes].map((cliente, idx) => (
+                <div
+                  key={`${cliente.id}-${idx}`}
+                  className="mx-8 flex items-center justify-center shrink-0"
+                >
+                  {cliente.url_web ? (
+                    <a
+                      href={cliente.url_web}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      <img
+                        src={cliente.logo_url}
+                        alt={cliente.nombre}
+                        className="h-12 w-auto max-w-[140px] object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                      />
+                    </a>
+                  ) : (
+                    <img
+                      src={cliente.logo_url}
+                      alt={cliente.nombre}
+                      className="h-12 w-auto max-w-[140px] object-contain grayscale hover:grayscale-0 transition-all duration-300"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Banner */}
       <section

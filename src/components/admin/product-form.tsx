@@ -39,6 +39,7 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
   const [uploading, setUploading] = useState(false);
   const [metaTitle, setMetaTitle] = useState((producto as unknown as Record<string, unknown>)?.meta_title as string || "");
   const [metaDescription, setMetaDescription] = useState((producto as unknown as Record<string, unknown>)?.meta_description as string || "");
+  const [fichaTecnicaUrl, setFichaTecnicaUrl] = useState(producto?.ficha_tecnica_url || "");
 
   useEffect(() => {
     fetch("/api/categorias").then((r) => r.json()).then(setCategorias);
@@ -71,6 +72,7 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
         stock, stock_minimo: stockMinimo, peso_gramos: pesoGramos || null,
         destacado, activo, variantes, imagenes,
         meta_title: metaTitle || null, meta_description: metaDescription || null,
+        ficha_tecnica_url: fichaTecnicaUrl || null,
       };
 
       const url = isNew ? "/api/admin/productos" : `/api/admin/productos/${producto!.id}`;
@@ -262,6 +264,11 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
                 placeholder="Descripcion detallada del producto"
                 className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
               />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>Ficha Tecnica (URL del PDF)</label>
+              <Input value={fichaTecnicaUrl} onChange={(e) => setFichaTecnicaUrl(e.target.value)} placeholder="https://... (URL del PDF en Storage)" />
+              <p className="mt-1 text-xs" style={{ color: "#64748B" }}>Sube el PDF a Supabase Storage y pega la URL aqui.</p>
             </div>
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2">
