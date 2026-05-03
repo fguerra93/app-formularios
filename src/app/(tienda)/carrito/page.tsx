@@ -7,7 +7,8 @@ import { formatCLP } from "@/lib/format";
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { QuantitySelector } from "@/components/tienda/quantity-selector";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Trash2, Package } from "lucide-react";
+import { ShoppingBag, Trash2, Package, ChevronDown, ChevronUp, Tag, X } from "lucide-react";
+import { toast } from "sonner";
 import type { ZonaEnvio } from "@/lib/types";
 
 export default function CarritoPage() {
@@ -15,6 +16,14 @@ export default function CarritoPage() {
   const [zonas, setZonas] = useState<ZonaEnvio[]>([]);
   const [tipoEntrega, setTipoEntrega] = useState<"retiro_tienda" | "despacho">("retiro_tienda");
   const [zonaSeleccionada, setZonaSeleccionada] = useState<string>("");
+  const [cuponOpen, setCuponOpen] = useState(false);
+  const [cuponInput, setCuponInput] = useState("");
+  const [cuponAplicado, setCuponAplicado] = useState<{
+    codigo: string;
+    descuento: number;
+  } | null>(null);
+  const [cuponError, setCuponError] = useState("");
+  const [cuponLoading, setCuponLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/zonas-envio")
@@ -26,7 +35,45 @@ export default function CarritoPage() {
   const zona = zonas.find((z) => z.id === zonaSeleccionada);
   const envioGratis = zona?.envio_gratis_desde && subtotal >= zona.envio_gratis_desde;
   const costoEnvio = tipoEntrega === "despacho" && zona && !envioGratis ? zona.precio : 0;
-  const total = subtotal + costoEnvio;
+  const descuento = cuponAplicado?.descuento || 0;
+  const total = subtotal - descuento + costoEnvio;
+
+  const handleAplicarCupon = async () => {
+    if (!cuponInput.trim()) return;
+    setCuponLoading(true);
+    setCuponError("");
+    try {
+      const res = await fetch("/api/cupones/validar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          codigo: cuponInput.toUpperCase().trim(),
+          subtotal,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.valido) {
+        setCuponAplicado({
+          codigo: cuponInput.toUpperCase().trim(),
+          descuento: data.descuento,
+        });
+        setCuponError("");
+        toast.success(`Cupon ${cuponInput.toUpperCase().trim()} aplicado`);
+      } else {
+        setCuponError(data.error || "Cupon no valido");
+        setCuponAplicado(null);
+      }
+    } catch {
+      setCuponError("Error al validar cupon");
+    }
+    setCuponLoading(false);
+  };
+
+  const handleQuitarCupon = () => {
+    setCuponAplicado(null);
+    setCuponInput("");
+    setCuponError("");
+  };
 
   if (items.length === 0) {
     return (
@@ -54,6 +101,64 @@ export default function CarritoPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
         <div className="lg:col-span-2 space-y-4">
+          {/* Coupon section */}
+          <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+            <button
+              onClick={() => setCuponOpen(!cuponOpen)}
+              className="w-full flex items-center justify-between p-4 text-sm font-semibold text-[#1E293B] hover:bg-gray-50 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Tag className="size-4 text-[#00B4D8]" />
+                Tienes un cupon?
+              </span>
+              {cuponOpen ? (
+                <ChevronUp className="size-4 text-[#64748B]" />
+              ) : (
+                <ChevronDown className="size-4 text-[#64748B]" />
+              )}
+            </button>
+            {cuponOpen && (
+              <div className="px-4 pb-4">
+                {cuponAplicado ? (
+                  <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <span className="text-sm font-medium text-green-700">
+                      Cupon {cuponAplicado.codigo} aplicado: -{formatCLP(cuponAplicado.descuento)}
+                    </span>
+                    <button
+                      onClick={handleQuitarCupon}
+                      className="p-1 hover:bg-green-100 rounded"
+                    >
+                      <X className="size-4 text-green-700" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={cuponInput}
+                        onChange={(e) => setCuponInput(e.target.value.toUpperCase())}
+                        placeholder="Codigo del cupon"
+                        className="flex-1 px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm uppercase"
+                      />
+                      <Button
+                        onClick={handleAplicarCupon}
+                        disabled={cuponLoading}
+                        variant="outline"
+                        className="shrink-0"
+                      >
+                        {cuponLoading ? "..." : "Aplicar"}
+                      </Button>
+                    </div>
+                    {cuponError && (
+                      <p className="text-xs text-red-500 mt-2">{cuponError}</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
           {items.map((item) => {
             const variantKey = item.variante
               ? Object.values(item.variante).join("-")
@@ -195,6 +300,16 @@ export default function CarritoPage() {
               <span className="text-[#64748B]">Subtotal</span>
               <span className="font-medium">{formatCLP(subtotal)}</span>
             </div>
+            {cuponAplicado && (
+              <div className="flex justify-between text-sm">
+                <span className="text-green-600">
+                  Cupon ({cuponAplicado.codigo})
+                </span>
+                <span className="font-medium text-green-600">
+                  -{formatCLP(cuponAplicado.descuento)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-[#64748B]">Envio</span>
               <span className="font-medium">
@@ -214,7 +329,7 @@ export default function CarritoPage() {
           </div>
 
           <Button
-            nativeButton={false} render={<Link href={`/checkout?tipo=${tipoEntrega}${zonaSeleccionada ? `&zona=${zonaSeleccionada}` : ""}`} />}
+            nativeButton={false} render={<Link href={`/checkout?tipo=${tipoEntrega}${zonaSeleccionada ? `&zona=${zonaSeleccionada}` : ""}${cuponAplicado ? `&cupon=${cuponAplicado.codigo}` : ""}`} />}
             className="w-full mt-4 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-6"
             size="lg"
           >
