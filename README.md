@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PrintUp - Plataforma E-Commerce de Impresion y Publicidad
 
-## Getting Started
+Ecosistema digital completo para PrintUp (Servicios Graficos Spa), empresa de impresion y publicidad en Donihue, Region de O'Higgins, Chile.
 
-First, run the development server:
+## Stack Tecnologico
+
+| Componente | Tecnologia |
+|---|---|
+| Frontend | Next.js 16, React 19, Tailwind CSS v4, shadcn/ui |
+| Base de datos | Supabase (PostgreSQL) |
+| Pagos | MercadoPago SDK |
+| Emails | Resend (transaccional + newsletter) |
+| Storage | Supabase Storage + NextCloud |
+| Auth | Supabase Auth (clientes) + JWT/jose (admin) |
+| Analytics | Google Analytics 4 |
+| Hosting | Vercel |
+
+## Sistemas del Ecosistema
+
+### Tienda Online
+- Catalogo con busqueda, filtros, paginacion
+- Detalle de producto con galeria, variantes, Q&A, reviews, ficha tecnica
+- Carrito persistente + checkout con 3 metodos de pago
+- Cuentas de cliente (registro, login, historial, favoritos)
+- Portafolio de trabajos con lightbox
+- Paginas legales (envio, devoluciones, privacidad)
+
+### Panel de Administracion (/admin)
+- Dashboard con metricas de ventas
+- Gestion de pedidos con timeline de estados
+- CRUD de productos, categorias, cupones
+- Control de inventario con alertas
+- Reviews y preguntas de clientes
+- Newsletter con envio masivo
+- Portafolio (trabajos + clientes destacados)
+- WhatsApp Bot configurable
+- CRM basico de contactos
+- Zonas de envio
+- Configuracion centralizada (tienda, pagos, WhatsApp, email, NextCloud, GA4)
+
+### Automatizaciones
+- Webhook MercadoPago (confirmacion automatica de pagos)
+- Emails automaticos (nuevo pedido, confirmacion, cambio estado)
+- Bot WhatsApp (respuestas automaticas a preguntas frecuentes)
+- Social proof popup (compras recientes)
+- Newsletter opt-in automatico (checkout + registro)
+- Sincronizacion NextCloud (archivos + pedidos)
+- Google Analytics 4 (configurable sin tocar codigo)
+
+## Desarrollo Local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de Entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 
-## Learn More
+# Auth Admin
+ADMIN_USER=
+ADMIN_PASSWORD=
+JWT_SECRET=
 
-To learn more about Next.js, take a look at the following resources:
+# Email
+RESEND_API_KEY=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Pagos
+MERCADOPAGO_ACCESS_TOKEN=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# App
+NEXT_PUBLIC_APP_URL=https://printup.cl
+```
 
-## Deploy on Vercel
+## Documentacion
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Guia Practica del Ecosistema](wiki/guia-practica-ecosistema.md)
+- [Resumen del Ecosistema](wiki/resumen-ecosistema-printup.md)
+- [Pendientes para Produccion](wiki/pendientes-produccion.md)
+- [Arquitectura](wiki/architecture-final.md)
+- [Plan de Construccion (6 fases)](wiki/plan-3-fases-v2.md)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Licencia
+
+Privado - Servicios Graficos Spa

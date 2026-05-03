@@ -1,92 +1,118 @@
 # Changelog
 
-Todos los cambios notables de este proyecto se documentan aqui.
+Todos los cambios notables de este proyecto se documentan en este archivo.
 
-## [2.0.0] - 2026-05-02
+El formato sigue el estandar [Keep a Changelog](https://keepachangelog.com/es/1.0.0/),
+y este proyecto adhiere a [Versionado Semantico](https://semver.org/spec/v2.0.0.html).
 
-### Tienda Online Completa (E-Commerce)
+---
 
-- **Catalogo de productos**: pagina publica con busqueda, filtros por categoria, ordenamiento y paginacion
-- **Pagina de producto**: detalle con imagenes, variantes (talla, color, tamanio), selector de cantidad, productos relacionados
-- **Carrito de compras**: agregar/quitar items, modificar cantidades, tipo de entrega (retiro o despacho), calculo de envio en tiempo real
-- **Checkout**: datos del cliente, direccion de envio, seleccion de metodo de pago, resumen del pedido
-- **5 categorias de productos**: Articulos Publicitarios, Grafica Publicitaria, Poleras Personalizadas, Transferibles, Pendones y Banderas
+## [2.0.0] - 2026-05-02 - Fase 6: Social Proof, Portafolio y Growth
 
-### Pagos
+### Agregado
 
-- **MercadoPago**: integracion completa con redirect, webhook para confirmacion automatica, email al cliente, boton de reintentar pago
-- **Transferencia Bancaria**: muestra datos bancarios, boton copiar, confirmacion por WhatsApp
-- **Pago al Retirar**: para retiro en tienda, pago al momento
-- **Confirmacion inteligente**: detecta estado del pago (?pago=ok/error/pendiente) y muestra mensaje apropiado
+- Galeria de Portafolio publica (`/portafolio`) con filtros por categoria, grid responsive y lightbox con navegacion
+- Pagina admin de Portafolio con CRUD de trabajos y clientes destacados
+- Sistema de Preguntas y Respuestas (Q&A) en productos con tab dedicado
+- Panel admin de Preguntas con filtros por estado pendiente/respondida
+- Newsletter completo: suscripcion en footer, opt-in en checkout y registro, y panel admin con envio masivo via Resend
+- Popup de compras recientes (social proof) configurable desde el panel admin
+- Integracion Google Analytics 4 dinamica, configurable desde admin sin necesidad de modificar codigo
+- Ficha tecnica descargable en formato PDF en paginas de producto
+- Paginas legales: Politica de Envio, Politica de Devoluciones y Politica de Privacidad
+- Pagina 404 personalizada con buscador integrado y links de navegacion
+- Seccion "Trabajos Recientes" en la homepage
+- Seccion "Confian en Nosotros" con marquee de logos en la homepage
+- Link a Portafolio en la barra de navegacion principal
+- Links a paginas de politicas en el footer
+- Barra de suscripcion a newsletter en el footer
+- Seccion MARKETING en el sidebar del panel admin (Newsletter, Portafolio)
+- API publica de configuracion para GA4 y social proof
+- Schema SQL fase 6: tablas `trabajos`, `clientes_destacados`, `preguntas_producto`, `suscriptores`
 
-### Panel de Administracion Ampliado
+---
 
-- **Dashboard**: ventas hoy, pedidos pendientes, formularios hoy, ingresos del mes, graficos de ventas 7 dias
-- **Pedidos**: lista con filtros (estado, busqueda, fecha), detalle, cambio de estado con email automatico, exportar CSV
-- **Productos**: CRUD completo, subir imagenes, variantes con precios, SEO (meta title/description)
-- **Categorias**: CRUD con conteo de productos
-- **Inventario**: vista de stock con alertas bajo/agotado, edicion inline
-- **Contactos (CRM)**: clientes unificados de pedidos y formularios, historial, WhatsApp directo
-- **Zonas de envio**: CRUD con comunas, precios, envio gratis, dias de despacho
+## [1.5.0] - 2026-05-02 - Fase 5: WhatsApp Bot, NextCloud Sync y Analytics
 
-### Configuracion Extendida
+### Agregado
 
-- **Tab Tienda**: nombre, slogan, logo, redes sociales
-- **Tab Pagos**: MercadoPago credentials + datos transferencia bancaria
-- **Tab WhatsApp**: numero, mensaje, activar/desactivar boton flotante
+- Bot de WhatsApp con respuestas automaticas para saludo, catalogo, precios, estado de pedido, horario y ubicacion
+- Panel admin de WhatsApp con configuracion de respuestas, modo IA y registro de conversaciones
+- Sincronizacion automatica con NextCloud: los pedidos se guardan como archivos JSON en una carpeta configurable
+- Dashboard de analytics avanzado con graficos de ventas, productos mas vendidos y clientes frecuentes
+- Exportacion de pedidos en formato CSV
+- Seccion de Configuracion NextCloud en el panel admin
+- API de webhook para WhatsApp con pattern matching de mensajes entrantes
 
-### SEO y Metadata
+---
 
-- **sitemap.xml dinamico**: URLs de paginas, categorias y productos
-- **robots.txt**: bloquea /admin, /api, /checkout
-- **Metadata por pagina**: Open Graph, Twitter Cards, titulo template
-- **JSON-LD**: Schema.org en productos (Product, Offer)
+## [1.4.0] - 2026-05-02 - Fase 4: Envios Avanzados y Cupones
 
-### WhatsApp
+### Agregado
 
-- **Boton flotante** en toda la tienda con animacion
-- **En confirmacion de pedido**: link directo con mensaje pre-llenado
-- **En admin**: boton para contactar clientes
+- Sistema de cupones de descuento con soporte para porcentaje, monto fijo y envio gratis
+- Panel admin de cupones con CRUD completo, fechas de vigencia y uso maximo configurable
+- Aplicacion de cupones en el checkout con validacion en tiempo real
+- Gestion de inventario con alertas de stock bajo y productos agotados
+- Panel admin de inventario con edicion rapida de cantidades
+- Validacion de stock disponible al momento del checkout
+- Banner superior informativo con datos de despachos, condicion de envio gratis y opcion de retiro en tienda
 
-### Pagina Sobre Nosotros
+---
 
-- Historia de PrintUp, servicios, Google Maps, contacto
+## [1.3.0] - 2026-05-02 - Fase 3: Cuentas de Usuario
 
-### UX y Polish
+### Agregado
 
-- Animaciones stagger en grids con framer-motion
-- Empty states mejorados con iconos
-- Accesibilidad: aria-labels, focus rings
-- Emails de confirmacion mejorados
+- Registro e inicio de sesion de clientes mediante Supabase Auth
+- Pagina Mi Cuenta (`/mi-cuenta`) con historial de pedidos, datos personales y gestion de direcciones
+- Sistema de favoritos/wishlist con boton de corazon en cada tarjeta de producto
+- Reviews de productos con calificacion de estrellas (1-5), campo de texto y gestion desde admin
+- Panel admin de reviews con flujo de aprobacion y rechazo
+- `AuthProvider` global con contexto de usuario disponible en toda la aplicacion
+- Nuevas paginas: `/login`, `/registro`, `/mi-cuenta`, `/favoritos`
 
-## [1.2.0] - 2026-04-27
+---
 
-### NextCloud Sync Integration
+## [1.2.0] - 2026-05-02 - Fase 2: Pagos y Pedidos
 
-- **Integracion NextCloud via WebDAV**: Sincronizacion automatica de archivos de formularios a NextCloud self-hosted mediante patron store-and-forward
-- **Sync Worker (Docker)**: Servicio independiente que polling cada 30s a Supabase, descarga archivos, los sube a NextCloud via WebDAV y libera storage de Supabase
-- **Upload directo a Supabase Storage desde frontend**: Los archivos se suben directamente desde el navegador a Supabase Storage via REST API, eliminando el limite de 4.5MB de Vercel API routes
-- **Group Folders con ACL**: Configuracion de permisos granulares por grupo en NextCloud para control de acceso a carpetas de formularios
-- **Link directo a NextCloud en email**: Notificacion incluye boton que lleva a la carpeta exacta del formulario en NextCloud (accesible en LAN)
-- **Limites de archivos**: Max 50MB por archivo, max 5 archivos por formulario (validacion frontend + backend)
-- **Panel admin NextCloud activo**: Tab de configuracion NextCloud habilitada con campos editables
-- **Auto-limpieza Supabase Storage**: Archivos se eliminan de Supabase tras sincronizarse a NextCloud, manteniendo el uso bajo el free tier (1GB)
+### Agregado
 
-## [1.1.0] - 2026-04-25
+- Integracion con MercadoPago mediante checkout redirect con generacion de preferencias
+- Metodo de pago por transferencia bancaria con datos de cuenta mostrados al cliente
+- Metodo de pago al retirar en tienda
+- Webhook de confirmacion automatica de pagos desde MercadoPago
+- Pagina de confirmacion de pedido con visualizacion del estado del pago
+- Panel admin de pedidos con filtros por estado, busqueda y timeline de seguimiento
+- Emails automaticos: notificacion de nuevo pedido al admin, confirmacion al cliente y aviso de cambio de estado
+- Pagina de confirmacion con opcion de reintento de pago en caso de fallo
+- Sistema de estados de pedido: pendiente, confirmado, preparando, enviado, entregado, cancelado
 
-### Accessibility & UX
+---
 
-- Mejoras de accesibilidad: contraste WCAG AA, landmarks semanticos
+## [1.1.0] - 2026-05-02 - Fase 1: E-Commerce Core
 
-## [1.0.0] - 2026-04-24
+### Agregado
 
-### Plataforma Full-Stack
+- Catalogo de productos con busqueda por texto y filtros por categoria
+- Pagina de detalle de producto con galeria de imagenes, selector de variantes (talla, color, tamanio) y tabs de informacion
+- Carrito de compras persistente mediante `localStorage`
+- Flujo de checkout con formulario de datos del cliente, seleccion de zona de envio y resumen del pedido
+- Panel admin de productos con CRUD completo, carga de imagenes, gestion de variantes y precios
+- Panel admin de categorias
+- Zonas de envio configurables con precios diferenciados por zona geografica
+- SEO: sitemap dinamico, `robots.txt`, datos estructurados JSON-LD por producto y etiquetas Open Graph
+- Pagina "Sobre Nosotros" con informacion institucional de PrintUp
 
-- Rebuild completo como plataforma Next.js 16 full-stack
-- Formulario publico con drag & drop de archivos
-- Panel admin protegido con JWT: dashboard, historial, detalle, configuracion
-- Supabase como BD (PostgreSQL) y Storage
-- Notificaciones por email via Resend con HTML personalizado
-- Sistema de estados: nuevo > revisado > completado
-- Busqueda, filtros y paginacion en historial
-- Metricas en dashboard: formularios hoy/mes/total, tasa de exito email
+---
+
+## [1.0.0] - 2026-04-XX - Sistema Base
+
+### Agregado
+
+- Formularios de contacto con subida de archivos (hasta 5 archivos, 50 MB cada uno)
+- Panel de administracion con dashboard e historial de formularios recibidos
+- Sincronizacion de archivos adjuntos a NextCloud
+- Emails de notificacion via Resend
+- Autenticacion de administrador con JWT
+- Configuracion general del sistema desde el panel admin
