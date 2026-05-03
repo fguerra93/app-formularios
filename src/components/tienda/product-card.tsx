@@ -55,13 +55,18 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
           <img
             src={mainImage.url}
             alt={mainImage.alt || producto.nombre}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Package className="size-16 text-[#00B4D8]/30" />
           </div>
         )}
+
+        {/* Ver detalles overlay */}
+        <div className="absolute inset-0 bg-[#1B2A6B]/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <span className="text-white text-sm font-semibold tracking-wide">Ver detalles</span>
+        </div>
 
         {/* Badges */}
         <div className="absolute top-3 left-3">
@@ -128,7 +133,7 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
           onClick={handleAddToCart}
           disabled={producto.stock === 0}
           aria-label={`Agregar ${producto.nombre} al carrito`}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-[#1B2A6B] text-white hover:bg-[#152259] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2"
+          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-[#1B2A6B] text-white hover:bg-[#152259] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2"
         >
           <ShoppingCart className="size-4" aria-hidden="true" />
           {producto.stock === 0 ? "Agotado" : "Agregar al carrito"}

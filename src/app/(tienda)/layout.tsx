@@ -2,6 +2,7 @@ import { Navbar } from "@/components/tienda/navbar";
 import { Footer } from "@/components/tienda/footer";
 import { WhatsAppButton } from "@/components/tienda/whatsapp-button";
 import { RecentPurchasePopup } from "@/components/tienda/recent-purchase-popup";
+import { ScrollToTop } from "@/components/tienda/scroll-to-top";
 
 export default function TiendaLayout({
   children,
@@ -15,6 +16,7 @@ export default function TiendaLayout({
       <Footer />
       <WhatsAppButton />
       <RecentPurchasePopup />
+      <ScrollToTop />
     </>
   );
 }

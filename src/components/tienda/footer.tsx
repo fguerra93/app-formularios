@@ -86,16 +86,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Col 1: Brand */}
         <div>
-          <span
-            className="text-2xl font-extrabold tracking-tight"
-            style={{
-              background: "linear-gradient(135deg, #FFFFFF, #00B4D8)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            PrintUp
-          </span>
+          <img
+            src="https://printup.cl/cdn/shop/files/LOGO-2.gif?v=1768853492"
+            alt="PrintUp"
+            className="h-10 w-auto"
+          />
           <p className="mt-3 text-sm text-white/70 leading-relaxed">
             Tu impresion, nuestra huella. Servicios de impresion y publicidad en Donihue, Region de O&apos;Higgins.
           </p>

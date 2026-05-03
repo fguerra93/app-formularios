@@ -89,16 +89,11 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span
-              className="text-2xl font-extrabold tracking-tight"
-              style={{
-                background: "linear-gradient(135deg, #1B2A6B, #00B4D8)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              PrintUp
-            </span>
+            <img
+              src="https://printup.cl/cdn/shop/files/LOGO-2.gif?v=1768853492"
+              alt="PrintUp"
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}

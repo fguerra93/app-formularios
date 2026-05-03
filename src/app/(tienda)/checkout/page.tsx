@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, Fragment } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
@@ -218,9 +218,57 @@ function CheckoutContent() {
         ]}
       />
 
-      <h1 className="text-2xl font-extrabold text-[#1E293B] mb-8" style={{ letterSpacing: "-0.02em" }}>
+      <h1 className="text-2xl font-extrabold text-[#1E293B] mb-4" style={{ letterSpacing: "-0.02em" }}>
         Finalizar Compra
       </h1>
+
+      {/* Progress Steps */}
+      {(() => {
+        const currentStep =
+          form.nombre && form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && pagoMetodo
+            ? 2
+            : pagoMetodo
+            ? 1
+            : 0;
+        const steps = [
+          { num: 1, label: "Datos" },
+          { num: 2, label: "Pago" },
+          { num: 3, label: "Confirmar" },
+        ];
+        return (
+          <div className="flex items-center justify-center gap-0 mb-8 mt-2">
+            {steps.map((step, i) => (
+              <Fragment key={step.num}>
+                {i > 0 && (
+                  <div
+                    className={`h-0.5 w-12 sm:w-20 transition-colors ${
+                      i <= currentStep ? "bg-[#00B4D8]" : "bg-[#E2E8F0]"
+                    }`}
+                  />
+                )}
+                <div className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                      i <= currentStep
+                        ? "bg-[#1B2A6B] text-white"
+                        : "bg-[#E2E8F0] text-[#64748B]"
+                    }`}
+                  >
+                    {step.num}
+                  </div>
+                  <span
+                    className={`text-xs font-medium ${
+                      i <= currentStep ? "text-[#1B2A6B]" : "text-[#94A3B8]"
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </div>
+              </Fragment>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Login banner for guests */}
       {!user && (
