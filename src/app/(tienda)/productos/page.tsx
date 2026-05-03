@@ -34,6 +34,11 @@ function CatalogoContent() {
   const sort = searchParams.get("sort") || "created_at:desc";
   const search = searchParams.get("search") || "";
   const catFilter = searchParams.get("categoria") || "";
+  const precioMin = searchParams.get("precio_min") || "";
+  const precioMax = searchParams.get("precio_max") || "";
+  const enStock = searchParams.get("en_stock") === "1";
+  const conDescuento = searchParams.get("con_descuento") === "1";
+  const nuevos = searchParams.get("nuevos") === "1";
 
   useEffect(() => {
     fetch("/api/categorias")
@@ -52,12 +57,43 @@ function CatalogoContent() {
     fetch(`/api/productos?${params}`)
       .then((r) => r.json())
       .then((data) => {
-        setProductos(data.productos || []);
-        setTotal(data.total || 0);
+        let prods: Producto[] = data.productos || [];
+
+        // Client-side filtering
+        if (precioMin) {
+          const min = Number(precioMin);
+          prods = prods.filter(
+            (p) => (p.precio_oferta ?? p.precio) >= min
+          );
+        }
+        if (precioMax) {
+          const max = Number(precioMax);
+          prods = prods.filter(
+            (p) => (p.precio_oferta ?? p.precio) <= max
+          );
+        }
+        if (enStock) {
+          prods = prods.filter((p) => p.stock > 0);
+        }
+        if (conDescuento) {
+          prods = prods.filter(
+            (p) => p.precio_oferta !== null && p.precio_oferta !== undefined
+          );
+        }
+        if (nuevos) {
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          prods = prods.filter(
+            (p) => new Date(p.created_at) >= thirtyDaysAgo
+          );
+        }
+
+        setProductos(prods);
+        setTotal(prods.length);
         setTotalPages(data.totalPages || 1);
       })
       .finally(() => setLoading(false));
-  }, [page, sort, search, catFilter]);
+  }, [page, sort, search, catFilter, precioMin, precioMax, enStock, conDescuento, nuevos]);
 
   const updateParams = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -83,6 +119,21 @@ function CatalogoContent() {
             sort={sort}
             onCategoryChange={(c) => updateParams("categoria", c)}
             onSortChange={(s) => updateParams("sort", s)}
+            precioMin={precioMin}
+            precioMax={precioMax}
+            onPrecioChange={(min, max) => {
+              const p = new URLSearchParams(searchParams.toString());
+              if (min) p.set("precio_min", min); else p.delete("precio_min");
+              if (max) p.set("precio_max", max); else p.delete("precio_max");
+              p.set("page", "1");
+              router.push(`/productos?${p}`);
+            }}
+            enStock={enStock}
+            conDescuento={conDescuento}
+            nuevos={nuevos}
+            onEstadoChange={(key, value) => {
+              updateParams(key, value ? "1" : "");
+            }}
           />
         </aside>
 
@@ -123,6 +174,21 @@ function CatalogoContent() {
                 sort={sort}
                 onCategoryChange={(c) => updateParams("categoria", c)}
                 onSortChange={(s) => updateParams("sort", s)}
+                precioMin={precioMin}
+                precioMax={precioMax}
+                onPrecioChange={(min, max) => {
+                  const p = new URLSearchParams(searchParams.toString());
+                  if (min) p.set("precio_min", min); else p.delete("precio_min");
+                  if (max) p.set("precio_max", max); else p.delete("precio_max");
+                  p.set("page", "1");
+                  router.push(`/productos?${p}`);
+                }}
+                enStock={enStock}
+                conDescuento={conDescuento}
+                nuevos={nuevos}
+                onEstadoChange={(key, value) => {
+                  updateParams(key, value ? "1" : "");
+                }}
               />
             </div>
           )}
@@ -203,13 +269,35 @@ function FilterPanel({
   sort,
   onCategoryChange,
   onSortChange,
+  precioMin,
+  precioMax,
+  onPrecioChange,
+  enStock,
+  conDescuento,
+  nuevos,
+  onEstadoChange,
 }: {
   categorias: Categoria[];
   activeCat: string;
   sort: string;
   onCategoryChange: (cat: string) => void;
   onSortChange: (sort: string) => void;
+  precioMin: string;
+  precioMax: string;
+  onPrecioChange: (min: string, max: string) => void;
+  enStock: boolean;
+  conDescuento: boolean;
+  nuevos: boolean;
+  onEstadoChange: (key: "en_stock" | "con_descuento" | "nuevos", value: boolean) => void;
 }) {
+  const [minLocal, setMinLocal] = useState(precioMin);
+  const [maxLocal, setMaxLocal] = useState(precioMax);
+
+  useEffect(() => {
+    setMinLocal(precioMin);
+    setMaxLocal(precioMax);
+  }, [precioMin, precioMax]);
+
   return (
     <div className="space-y-6">
       {/* Categories */}
@@ -243,6 +331,70 @@ function FilterPanel({
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Price Range */}
+      <div>
+        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Precio</h3>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            placeholder="Min"
+            value={minLocal}
+            onChange={(e) => setMinLocal(e.target.value)}
+            className="w-full px-2 py-1.5 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+          />
+          <span className="text-[#64748B] text-xs">-</span>
+          <input
+            type="number"
+            min={0}
+            placeholder="Max"
+            value={maxLocal}
+            onChange={(e) => setMaxLocal(e.target.value)}
+            className="w-full px-2 py-1.5 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+          />
+        </div>
+        <button
+          onClick={() => onPrecioChange(minLocal, maxLocal)}
+          className="mt-2 w-full px-3 py-1.5 rounded-lg border border-[#E2E8F0] text-xs font-medium text-[#1B2A6B] hover:bg-gray-50 transition-colors"
+        >
+          Aplicar rango
+        </button>
+      </div>
+
+      {/* Estado filters */}
+      <div>
+        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Estado</h3>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={enStock}
+              onChange={(e) => onEstadoChange("en_stock", e.target.checked)}
+              className="rounded border-gray-300 accent-[#1B2A6B]"
+            />
+            En stock
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={conDescuento}
+              onChange={(e) => onEstadoChange("con_descuento", e.target.checked)}
+              className="rounded border-gray-300 accent-[#1B2A6B]"
+            />
+            Con descuento
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={nuevos}
+              onChange={(e) => onEstadoChange("nuevos", e.target.checked)}
+              className="rounded border-gray-300 accent-[#1B2A6B]"
+            />
+            Nuevos (30 dias)
+          </label>
+        </div>
       </div>
 
       {/* Sort */}
