@@ -3,8 +3,8 @@ import { getSupabaseAdmin } from "@/lib/supabase";
 import {
   getMetaConfig,
   verifyWebhookSignature,
-  sendMessageByChannel,
 } from "@/lib/meta";
+import { processBotMessage } from "@/lib/bot/engine";
 
 export const dynamic = "force-dynamic";
 
@@ -380,90 +380,6 @@ async function processIncomingMessage(
     created_at: now,
   });
 
-  // 3. Check for auto-replies (only for text messages with content)
-  if (msg.contenido) {
-    await checkAndSendAutoReply(
-      supabase,
-      conversacionId,
-      msg,
-      accessToken
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Auto-reply logic
-// ---------------------------------------------------------------------------
-
-async function checkAndSendAutoReply(
-  supabase: ReturnType<typeof getSupabaseAdmin>,
-  conversacionId: string,
-  msg: ParsedMessage,
-  accessToken: string
-) {
-  // Fetch active auto-replies for this channel
-  const { data: reglas, error } = await supabase
-    .from("respuestas_automaticas")
-    .select("*")
-    .eq("activo", true)
-    .contains("canales", [msg.canal])
-    .order("prioridad", { ascending: false });
-
-  if (error || !reglas || reglas.length === 0) return;
-
-  const msgLower = msg.contenido.toLowerCase();
-  const now = new Date();
-
-  for (const regla of reglas) {
-    // Check time restrictions
-    if (regla.horario_inicio && regla.horario_fin) {
-      const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-      if (currentTime < regla.horario_inicio || currentTime > regla.horario_fin) {
-        continue;
-      }
-    }
-
-    // Check keyword match (case-insensitive, any keyword contained in message)
-    const keywords: string[] = regla.palabras_clave || [];
-    const matched = keywords.some((kw: string) =>
-      msgLower.includes(kw.toLowerCase())
-    );
-
-    if (!matched) continue;
-
-    // We have a match – send the auto-reply
-    const respuesta: string = regla.respuesta || "";
-    if (!respuesta) continue;
-
-    // Send via the appropriate channel API
-    if (accessToken) {
-      await sendMessageByChannel(msg.canal, msg.senderId, respuesta);
-    }
-
-    // Save outgoing message
-    const replyNow = new Date().toISOString();
-    await supabase.from("mensajes").insert({
-      conversacion_id: conversacionId,
-      direccion: "saliente",
-      tipo: regla.tipo_respuesta || "texto",
-      contenido: respuesta,
-      media_url: regla.media_url || null,
-      estado_envio: accessToken ? "enviado" : "pendiente",
-      respuesta_automatica: true,
-      created_at: replyNow,
-    });
-
-    // Update conversation with the auto-reply as last message
-    await supabase
-      .from("conversaciones")
-      .update({
-        ultimo_mensaje: respuesta,
-        ultimo_mensaje_at: replyNow,
-        updated_at: replyNow,
-      })
-      .eq("id", conversacionId);
-
-    // Only send the first matching auto-reply (highest priority)
-    break;
-  }
+  // 3. Process with bot engine (handles onboarding, menu, AI, uploads)
+  await processBotMessage(conversacionId, msg);
 }

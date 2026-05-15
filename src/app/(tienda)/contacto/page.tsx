@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react";
 
 interface FileItem {
@@ -8,13 +9,33 @@ interface FileItem {
   id: string;
 }
 
-export default function ContactoPage() {
+function ContactoForm() {
+  const searchParams = useSearchParams();
+  const clienteRef = searchParams.get("ref");
+
   const [files, setFiles] = useState<FileItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Prellenar datos si viene desde el bot con ?ref=clienteId
+  useEffect(() => {
+    if (!clienteRef) return;
+    fetch(`/api/clientes/${clienteRef}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) return;
+        const nombre = document.getElementById("nombre") as HTMLInputElement;
+        const email = document.getElementById("email") as HTMLInputElement;
+        const telefono = document.getElementById("telefono") as HTMLInputElement;
+        if (nombre && data.nombre) nombre.value = data.nombre;
+        if (email && data.email) email.value = data.email;
+        if (telefono && data.telefono) telefono.value = data.telefono;
+      })
+      .catch(() => {});
+  }, [clienteRef]);
 
   const MAX_FILES = 5;
   const MAX_FILE_SIZE = 50 * 1024 * 1024;
@@ -395,5 +416,13 @@ export default function ContactoPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ContactoPage() {
+  return (
+    <Suspense>
+      <ContactoForm />
+    </Suspense>
   );
 }

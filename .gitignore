@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temporary/test files
+.playwright-mcp/
+screenshots/
+supabase/.temp/
+.claude/settings.local.json

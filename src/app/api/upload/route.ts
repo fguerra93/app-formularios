@@ -145,13 +145,18 @@ export async function POST(request: NextRequest) {
 </html>`;
 
       try {
-        await resend.emails.send({
+        const { error: sendErr } = await resend.emails.send({
           from: `${fromName} <${fromEmail}>`,
           to: [notifyTo],
           subject: `Nuevo formulario de ${nombre}`,
           html: htmlContent,
         });
-        emailSent = true;
+        if (sendErr) {
+          emailError = sendErr.message || "Error al enviar email";
+          console.error("Resend error:", sendErr);
+        } else {
+          emailSent = true;
+        }
       } catch (err) {
         emailError =
           err instanceof Error ? err.message : "Error al enviar email";

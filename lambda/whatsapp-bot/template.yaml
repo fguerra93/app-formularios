@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: PrintUp WhatsApp Bot - Lambda Function
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs20.x
+    MemorySize: 256
+
+Resources:
+  WhatsAppBotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/index.handler
+      Description: WhatsApp Bot webhook handler
+      FunctionUrlConfig:
+        AuthType: NONE
+        Cors:
+          AllowOrigins:
+            - '*'
+      Environment:
+        Variables:
+          META_WHATSAPP_TOKEN: !Ref MetaWhatsAppToken
+          META_WHATSAPP_PHONE_ID: !Ref MetaWhatsAppPhoneId
+          META_WHATSAPP_VERIFY_TOKEN: !Ref MetaWhatsAppVerifyToken
+          SUPABASE_URL: !Ref SupabaseUrl
+          SUPABASE_SERVICE_KEY: !Ref SupabaseServiceKey
+          AWS_REGION_BEDROCK: us-east-1
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource: '*'
+
+Parameters:
+  MetaWhatsAppToken:
+    Type: String
+    NoEcho: true
+  MetaWhatsAppPhoneId:
+    Type: String
+  MetaWhatsAppVerifyToken:
+    Type: String
+    NoEcho: true
+  SupabaseUrl:
+    Type: String
+  SupabaseServiceKey:
+    Type: String
+    NoEcho: true
+
+Outputs:
+  WebhookUrl:
+    Description: WhatsApp webhook URL (configure in Meta for Developers)
+    Value: !GetAtt WhatsAppBotFunctionUrl.FunctionUrl
