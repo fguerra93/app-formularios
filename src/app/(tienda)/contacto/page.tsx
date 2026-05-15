@@ -3,6 +3,9 @@
 import { useState, useRef, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react";
+import { ModuleHero } from "@/components/tienda/module-hero";
+import { ScheduleBadgeInline } from "@/components/tienda/schedule-badge";
+import { FaqAccordion } from "@/components/tienda/faq-accordion";
 
 interface FileItem {
   file: File;
@@ -159,25 +162,25 @@ function ContactoForm() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
-          Contacto y Subida de Archivos
-        </h1>
-        <p className="text-[#64748B] max-w-xl mx-auto">
-          Envia tu diseno y te confirmaremos recepcion a tu correo. Tambien puedes contactarnos por WhatsApp o email.
-        </p>
-      </div>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Module Hero */}
+      <ModuleHero
+        title="Contacto y Subida de Archivos"
+        subtitle="Envia tu diseno y te confirmaremos recepcion. Tambien puedes contactarnos por WhatsApp o email."
+        icon={<MessageCircle className="w-6 h-6" />}
+        theme="contacto"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact info */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-            <h2 className="font-bold text-[#1E293B] mb-4">Informacion de Contacto</h2>
-            <ul className="space-y-4">
+          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 hover-glow transition-all">
+            <h2 className="font-bold text-[#1E293B] mb-3">Informacion de Contacto</h2>
+            <ScheduleBadgeInline />
+            <ul className="space-y-4 mt-4">
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
-                  <Mail className="size-4 text-[#00B4D8]" />
+                <div className="w-10 h-10 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center shrink-0">
+                  <Mail className="size-5 text-[#00B4D8]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#1E293B]">Email</p>
@@ -187,28 +190,28 @@ function ContactoForm() {
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
-                  <Phone className="size-4 text-[#00B4D8]" />
+                <div className="w-10 h-10 rounded-lg bg-[#25D366]/10 flex items-center justify-center shrink-0">
+                  <Phone className="size-5 text-[#25D366]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#1E293B]">WhatsApp</p>
+                  <p className="text-sm font-medium text-[#1E293B]">WhatsApp 24/7</p>
                   <a href="https://wa.me/56966126645" target="_blank" rel="noopener noreferrer" className="text-sm text-[#00B4D8] hover:underline">
                     +56 9 66126645
                   </a>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
-                  <Clock className="size-4 text-[#00B4D8]" />
+                <div className="w-10 h-10 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center shrink-0">
+                  <Clock className="size-5 text-[#8b5cf6]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#1E293B]">Horario</p>
-                  <p className="text-sm text-[#64748B]">Lunes a Viernes 9:00 - 18:00</p>
+                  <p className="text-sm text-[#64748B]">Lun-Vie 9:00 - 18:00 / Sab 10:00 - 14:00</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
-                  <MapPin className="size-4 text-[#00B4D8]" />
+                <div className="w-10 h-10 rounded-lg bg-[#FF9710]/10 flex items-center justify-center shrink-0">
+                  <MapPin className="size-5 text-[#FF9710]" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#1E293B]">Direccion</p>
@@ -414,6 +417,26 @@ function ContactoForm() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Google Maps */}
+      <div className="mt-8 rounded-xl overflow-hidden border border-[#E2E8F0]">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3319.5!2d-70.9456!3d-34.1083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sErrazuriz%2009%2C%20Donihue!5e0!3m2!1ses!2scl!4v1700000000000"
+          width="100%"
+          height="250"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Ubicacion PrintUp en Google Maps"
+        />
+      </div>
+
+      {/* FAQ */}
+      <div className="mt-12 max-w-3xl mx-auto">
+        <h2 className="text-xl font-bold text-[#1E293B] text-center mb-6">Preguntas Frecuentes</h2>
+        <FaqAccordion limit={3} />
       </div>
     </div>
   );

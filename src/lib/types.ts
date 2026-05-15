@@ -99,6 +99,21 @@ export interface Producto {
   sku: string | null;
   precios_cantidad: PrecioCantidad[];
   ficha_tecnica_url: string | null;
+  // Price calculator fields (for m² products)
+  precio_m2?: number | null;
+  ancho_max_cm?: number | null;
+  alto_max_cm?: number | null;
+  area_min_cm2?: number | null;
+  materiales_calculadora?: { nombre: string; multiplicador: number }[];
+  acabados_calculadora?: { nombre: string; precioExtra: number }[];
+  // What's included (e.g. ["Base aluminio", "Varilla telescopica", "Bolso de transporte"])
+  incluye?: string[];
+  // Uses & applications (e.g. ["Ferias y eventos", "Stands de venta"])
+  usos?: string[];
+  // Key characteristics (e.g. ["Impresion en alta resolucion 1440dpi", "Material resistente UV"])
+  caracteristicas?: string[];
+  // Extended specs
+  especificaciones?: { label: string; value: string }[];
   created_at: string;
   updated_at: string;
 }

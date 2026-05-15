@@ -7,6 +7,47 @@ y este proyecto adhiere a [Versionado Semantico](https://semver.org/spec/v2.0.0.
 
 ---
 
+## [3.0.0] - 2026-05-15 - Mega Visual Upgrade + Calculadora m2
+
+### Agregado
+
+- Hero homepage premium con collage de 3 productos reales (DTF Textil, Pendon Roller, Gran Formato), badges flotantes glassmorphic y video background
+- Sistema decorativo CSS-only: FloatingCircles, RotatingRing, PulsingDots, GlowIcon, AccentLine, GlassmorphCard, DotPattern con 17 variantes de gradiente
+- Navbar con top bar de estado abierto/cerrado en tiempo real (timezone America/Santiago), busqueda AJAX con debounce y thumbnails
+- Boton WhatsApp en cada card de producto para cotizacion directa
+- Layout dual en pagina de producto: full-width para productos m2, 2 columnas para estandar
+- Calculadora de precios por m2 con visualizacion SVG del pano, nesting inteligente, materiales y acabados dinamicos
+- Cotizador rapido inline en homepage con envio a WhatsApp
+- Pagina de Sucursales/Taller (`/sucursales`) con info, horarios en tiempo real y mapa
+- Contadores animados con IntersectionObserver para stats
+- Carousel de testimonios con auto-play
+- FAQ accordion animado
+- Lightbox para galeria de imagenes en detalle de producto
+- Tabla de especificaciones tecnicas por producto
+- Module hero decorativo reutilizable por seccion
+- Facebook Pixel analytics component
+
+### Mejorado
+
+- Footer rediseñado con 4 columnas, newsletter glassmorphic y certificaciones
+- Pagina de Contacto con module hero, grid 2 columnas y mapa embed
+- Pagina Nosotros con timeline animado, stats y glassmorphism cards
+- Product cards con hover glow, rating con estrellas y badges mejorados
+- Cotizador cambiado de gradiente verde a navy brand
+- `next.config.ts`: remote patterns para cdn.shopify.com
+
+### Migraciones SQL
+
+- `migration-calculadora-m2.sql`: campos base para calculadora (precio_m2, ancho_max_cm, etc.)
+- `migration-calculadora-mas-productos.sql`: datos calculadora para DTF Textil, DTF UV y Foam Board
+
+### Documentacion
+
+- `wiki/PROPUESTA-PRINTUP-HOSTING.md` - Propuesta comercial de hosting
+- `wiki/CV-FELIPE-GUERRA.md` - CV actualizado con logros del proyecto
+
+---
+
 ## [2.0.0] - 2026-05-02 - Fase 6: Social Proof, Portafolio y Growth
 
 ### Agregado

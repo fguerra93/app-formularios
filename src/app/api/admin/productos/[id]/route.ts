@@ -46,6 +46,10 @@ export async function PUT(
     "nombre", "slug", "descripcion", "descripcion_corta", "precio",
     "precio_oferta", "categoria_id", "imagenes", "variantes", "stock",
     "stock_minimo", "destacado", "activo", "tags", "peso_gramos", "sku",
+    "precios_cantidad", "ficha_tecnica_url",
+    "precio_m2", "ancho_max_cm", "alto_max_cm", "area_min_cm2",
+    "materiales_calculadora", "acabados_calculadora",
+    "incluye", "usos", "caracteristicas", "especificaciones",
   ];
 
   for (const field of fields) {

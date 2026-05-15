@@ -7,9 +7,10 @@ import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, SlidersHorizontal, X, PackageOpen } from "lucide-react";
+import { Search, SlidersHorizontal, X, PackageOpen, ShoppingBag } from "lucide-react";
 import type { Producto, Categoria } from "@/lib/types";
 import { StaggerContainer, StaggerItem } from "@/components/tienda/motion";
+import { ModuleHero } from "@/components/tienda/module-hero";
 
 export default function CatalogoPage() {
   return (
@@ -106,9 +107,67 @@ function CatalogoContent() {
     router.push(`/productos?${params}`);
   };
 
+  // Active filter chips
+  const activeFilters: { label: string; key: string; value?: string }[] = [];
+  if (catFilter) {
+    const catName = categorias.find((c) => c.slug === catFilter)?.nombre || catFilter;
+    activeFilters.push({ label: catName, key: "categoria" });
+  }
+  if (search) activeFilters.push({ label: `"${search}"`, key: "search" });
+  if (precioMin) activeFilters.push({ label: `Min $${precioMin}`, key: "precio_min" });
+  if (precioMax) activeFilters.push({ label: `Max $${precioMax}`, key: "precio_max" });
+  if (enStock) activeFilters.push({ label: "En stock", key: "en_stock" });
+  if (conDescuento) activeFilters.push({ label: "Con descuento", key: "con_descuento" });
+  if (nuevos) activeFilters.push({ label: "Nuevos", key: "nuevos" });
+
+  const clearFilter = (key: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(key);
+    params.set("page", "1");
+    router.push(`/productos?${params}`);
+  };
+
+  const clearAllFilters = () => {
+    router.push("/productos");
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Breadcrumb items={[{ label: "Productos" }]} />
+
+      {/* Module Hero */}
+      <ModuleHero
+        title={catFilter ? categorias.find((c) => c.slug === catFilter)?.nombre || "Productos" : "Nuestro Catalogo"}
+        subtitle={catFilter ? `Explora todos los productos de esta categoria` : "Encuentra todo lo que necesitas para tu proyecto"}
+        icon={<ShoppingBag className="w-6 h-6" />}
+        theme="productos"
+        compact
+      />
+
+      {/* Active filter chips */}
+      {activeFilters.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">Filtros:</span>
+          {activeFilters.map((f) => (
+            <button
+              key={f.key}
+              onClick={() => clearFilter(f.key)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1B2A6B]/10 text-[#1B2A6B] text-xs font-medium hover:bg-[#1B2A6B]/20 transition-colors"
+            >
+              {f.label}
+              <X className="size-3" />
+            </button>
+          ))}
+          {activeFilters.length > 1 && (
+            <button
+              onClick={clearAllFilters}
+              className="text-xs text-[#00B4D8] hover:underline font-medium"
+            >
+              Limpiar todo
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-col md:flex-row gap-8">
         {/* Filters - Desktop */}

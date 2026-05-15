@@ -205,3 +205,337 @@
 .group:hover .product-card-overlay {
   opacity: 1;
 }
+
+/* ========== PrintUp Premium Animation System ========== */
+
+/* Floating circles - 3 layers with different speeds */
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(15px, -20px) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes float-delay {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, 15px) scale(1.08); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes float-slow {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10px, -25px) scale(1.03); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-float-delay { animation: float-delay 8s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+
+/* Rotating ring */
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-rotate-slow { animation: rotate-slow 20s linear infinite; }
+
+/* Pulsing dots */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+.animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+
+/* Glow pulse for icons */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(0, 180, 216, 0.6); }
+}
+
+.animate-glow { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Gradient shift for accent lines */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Subtle bounce for CTAs */
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+
+/* Counter number animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(27, 42, 107, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(27, 42, 107, 0.1);
+}
+
+.glass-white {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Accent line gradient */
+.accent-line {
+  height: 3px;
+  background: linear-gradient(90deg, #1B2A6B, #00B4D8, #FF9710, #00B4D8, #1B2A6B);
+  background-size: 200% 100%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Glow border on hover */
+.hover-glow {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(0, 180, 216, 0.15), 0 8px 32px rgba(27, 42, 107, 0.1);
+  border-color: rgba(0, 180, 216, 0.3);
+}
+
+/* Status dot animation */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-dot-open {
+  background-color: #22c55e;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+.status-dot-closed {
+  background-color: #ef4444;
+  animation: status-pulse 3s ease-in-out infinite;
+}
+
+/* Header shrink on scroll */
+.header-shrink {
+  transition: all 0.3s ease;
+}
+
+.header-shrink.scrolled {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-shrink.scrolled .header-inner {
+  height: 3rem;
+}
+
+.header-shrink .header-inner {
+  height: 4rem;
+  transition: height 0.3s ease;
+}
+
+.header-shrink.scrolled .header-logo {
+  height: 2rem;
+  transition: height 0.3s ease;
+}
+
+.header-shrink .header-logo {
+  height: 2.5rem;
+  transition: height 0.3s ease;
+}
+
+.header-shrink.scrolled .top-bar {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.top-bar {
+  max-height: 40px;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+/* Lightbox overlay */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in-fast 0.2s ease;
+}
+
+@keyframes fade-in-fast {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Professional spec table */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+
+.spec-table thead th {
+  background: #4FC3A1;
+  color: white;
+  padding: 12px 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.spec-table thead th:nth-child(even) {
+  background: #324960;
+}
+
+.spec-table tbody tr:nth-child(even) {
+  background: #F8F8F8;
+}
+
+.spec-table tbody tr:nth-child(odd) {
+  background: white;
+}
+
+.spec-table tbody td {
+  padding: 10px 16px;
+  text-align: center;
+  color: #1E293B;
+}
+
+/* Spec table responsive scroll */
+.spec-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+
+@media (max-width: 767px) {
+  .spec-table-wrapper::after {
+    content: "Desliza para ver mas →";
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #64748B;
+    padding: 8px 0;
+  }
+}
+
+/* Price calculator display */
+.price-calculator-display {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1B2A6B;
+  line-height: 1;
+}
+
+/* Measurement alert */
+.measurement-alert {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.measurement-alert.warning {
+  background: #FEF3C7;
+  border: 1px solid #F59E0B;
+  color: #92400E;
+}
+
+.measurement-alert.error {
+  background: #FEE2E2;
+  border: 1px solid #EF4444;
+  color: #991B1B;
+}
+
+.measurement-alert.info {
+  background: #EFF6FF;
+  border: 1px solid #3B82F6;
+  color: #1E40AF;
+}
+
+/* Sticky mobile bar slide-in */
+@keyframes slide-in-from-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.animate-in.slide-in-from-bottom {
+  animation: slide-in-from-bottom 0.3s ease-out;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-delay,
+  .animate-float-slow,
+  .animate-rotate-slow,
+  .animate-pulse-dot,
+  .animate-glow,
+  .animate-gradient,
+  .animate-shimmer,
+  .animate-bounce-subtle,
+  .status-dot-open,
+  .status-dot-closed {
+    animation: none;
+  }
+  .accent-line {
+    animation: none;
+  }
+  .header-shrink.scrolled .top-bar {
+    max-height: 40px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    opacity: 1;
+  }
+}

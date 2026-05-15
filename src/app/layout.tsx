@@ -5,6 +5,7 @@ import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/tienda/wishlist-provider";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { GAProvider } from "@/components/analytics/ga-provider";
+import { FBPixelProvider } from "@/components/analytics/fb-pixel";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -59,6 +60,7 @@ export default function RootLayout({
         </AuthProvider>
         <Toaster richColors position="top-right" />
         <GAProvider />
+        <FBPixelProvider />
       </body>
     </html>
   );

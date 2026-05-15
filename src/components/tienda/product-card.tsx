@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Package, Heart, Star } from "lucide-react";
+import { ShoppingCart, Package, Heart, Star, MessageCircle } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { formatCLP } from "@/lib/format";
@@ -47,7 +47,7 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
   return (
     <Link
       href={`/productos/${categoriaSlug}/${producto.slug}`}
-      className="group block bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-lg transition-all duration-200"
+      className="group block bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover-glow transition-all duration-200"
     >
       {/* Image */}
       <div className="relative aspect-square bg-[#F0F7FF] overflow-hidden">
@@ -129,15 +129,27 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
             </span>
           )}
         </div>
-        <button
-          onClick={handleAddToCart}
-          disabled={producto.stock === 0}
-          aria-label={`Agregar ${producto.nombre} al carrito`}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-[#1B2A6B] text-white hover:bg-[#152259] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2"
-        >
-          <ShoppingCart className="size-4" aria-hidden="true" />
-          {producto.stock === 0 ? "Agotado" : "Agregar al carrito"}
-        </button>
+        <div className="mt-3 flex gap-2">
+          <button
+            onClick={handleAddToCart}
+            disabled={producto.stock === 0}
+            aria-label={`Agregar ${producto.nombre} al carrito`}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-[#1B2A6B] text-white hover:bg-[#152259] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2"
+          >
+            <ShoppingCart className="size-4" aria-hidden="true" />
+            {producto.stock === 0 ? "Agotado" : "Agregar al carrito"}
+          </button>
+          <a
+            href={`https://wa.me/56966126645?text=${encodeURIComponent(`Hola PrintUp! Me interesa: ${producto.nombre} - ${formatCLP(displayPrice)}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Cotizar ${producto.nombre} por WhatsApp`}
+            className="flex items-center justify-center w-11 rounded-lg bg-[#25D366] text-white hover:bg-[#1ebe5a] hover:scale-[1.05] transition-all duration-200 shrink-0"
+          >
+            <MessageCircle className="size-4" />
+          </a>
+        </div>
       </div>
     </Link>
   );
