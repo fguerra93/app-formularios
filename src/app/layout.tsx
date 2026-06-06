@@ -6,6 +6,7 @@ import { WishlistProvider } from "@/components/tienda/wishlist-provider";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { GAProvider } from "@/components/analytics/ga-provider";
 import { FBPixelProvider } from "@/components/analytics/fb-pixel";
+import { SandboxBanner } from "@/components/SandboxBanner";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -51,6 +52,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${plusJakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[var(--font-sans)]">
+        <SandboxBanner />
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
