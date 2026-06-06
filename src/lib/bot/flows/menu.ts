@@ -1,5 +1,7 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { aprobacionesRepo, notificacionesRepo, pedidosRepo } from "@/server/repositories";
 import { detectIntent } from "../intents";
+import { calcularCotizacion } from "../pricing";
+import { formatearCotizacion } from "../tools";
 import type { BotContext, BotResponse, IncomingMessage } from "../types";
 
 const MENU_TEXT =
@@ -32,6 +34,10 @@ export async function handleMenu(
 
   if (pending === "cotizar") {
     return handleCotizarChoice(context, text);
+  }
+
+  if (pending === "cotizar_cantidad") {
+    return handleCotizarCantidad(context, msg, text);
   }
 
   // --- Opciones del menu ---
@@ -191,24 +197,21 @@ async function handleEstadoPedido(
   context: BotContext,
   text: string
 ): Promise<BotResponse> {
-  const supabase = getSupabaseAdmin();
   const orderNum = text.replace("#", "").trim();
   const isEmail = text.includes("@");
 
-  let query = supabase
-    .from("pedidos")
-    .select("numero_pedido, estado, total, created_at");
+  const p = (await pedidosRepo.findEstadoParaBot({
+    isEmail,
+    text,
+    numero: parseInt(orderNum) || 0,
+  })) as {
+    numero_pedido: number;
+    estado: string;
+    total: number | null;
+    created_at: string;
+  } | null;
 
-  if (isEmail) {
-    query = query.eq("cliente_email", text.trim());
-  } else {
-    query = query.eq("numero_pedido", parseInt(orderNum) || 0);
-  }
-
-  const { data: pedidos } = await query.limit(1);
-
-  if (pedidos && pedidos.length > 0) {
-    const p = pedidos[0];
+  if (p) {
     const estados: Record<string, string> = {
       pendiente: "Pendiente de confirmacion",
       confirmado: "Confirmado",
@@ -259,10 +262,12 @@ function handleCotizarChoice(
     };
   }
 
-  if (tipo === "Otro") {
+  if (tipo === "Otro" || tipo === "Vinilo / Pendones") {
+    // Sin planilla de auto-cotización: lo ve un ejecutivo.
     return {
       messages: [
-        "Para cotizaciones especiales, te conecto con un ejecutivo. Responderemos a la brevedad.",
+        "Para ese trabajo necesitamos revisar tu diseño. Un ejecutivo te " +
+          "contactará con la cotización formal. También puedes enviarlo en printup.cl/contacto.",
       ],
       newContext: { ...context, flow: null, data: {} },
       escalate: true,
@@ -271,29 +276,93 @@ function handleCotizarChoice(
         data: {
           cliente_nombre: context.cliente_id || "Cliente",
           canal: "whatsapp",
-          mensaje: `Solicita cotizacion manual de tipo: Otro`,
+          mensaje: `Solicita cotizacion manual de tipo: ${tipo}`,
         },
       },
     };
   }
 
-  // Por ahora escalar cotizaciones formales (Fase 12 las automatizara)
+  // Tipos con planilla: pedir cantidad para cotizar automáticamente.
+  return {
+    messages: [`Perfecto, ${tipo}. ¿Cuántas unidades necesitas? (escribe el número)`],
+    newContext: {
+      ...context,
+      flow: "menu",
+      step: 0,
+      data: { ...context.data, pending_action: "cotizar_cantidad", cotizar_tipo: tipo },
+    },
+  };
+}
+
+/**
+ * Recibe la cantidad, calcula la cotización por planilla y la deja en la COLA
+ * DE APROBACIÓN del dueño (nivel AMARILLO). El bot NO envía el precio final
+ * hasta que el dueño aprueba.
+ */
+async function handleCotizarCantidad(
+  context: BotContext,
+  msg: IncomingMessage,
+  text: string
+): Promise<BotResponse> {
+  const cantidad = parseInt(text.replace(/\D/g, ""), 10);
+  const tipo = (context.data.cotizar_tipo as string) || "";
+
+  if (!cantidad || cantidad < 1) {
+    return {
+      messages: ["Indícame la cantidad en número, por ejemplo: 50"],
+      newContext: context,
+    };
+  }
+
+  const cotizacion = await calcularCotizacion({ tipo, cantidad });
+
+  if (!cotizacion) {
+    // Sin planilla aplicable -> escalar a humano.
+    return {
+      messages: [
+        "Necesito revisar este caso con un ejecutivo para darte el mejor precio. " +
+          "Te contactaremos a la brevedad.",
+      ],
+      newContext: { ...context, flow: null, data: {} },
+      escalate: true,
+      notify: {
+        type: "escalacion",
+        data: {
+          cliente_nombre: context.cliente_id || msg.senderName || "Cliente",
+          canal: msg.canal,
+          mensaje: `Cotización ${tipo} x${cantidad} sin planilla`,
+        },
+      },
+    };
+  }
+
+  // AMARILLO: dejar la cotización como borrador en la cola de aprobación.
+  await aprobacionesRepo.crear({
+    tipo: "enviar_cotizacion",
+    titulo: `Cotización ${tipo} x${cantidad}`,
+    descripcion: formatearCotizacion(cotizacion),
+    payload: {
+      canal: msg.canal,
+      sender_id: msg.senderId,
+      sender_phone: msg.senderPhone,
+      cotizacion,
+      texto: formatearCotizacion(cotizacion),
+    },
+    creada_por: "bot",
+  });
+  await notificacionesRepo.crear({
+    tipo: "sistema",
+    titulo: `Cotización por aprobar: ${tipo} x${cantidad}`,
+    cuerpo: `Total estimado $${cotizacion.total.toLocaleString("es-CL")}`,
+    enlace: "/admin/aprobaciones",
+  });
+
   return {
     messages: [
-      `Anotado: ${tipo}.\n\n` +
-        `Para darte un precio necesitamos ver tu diseno. ` +
-        `Puedes enviarlo aqui o por nuestro formulario:\n` +
-        `printup.cl/contacto\n\n` +
-        `Un ejecutivo te contactara con la cotizacion formal.`,
+      `¡Listo! Preparé una cotización para ${cantidad} unidades de ${tipo}. ` +
+        `La estoy revisando con el equipo y te la confirmamos a la brevedad. ` +
+        `¿Algo más en lo que te ayude?`,
     ],
     newContext: { ...context, flow: null, data: {} },
-    notify: {
-      type: "escalacion",
-      data: {
-        cliente_nombre: context.cliente_id || "Cliente",
-        canal: "whatsapp",
-        mensaje: `Solicita cotizacion de: ${tipo}`,
-      },
-    },
   };
 }

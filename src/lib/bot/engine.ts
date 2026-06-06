@@ -1,5 +1,6 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clientesRepo, formulariosRepo, mensajeriaRepo } from "@/server/repositories";
 import { sendMessageByChannel } from "@/lib/meta";
+import { clasificarNivel } from "./autonomy";
 import { handleOnboarding } from "./flows/onboarding";
 import { handleMenu } from "./flows/menu";
 import { handleUploadImage } from "./flows/upload-image";
@@ -32,14 +33,8 @@ export async function processBotMessage(
   conversacionId: string,
   msg: IncomingMessage
 ): Promise<void> {
-  const supabase = getSupabaseAdmin();
-
   // 1. Leer contexto actual de la conversacion
-  const { data: conv } = await supabase
-    .from("conversaciones")
-    .select("bot_context, cliente_id, estado")
-    .eq("id", conversacionId)
-    .single();
+  const conv = await mensajeriaRepo.getConversacionContext(conversacionId);
 
   // Si la conversacion esta escalada a humano, no responder
   if (conv?.estado === "escalada" || conv?.estado === "archivada") return;
@@ -81,7 +76,7 @@ export async function processBotMessage(
     await sendMessageByChannel(msg.canal, msg.senderId, text);
 
     // Guardar mensaje saliente en BD
-    await supabase.from("mensajes").insert({
+    await mensajeriaRepo.insertMensaje({
       conversacion_id: conversacionId,
       direccion: "saliente",
       tipo: "texto",
@@ -110,28 +105,21 @@ export async function processBotMessage(
     updateData.estado = "escalada";
   }
 
-  await supabase
-    .from("conversaciones")
-    .update(updateData)
-    .eq("id", conversacionId);
+  await mensajeriaRepo.updateConversacion(conversacionId, updateData);
 
   // 5. Crear formulario si el bot lo solicita
   if (response.createFormulario) {
-    const { data: form } = await supabase
-      .from("formularios")
-      .insert({
-        nombre: response.createFormulario.nombre,
-        email: response.createFormulario.email,
-        telefono: response.createFormulario.telefono,
-        material: response.createFormulario.material,
-        mensaje: response.createFormulario.mensaje,
-        archivos: response.createFormulario.archivos,
-        estado: "nuevo",
-        nextcloud_synced: false,
-        email_enviado: false,
-      })
-      .select("id")
-      .single();
+    const form = await formulariosRepo.create({
+      nombre: response.createFormulario.nombre,
+      email: response.createFormulario.email,
+      telefono: response.createFormulario.telefono,
+      material: response.createFormulario.material,
+      mensaje: response.createFormulario.mensaje,
+      archivos: response.createFormulario.archivos,
+      estado: "nuevo",
+      nextcloud_synced: false,
+      email_enviado: false,
+    });
 
     if (response.notify && form) {
       response.notify.data.formulario_id = form.id;
@@ -165,11 +153,36 @@ async function handleNewMessage(
   }
 
   // Buscar si el contacto ya es cliente registrado
-  const supabase = getSupabaseAdmin();
-  const cliente = await findClienteByContact(supabase, msg);
+  const cliente = await clientesRepo.findByContacto(
+    msg.canal,
+    msg.senderPhone || "",
+    msg.senderId
+  );
 
   if (cliente) {
-    context.cliente_id = cliente.id;
+    context.cliente_id = cliente.id as string;
+  }
+
+  // Autonomía (Patrón 7): clasificar antes de responder.
+  // ROJO (pago, reclamo, dato sensible) -> escalar a humano de inmediato.
+  const nivel = clasificarNivel(msg.contenido);
+  if (nivel === "rojo") {
+    return {
+      messages: [
+        "Entiendo. Te conecto con un ejecutivo de PrintUp para ayudarte " +
+          "personalmente. Responderemos a la brevedad.",
+      ],
+      newContext: { ...context, flow: null, data: {} },
+      escalate: true,
+      notify: {
+        type: "escalacion",
+        data: {
+          cliente_nombre: cliente?.nombre || msg.senderName || msg.senderId,
+          canal: msg.canal,
+          mensaje: msg.contenido,
+        },
+      },
+    };
   }
 
   // Detectar intencion
@@ -187,7 +200,7 @@ async function handleNewMessage(
             ...context,
             flow: "menu",
             step: 0,
-            cliente_id: cliente.id,
+            cliente_id: cliente.id as string,
           },
         };
       }
@@ -319,33 +332,4 @@ async function handleNewMessage(
       };
     }
   }
-}
-
-async function findClienteByContact(
-  supabase: ReturnType<typeof getSupabaseAdmin>,
-  msg: IncomingMessage
-) {
-  let query;
-
-  if (msg.canal === "whatsapp" && msg.senderPhone) {
-    query = supabase
-      .from("clientes")
-      .select("*")
-      .eq("whatsapp_phone", msg.senderPhone);
-  } else if (msg.canal === "instagram") {
-    query = supabase
-      .from("clientes")
-      .select("*")
-      .eq("instagram_id", msg.senderId);
-  } else if (msg.canal === "facebook") {
-    query = supabase
-      .from("clientes")
-      .select("*")
-      .eq("facebook_id", msg.senderId);
-  } else {
-    return null;
-  }
-
-  const { data } = await query.limit(1).single();
-  return data;
 }
