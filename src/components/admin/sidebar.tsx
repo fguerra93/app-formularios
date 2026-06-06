@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -24,6 +24,8 @@ import {
   Image,
   Megaphone,
   Palette,
+  Inbox,
+  Factory,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -34,6 +36,13 @@ interface NavSection {
 }
 
 const navSections: NavSection[] = [
+  {
+    label: "OPERACION",
+    items: [
+      { href: "/admin/aprobaciones", label: "Aprobaciones", icon: Inbox },
+      { href: "/admin/produccion", label: "Produccion", icon: Factory },
+    ],
+  },
   {
     label: "TIENDA",
     items: [
@@ -81,6 +90,26 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendientes, setPendientes] = useState(0);
+
+  useEffect(() => {
+    const cargar = async () => {
+      try {
+        const res = await fetch("/api/admin/aprobaciones?estado=pendiente", {
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPendientes(data.pendientes || 0);
+        }
+      } catch {
+        // silencioso
+      }
+    };
+    cargar();
+    const interval = setInterval(cargar, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -177,7 +206,12 @@ export function Sidebar() {
                       }}
                     >
                       <Icon className="size-4" />
-                      {item.label}
+                      <span className="flex-1">{item.label}</span>
+                      {item.href === "/admin/aprobaciones" && pendientes > 0 && (
+                        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                          {pendientes}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 );
