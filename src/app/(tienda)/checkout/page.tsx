@@ -176,7 +176,7 @@ function CheckoutContent() {
 
           if (mpRes.ok && mpData.init_point) {
             clearCart();
-            window.location.href = mpData.init_point;
+            window.location.assign(mpData.init_point);
             return;
           } else {
             // MercadoPago failed, fallback to confirmation page
@@ -189,7 +189,12 @@ function CheckoutContent() {
         clearCart();
         router.push(`/checkout/confirmacion/${pedidoId}`);
       } else {
-        alert(data.error || "Error al crear el pedido");
+        const faltantes = Array.isArray(data.faltantes)
+          ? data.faltantes
+              .map((f: { nombre: string; disponible: number }) => `• ${f.nombre} (quedan ${f.disponible})`)
+              .join("\n")
+          : "";
+        alert([data.error || "Error al crear el pedido", faltantes].filter(Boolean).join("\n\n"));
       }
     } catch {
       alert("Error de conexion. Intenta nuevamente.");
@@ -570,6 +575,18 @@ function CheckoutContent() {
                   {formatCLP(total)}
                 </span>
               </div>
+              {/* IVA informativo: los precios YA incluyen IVA (19%). */}
+              <div className="flex justify-between text-xs text-[#94A3B8]">
+                <span>Neto</span>
+                <span>{formatCLP(Math.round(total / 1.19))}</span>
+              </div>
+              <div className="flex justify-between text-xs text-[#94A3B8]">
+                <span>IVA (19%) incluido</span>
+                <span>{formatCLP(total - Math.round(total / 1.19))}</span>
+              </div>
+              <p className="pt-1 text-center text-[11px] text-[#94A3B8]">
+                Los precios incluyen IVA (19%).
+              </p>
             </div>
 
             <Button
