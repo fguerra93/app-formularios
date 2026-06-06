@@ -1,0 +1,66 @@
+# ============================================================
+# PrintUp — Variables de entorno para Cloud Run (SANDBOX)
+# Plantilla SIN secretos reales. Usar con:
+#   gcloud run deploy printup-app --env-vars-file deploy/run-env.sandbox.yaml ...
+#
+# REGLA: los valores sensibles (marcados [SECRET]) NO van aquí en producción;
+# se cargan desde Secret Manager con --set-secrets. Este archivo es la
+# referencia de qué necesita el servicio en modo sandbox.
+# ============================================================
+
+NODE_ENV: "production"
+NEXT_PUBLIC_MODO: "sandbox"
+NEXT_PUBLIC_APP_URL: "https://printup-app-XXXX.run.app"
+
+# --- Supabase (Variante A) o, en Variante B, se reemplaza por DB_* ----------
+NEXT_PUBLIC_SUPABASE_URL: "https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-anon-key"
+SUPABASE_SERVICE_ROLE_KEY: "[SECRET]"
+
+# --- Variante B (Cloud SQL Postgres) — usar en lugar de Supabase ------------
+# DB_HOST: "/cloudsql/adminsmart:southamerica-west1:printup-sql"
+# DB_NAME: "printup"
+# DB_USER: "printup"
+# DB_PASS: "[SECRET]"
+# CLOUD_SQL_CONNECTION_NAME: "adminsmart:southamerica-west1:printup-sql"
+
+# --- Auth / RBAC ------------------------------------------------------------
+JWT_SECRET: "[SECRET]"
+ADMIN_EMAIL: "dueno@printup.cl"
+ADMIN_PASSWORD: "[SECRET]"
+
+# --- Pagos (MercadoPago TEST en sandbox) ------------------------------------
+MERCADOPAGO_ACCESS_TOKEN: "[SECRET]"
+MERCADOPAGO_PUBLIC_KEY: "TEST-xxxx"
+NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY: "TEST-xxxx"
+MERCADOPAGO_WEBHOOK_SECRET: "[SECRET]"
+
+# --- Email (Resend) ---------------------------------------------------------
+RESEND_API_KEY: "[SECRET]"
+FROM_EMAIL: "pedidos@printup.cl"
+FROM_NAME: "PrintUp"
+NOTIFY_TO: "pedidos@printup.cl"
+
+# --- Cloudflare R2 (Variante B storage) -------------------------------------
+R2_ACCOUNT_ID: ""
+R2_ACCESS_KEY_ID: "[SECRET]"
+R2_SECRET_ACCESS_KEY: "[SECRET]"
+R2_BUCKET: "printup-archivos"
+R2_PUBLIC_URL: ""
+
+# --- Meta (WhatsApp/IG/FB) --------------------------------------------------
+META_APP_SECRET: "[SECRET]"
+META_VERIFY_TOKEN: "[SECRET]"
+
+# --- Bot IA -----------------------------------------------------------------
+ANTHROPIC_API_KEY: "[SECRET]"
+
+# --- Cron (procesar-eventos, liberar-reservas, carritos-abandonados) --------
+CRON_SECRET: "[SECRET]"
+
+# --- DTE (boleta/factura) — mock en sandbox ---------------------------------
+DTE_ENABLED: "false"
+
+# --- Sentry (opcional) ------------------------------------------------------
+NEXT_PUBLIC_SENTRY_DSN: ""
+SENTRY_DSN: ""

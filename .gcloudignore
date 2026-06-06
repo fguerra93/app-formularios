@@ -1,0 +1,15 @@
+# Archivos que NO se suben a Cloud Build (gcloud run deploy --source).
+.git
+.github
+node_modules
+.next/cache
+.env
+.env.*
+!.env.example
+wiki
+legacy
+sync-worker
+**/*.test.ts
+.vscode
+.idea
+.DS_Store
