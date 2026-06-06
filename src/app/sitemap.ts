@@ -1,11 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getSupabase } from "@/lib/supabase";
+import { categoriasRepo, productosRepo } from "@/server/repositories";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = getSupabase();
-
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
@@ -15,12 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Categories
-  const { data: categorias } = await supabase
-    .from("categorias")
-    .select("slug, created_at")
-    .eq("activa", true);
+  const categorias = await categoriasRepo.listActivasParaSitemap();
 
-  const categoryPages: MetadataRoute.Sitemap = (categorias || []).map((cat) => ({
+  const categoryPages: MetadataRoute.Sitemap = categorias.map((cat) => ({
     url: `${BASE_URL}/productos/${cat.slug}`,
     lastModified: new Date(cat.created_at),
     changeFrequency: "weekly" as const,
@@ -28,12 +23,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Products
-  const { data: productos } = await supabase
-    .from("productos")
-    .select("slug, updated_at, categoria:categorias(slug)")
-    .eq("activo", true);
+  const productos = await productosRepo.listActivosParaSitemap();
 
-  const productPages: MetadataRoute.Sitemap = (productos || []).map((prod) => {
+  const productPages: MetadataRoute.Sitemap = productos.map((prod) => {
     const cat = prod.categoria as unknown as { slug: string } | null;
     const catSlug = cat?.slug || "sin-categoria";
     return {

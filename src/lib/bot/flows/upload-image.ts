@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clientesRepo, storageRepo } from "@/server/repositories";
 import { downloadMetaMedia } from "../media";
 import type { BotContext, BotResponse, IncomingMessage } from "../types";
 
@@ -14,7 +14,6 @@ export async function handleUploadImage(
   msg: IncomingMessage
 ): Promise<BotResponse> {
   const data = { ...context.data } as Record<string, unknown>;
-  const supabase = getSupabaseAdmin();
 
   switch (context.step) {
     // ---- STEP 0: Recibir imagen ----
@@ -49,17 +48,19 @@ export async function handleUploadImage(
         };
       }
 
-      // Subir a Supabase Storage
+      // Subir a Storage
       const fileName = `chat_${Date.now()}_${mediaResult.fileName}`;
       const storagePath = `formularios/chat/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("archivos")
-        .upload(storagePath, mediaResult.buffer, {
-          contentType: mediaResult.mimeType,
-        });
-
-      if (uploadError) {
+      let publicUrl: string;
+      try {
+        const result = await storageRepo.uploadChatFile(
+          storagePath,
+          mediaResult.buffer,
+          mediaResult.mimeType
+        );
+        publicUrl = result.publicUrl;
+      } catch (uploadError) {
         console.error("Storage upload error:", uploadError);
         return {
           messages: [
@@ -70,16 +71,11 @@ export async function handleUploadImage(
         };
       }
 
-      // Obtener URL publica
-      const { data: urlData } = supabase.storage
-        .from("archivos")
-        .getPublicUrl(storagePath);
-
       data.archivo = {
         nombre: mediaResult.fileName,
         tamano: mediaResult.buffer.byteLength,
         tipo: mediaResult.mimeType,
-        url: urlData.publicUrl,
+        url: publicUrl,
         storage_path: storagePath,
       };
 
@@ -130,11 +126,7 @@ export async function handleUploadImage(
       let telefono = msg.senderPhone || "";
 
       if (context.cliente_id) {
-        const { data: cliente } = await supabase
-          .from("clientes")
-          .select("nombre, email, telefono")
-          .eq("id", context.cliente_id)
-          .single();
+        const cliente = await clientesRepo.findBasicById(context.cliente_id);
 
         if (cliente) {
           nombre = cliente.nombre || nombre;

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajeriaRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +10,6 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
   const now = new Date();
   const todayStart = new Date(
     now.getFullYear(),
@@ -20,46 +18,32 @@ export async function GET() {
   ).toISOString();
 
   // Conversations by canal
-  const { data: conversacionesPorCanal } = await supabase
-    .from("conversaciones")
-    .select("canal");
+  const conversacionesPorCanal = await mensajeriaRepo.listConversacionCanales();
 
   const porCanal: Record<string, number> = {
     whatsapp: 0,
     instagram: 0,
     facebook: 0,
   };
-  (conversacionesPorCanal || []).forEach((conv) => {
+  conversacionesPorCanal.forEach((conv) => {
     const c = conv.canal || "otro";
     porCanal[c] = (porCanal[c] || 0) + 1;
   });
 
   // Messages today
-  const { count: mensajesHoy } = await supabase
-    .from("mensajes")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", todayStart);
+  const mensajesHoy = await mensajeriaRepo.countMensajesDesde(todayStart);
 
   // Conversations without response
   // These are conversations that have at least one incoming message
   // but no outgoing message after the last incoming message
-  const { data: conversacionesAbiertas } = await supabase
-    .from("conversaciones")
-    .select("id")
-    .eq("estado", "abierta");
+  const conversacionesAbiertas = await mensajeriaRepo.listConversacionesAbiertasIds();
 
   let sinRespuesta = 0;
 
-  if (conversacionesAbiertas && conversacionesAbiertas.length > 0) {
+  if (conversacionesAbiertas.length > 0) {
     for (const conv of conversacionesAbiertas) {
       // Get the last message for this conversation
-      const { data: ultimoMensaje } = await supabase
-        .from("mensajes")
-        .select("direccion")
-        .eq("conversacion_id", conv.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+      const ultimoMensaje = await mensajeriaRepo.ultimoMensajeDireccion(conv.id);
 
       if (ultimoMensaje && ultimoMensaje.direccion === "entrante") {
         sinRespuesta++;
@@ -69,17 +53,12 @@ export async function GET() {
 
   // Average response time
   // Get pairs of incoming messages followed by outgoing messages
-  const { data: mensajesParaTiempo } = await supabase
-    .from("mensajes")
-    .select("conversacion_id, direccion, created_at")
-    .in("direccion", ["entrante", "saliente"])
-    .order("created_at", { ascending: true })
-    .limit(1000);
+  const mensajesParaTiempo = await mensajeriaRepo.listMensajesParaTiempo(1000);
 
   let totalResponseTime = 0;
   let responseCount = 0;
 
-  if (mensajesParaTiempo && mensajesParaTiempo.length > 0) {
+  if (mensajesParaTiempo.length > 0) {
     // Group by conversacion_id
     const porConversacion: Record<
       string,

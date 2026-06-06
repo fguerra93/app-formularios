@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { disenosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,15 +8,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = getSupabase();
 
-  const { data, error } = await supabase
-    .from("disenos_cliente")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const data = await disenosRepo.findById(id);
 
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json(
       { error: "Diseno no encontrado" },
       { status: 404 }
@@ -31,7 +26,6 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = getSupabase();
 
   let body: {
     diseno_json?: unknown;
@@ -56,20 +50,14 @@ export async function PUT(
   if (body.variante !== undefined) updateData.variante = body.variante;
   if (body.estado !== undefined) updateData.estado = body.estado;
 
-  const { data, error } = await supabase
-    .from("disenos_cliente")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating diseno:", error);
+  try {
+    const data = await disenosRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating diseno:", e);
     return NextResponse.json(
       { error: "Error al actualizar diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }

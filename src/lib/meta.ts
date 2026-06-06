@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo } from "@/server/repositories";
 import { createHmac, timingSafeEqual } from "crypto";
 
 // ---------------------------------------------------------------------------
@@ -28,8 +28,6 @@ interface MetaApiResponse {
  * `configuracion` table in Supabase.
  */
 export async function getMetaConfig(): Promise<MetaConfig> {
-  const supabase = getSupabaseAdmin();
-
   const keys = [
     "meta_page_access_token",
     "meta_page_id",
@@ -38,19 +36,7 @@ export async function getMetaConfig(): Promise<MetaConfig> {
     "meta_whatsapp_phone_number_id",
   ];
 
-  const { data, error } = await supabase
-    .from("configuracion")
-    .select("clave, valor")
-    .in("clave", keys);
-
-  if (error) {
-    console.error("Error reading Meta config:", error);
-  }
-
-  const map: Record<string, string> = {};
-  for (const row of data || []) {
-    map[row.clave] = row.valor;
-  }
+  const map = await configuracionRepo.getMany(keys);
 
   return {
     pageAccessToken: map["meta_page_access_token"] || "",

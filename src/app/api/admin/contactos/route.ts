@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { formulariosRepo, pedidosRepo } from "@/server/repositories";
 
 interface Contacto {
   nombre: string;
@@ -17,36 +17,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
   const { searchParams } = request.nextUrl;
   const search = searchParams.get("search");
 
-  // Get clients from pedidos
-  let pedidosQuery = supabase
-    .from("pedidos")
-    .select("cliente_nombre, cliente_email, cliente_telefono, created_at");
-
-  if (search) {
-    pedidosQuery = pedidosQuery.or(`cliente_nombre.ilike.%${search}%,cliente_email.ilike.%${search}%`);
-  }
-
-  const { data: pedidos } = await pedidosQuery;
-
-  // Get contacts from formularios
-  let formQuery = supabase
-    .from("formularios")
-    .select("nombre, email, telefono, created_at");
-
-  if (search) {
-    formQuery = formQuery.or(`nombre.ilike.%${search}%,email.ilike.%${search}%`);
-  }
-
-  const { data: formularios } = await formQuery;
+  // Get clients from pedidos and contacts from formularios
+  const pedidos = await pedidosRepo.listContactos(search);
+  const formularios = await formulariosRepo.listContactos(search);
 
   // Merge by email
   const contactMap = new Map<string, Contacto>();
 
-  for (const p of pedidos || []) {
+  for (const p of pedidos) {
     const key = p.cliente_email.toLowerCase();
     const existing = contactMap.get(key);
     if (existing) {
@@ -69,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  for (const f of formularios || []) {
+  for (const f of formularios) {
     const key = f.email.toLowerCase();
     const existing = contactMap.get(key);
     if (existing) {

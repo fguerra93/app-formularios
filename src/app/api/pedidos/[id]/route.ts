@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { pedidosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,15 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const supabase = getSupabase();
+  const data = await pedidosRepo.findById(id);
 
-  const { data, error } = await supabase
-    .from("pedidos")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json(
       { error: "Pedido no encontrado" },
       { status: 404 }

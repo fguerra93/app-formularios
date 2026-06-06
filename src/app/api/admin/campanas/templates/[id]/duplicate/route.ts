@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { templatesRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -14,26 +14,20 @@ export async function POST(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
   // Get original template
-  const { data: original, error: fetchError } = await supabase
-    .from("email_templates")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const original = await templatesRepo.findById(id);
 
-  if (fetchError || !original) {
+  if (!original) {
     return NextResponse.json(
       { error: "Template no encontrado" },
       { status: 404 }
     );
   }
 
-  // Create copy
-  const { data, error } = await supabase
-    .from("email_templates")
-    .insert({
+  try {
+    // Create copy
+    const data = await templatesRepo.create({
       nombre: `Copia de ${original.nombre}`,
       descripcion: original.descripcion,
       categoria: original.categoria,
@@ -42,17 +36,13 @@ export async function POST(
       thumbnail_url: original.thumbnail_url,
       es_preset: false,
       activo: true,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error duplicating template:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error duplicating template:", e);
     return NextResponse.json(
       { error: "Error al duplicar template" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

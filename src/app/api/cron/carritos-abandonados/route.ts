@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { carritosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -21,22 +21,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Find abandoned carts: updated more than 24h ago, not emailed, not recovered
     const twentyFourHoursAgo = new Date(
       Date.now() - 24 * 60 * 60 * 1000
     ).toISOString();
 
-    const { data: carritos, error: fetchError } = await supabase
-      .from("carritos_guardados")
-      .select("id, cliente_id, email, items")
-      .lt("updated_at", twentyFourHoursAgo)
-      .eq("email_enviado", false)
-      .eq("recuperado", false);
-
-    if (fetchError) {
-      console.error("Error fetching abandoned carts:", fetchError);
+    let carritos;
+    try {
+      carritos = await carritosRepo.findAbandonados(twentyFourHoursAgo);
+    } catch (e) {
+      console.error("Error fetching abandoned carts:", e);
       return NextResponse.json(
         { error: "Error al buscar carritos abandonados" },
         { status: 500 }
@@ -55,16 +49,10 @@ export async function POST(request: NextRequest) {
     // In production, this is where you would send recovery emails via SES/Resend
     const carritoIds = carritos.map((c) => c.id);
 
-    const { error: updateError } = await supabase
-      .from("carritos_guardados")
-      .update({
-        email_enviado: true,
-        updated_at: new Date().toISOString(),
-      })
-      .in("id", carritoIds);
-
-    if (updateError) {
-      console.error("Error updating abandoned carts:", updateError);
+    try {
+      await carritosRepo.markEmailEnviado(carritoIds);
+    } catch (e) {
+      console.error("Error updating abandoned carts:", e);
       return NextResponse.json(
         { error: "Error al actualizar carritos" },
         { status: 500 }

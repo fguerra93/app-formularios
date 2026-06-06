@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { newsletterRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -23,25 +23,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Formato de email invalido" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
-
   // Check if subscriber already exists
-  const { data: existing } = await supabase
-    .from("suscriptores")
-    .select("*")
-    .eq("email", email.toLowerCase())
-    .single();
+  const existing = await newsletterRepo.findByEmail(email.toLowerCase());
 
   if (existing) {
     if (!existing.activo) {
       // Reactivate inactive subscriber
-      const { error } = await supabase
-        .from("suscriptores")
-        .update({ activo: true, nombre: nombre || existing.nombre })
-        .eq("id", existing.id);
-
-      if (error) {
-        console.error("Error reactivating suscriptor:", error);
+      try {
+        await newsletterRepo.reactivate(
+          existing.id as string,
+          (nombre || existing.nombre) as string | null
+        );
+      } catch (e) {
+        console.error("Error reactivating suscriptor:", e);
         return NextResponse.json({ error: "Error al reactivar suscripcion" }, { status: 500 });
       }
     }
@@ -49,17 +43,15 @@ export async function POST(request: NextRequest) {
   }
 
   // Create new subscriber
-  const { error } = await supabase
-    .from("suscriptores")
-    .insert({
+  try {
+    await newsletterRepo.create({
       email: email.toLowerCase(),
       nombre: nombre || null,
       fuente: fuente || null,
       activo: true,
     });
-
-  if (error) {
-    console.error("Error creating suscriptor:", error);
+  } catch (e) {
+    console.error("Error creating suscriptor:", e);
     return NextResponse.json({ error: "Error al suscribirse" }, { status: 500 });
   }
 

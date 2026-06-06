@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajeriaRepo } from "@/server/repositories";
 import { sendMessageByChannel } from "@/lib/meta";
 
 export const dynamic = "force-dynamic";
@@ -27,16 +27,10 @@ export async function POST(
       );
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Verify conversation exists
-    const { data: conversacion, error: convError } = await supabase
-      .from("conversaciones")
-      .select("*")
-      .eq("id", id)
-      .single();
+    const conversacion = await mensajeriaRepo.findConversacion(id);
 
-    if (convError || !conversacion) {
+    if (!conversacion) {
       return NextResponse.json(
         { error: "Conversacion no encontrada" },
         { status: 404 }
@@ -46,9 +40,9 @@ export async function POST(
     const now = new Date().toISOString();
 
     // Insert outgoing message
-    const { data: mensaje, error: msgError } = await supabase
-      .from("mensajes")
-      .insert({
+    let mensaje;
+    try {
+      mensaje = await mensajeriaRepo.insertMensajeReturning({
         conversacion_id: id,
         direccion: "saliente",
         tipo,
@@ -57,12 +51,9 @@ export async function POST(
         estado_envio: "pendiente",
         respuesta_automatica: false,
         created_at: now,
-      })
-      .select()
-      .single();
-
-    if (msgError) {
-      console.error("Error inserting message:", msgError);
+      });
+    } catch (e) {
+      console.error("Error inserting message:", e);
       return NextResponse.json(
         { error: "Error al guardar mensaje" },
         { status: 500 }
@@ -72,46 +63,39 @@ export async function POST(
     // Send via Meta API
     try {
       await sendMessageByChannel(
-        conversacion.canal,
-        conversacion.contacto_id,
+        conversacion.canal as string,
+        conversacion.contacto_id as string,
         contenido?.trim() || ""
       );
 
       // Update message status to sent
-      await supabase
-        .from("mensajes")
-        .update({ estado_envio: "enviado" })
-        .eq("id", mensaje.id);
+      await mensajeriaRepo.updateMensaje(mensaje.id as string, {
+        estado_envio: "enviado",
+      });
     } catch (sendError) {
       console.error("Error sending message via Meta:", sendError);
 
       // Update message status to failed
-      await supabase
-        .from("mensajes")
-        .update({ estado_envio: "fallido" })
-        .eq("id", mensaje.id);
+      await mensajeriaRepo.updateMensaje(mensaje.id as string, {
+        estado_envio: "fallido",
+      });
     }
 
     // Update conversation
-    const { error: updateError } = await supabase
-      .from("conversaciones")
-      .update({
+    try {
+      await mensajeriaRepo.updateConversacion(id, {
         ultimo_mensaje: contenido?.trim() || `[${tipo}]`,
         ultimo_mensaje_at: now,
         updated_at: now,
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      console.error("Error updating conversacion:", updateError);
+      });
+    } catch (e) {
+      console.error("Error updating conversacion:", e);
     }
 
     // Re-fetch updated message
-    const { data: mensajeActualizado } = await supabase
-      .from("mensajes")
-      .select("*")
-      .eq("id", mensaje.id)
-      .single();
+    const mensajeActualizado = await mensajeriaRepo.findMensajeById(
+      mensaje.id as string
+    );
 
     return NextResponse.json({
       success: true,

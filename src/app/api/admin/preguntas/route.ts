@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { preguntasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,29 +10,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
   const { searchParams } = request.nextUrl;
   const estado = searchParams.get("estado");
 
-  let query = supabase
-    .from("preguntas_producto")
-    .select("*, productos(nombre)")
-    .order("created_at", { ascending: false });
-
-  if (estado === "pendiente") {
-    query = query.is("respuesta", null);
-  } else if (estado === "respondida") {
-    query = query.not("respuesta", "is", null);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Error fetching preguntas:", error);
+  try {
+    const data = await preguntasRepo.listAdmin(estado);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching preguntas:", e);
     return NextResponse.json({ error: "Error al obtener preguntas" }, { status: 500 });
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function PATCH(request: NextRequest) {
@@ -42,7 +29,6 @@ export async function PATCH(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   if (!body.id) {
     return NextResponse.json({ error: "ID requerido" }, { status: 400 });
@@ -55,17 +41,11 @@ export async function PATCH(request: NextRequest) {
   }
   if (body.publica !== undefined) updateData.publica = body.publica;
 
-  const { data, error } = await supabase
-    .from("preguntas_producto")
-    .update(updateData)
-    .eq("id", body.id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating pregunta:", error);
+  try {
+    const data = await preguntasRepo.update(body.id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating pregunta:", e);
     return NextResponse.json({ error: "Error al actualizar pregunta" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }

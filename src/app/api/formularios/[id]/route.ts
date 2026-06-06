@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { formulariosRepo } from "@/server/repositories";
 
 export async function GET(
   _request: NextRequest,
@@ -12,15 +12,9 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
+  const data = await formulariosRepo.findById(id);
 
-  const { data, error } = await supabase
-    .from("formularios")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json(
       { error: "Formulario no encontrado" },
       { status: 404 }
@@ -50,16 +44,9 @@ export async function PATCH(
     );
   }
 
-  const supabase = getSupabaseAdmin();
+  const data = await formulariosRepo.updateEstado(id, estado);
 
-  const { data, error } = await supabase
-    .from("formularios")
-    .update({ estado, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json(
       { error: "Error al actualizar formulario" },
       { status: 500 }

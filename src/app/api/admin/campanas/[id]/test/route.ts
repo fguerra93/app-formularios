@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { campanasRepo, configuracionRepo, templatesRepo } from "@/server/repositories";
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
@@ -25,16 +25,10 @@ export async function POST(
     );
   }
 
-  const supabase = getSupabaseAdmin();
-
   // Get campaign
-  const { data: campana, error: campError } = await supabase
-    .from("campanas")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const campana = await campanasRepo.findCampana(id);
 
-  if (campError || !campana) {
+  if (!campana) {
     return NextResponse.json(
       { error: "Campana no encontrada" },
       { status: 404 }
@@ -42,14 +36,11 @@ export async function POST(
   }
 
   // Get email HTML: from campaign or from template
-  let html = campana.contenido_html;
+  let html = campana.contenido_html as string | null;
   if (!html && campana.template_id) {
-    const { data: template } = await supabase
-      .from("email_templates")
-      .select("contenido_html")
-      .eq("id", campana.template_id)
-      .single();
-
+    const template = await templatesRepo.findContenidoHtml(
+      campana.template_id as string
+    );
     if (template) {
       html = template.contenido_html;
     }
@@ -72,34 +63,16 @@ export async function POST(
       `${baseUrl}/api/newsletter/desuscribir?email=${encodeURIComponent(email)}`
     );
 
-  // Get Resend config
-  let apiKey = process.env.RESEND_API_KEY || "";
-  let fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-  let fromName = process.env.FROM_NAME || "PrintUp Tienda";
-
-  try {
-    const { data: configs } = await supabase
-      .from("configuracion")
-      .select("*")
-      .in("clave", ["resend_api_key", "from_email", "from_name"]);
-
-    if (configs) {
-      const keyConfig = configs.find(
-        (c: { clave: string }) => c.clave === "resend_api_key"
-      );
-      const emailConfig = configs.find(
-        (c: { clave: string }) => c.clave === "from_email"
-      );
-      const nameConfig = configs.find(
-        (c: { clave: string }) => c.clave === "from_name"
-      );
-      if (keyConfig?.valor) apiKey = keyConfig.valor;
-      if (emailConfig?.valor) fromEmail = emailConfig.valor;
-      if (nameConfig?.valor) fromName = nameConfig.valor;
-    }
-  } catch {
-    // Use env defaults
-  }
+  // Get Resend config (config overrides env)
+  const config = await configuracionRepo.getMany([
+    "resend_api_key",
+    "from_email",
+    "from_name",
+  ]);
+  const apiKey = config.resend_api_key || process.env.RESEND_API_KEY || "";
+  const fromEmail =
+    config.from_email || process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromName = config.from_name || process.env.FROM_NAME || "PrintUp Tienda";
 
   if (!apiKey) {
     return NextResponse.json(
@@ -114,7 +87,7 @@ export async function POST(
     await resend.emails.send({
       from: `${fromName} <${fromEmail}>`,
       to: [email],
-      subject: `[TEST] ${campana.asunto}`,
+      subject: `[TEST] ${campana.asunto as string}`,
       html,
     });
 

@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { cuponesRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const supabase = getSupabase();
-
   let body: { codigo?: string; subtotal?: number };
   try {
     body = await request.json();
@@ -26,13 +24,9 @@ export async function POST(request: NextRequest) {
   }
 
   // Buscar cupon por codigo (case-insensitive)
-  const { data: cupon, error } = await supabase
-    .from("cupones")
-    .select("*")
-    .ilike("codigo", codigo)
-    .single();
+  const cupon = await cuponesRepo.findByCodigo(codigo);
 
-  if (error || !cupon) {
+  if (!cupon) {
     return NextResponse.json({
       valido: false,
       descuento: 0,

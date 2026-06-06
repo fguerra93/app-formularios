@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { campanasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +14,9 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
+  const data = await campanasRepo.findCampana(id);
 
-  const { data, error } = await supabase
-    .from("campanas")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
-    console.error("Error fetching campana:", error);
+  if (!data) {
     return NextResponse.json(
       { error: "Campana no encontrada" },
       { status: 404 }
@@ -44,7 +37,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.nombre !== undefined) updateData.nombre = body.nombre;
@@ -57,22 +49,16 @@ export async function PUT(
 
   updateData.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase
-    .from("campanas")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating campana:", error);
+  try {
+    const data = await campanasRepo.updateCampanaReturning(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating campana:", e);
     return NextResponse.json(
       { error: "Error al actualizar campana" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -85,14 +71,9 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
   // Only allow deleting campaigns in draft state
-  const { data: campana } = await supabase
-    .from("campanas")
-    .select("estado")
-    .eq("id", id)
-    .single();
+  const campana = await campanasRepo.findCampanaEstado(id);
 
   if (!campana) {
     return NextResponse.json(
@@ -108,18 +89,16 @@ export async function DELETE(
     );
   }
 
-  // Delete associated envios first
-  await supabase.from("campana_envios").delete().eq("campana_id", id);
-
-  const { error } = await supabase.from("campanas").delete().eq("id", id);
-
-  if (error) {
-    console.error("Error deleting campana:", error);
+  try {
+    // Delete associated envios first
+    await campanasRepo.deleteEnviosByCampana(id);
+    await campanasRepo.deleteCampana(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting campana:", e);
     return NextResponse.json(
       { error: "Error al eliminar campana" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }

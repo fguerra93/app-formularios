@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { zonasRepo } from "@/server/repositories";
 
 export async function PUT(
   request: NextRequest,
@@ -13,7 +13,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.nombre !== undefined) updateData.nombre = body.nombre;
@@ -24,19 +23,13 @@ export async function PUT(
   if (body.dias_despacho !== undefined) updateData.dias_despacho = body.dias_despacho;
   if (body.horario !== undefined) updateData.horario = body.horario;
 
-  const { data, error } = await supabase
-    .from("zonas_envio")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating zona:", error);
+  try {
+    const data = await zonasRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating zona:", e);
     return NextResponse.json({ error: "Error al actualizar zona" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -49,17 +42,12 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("zonas_envio")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting zona:", error);
+  try {
+    await zonasRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting zona:", e);
     return NextResponse.json({ error: "Error al eliminar zona" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

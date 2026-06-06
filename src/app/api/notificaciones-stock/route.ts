@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { productosRepo, notificacionesStockRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -24,16 +24,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Check if product exists
-    const { data: producto, error: prodError } = await supabase
-      .from("productos")
-      .select("id, nombre")
-      .eq("id", producto_id)
-      .single();
-
-    if (prodError || !producto) {
+    const producto = await productosRepo.findById(producto_id);
+    if (!producto) {
       return NextResponse.json(
         { error: "Producto no encontrado" },
         { status: 404 }
@@ -41,14 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for existing subscription
-    const { data: existing } = await supabase
-      .from("notificaciones_stock")
-      .select("id")
-      .eq("producto_id", producto_id)
-      .eq("email", email)
-      .eq("notificado", false)
-      .single();
-
+    const existing = await notificacionesStockRepo.findPendiente(producto_id, email);
     if (existing) {
       return NextResponse.json({
         success: true,
@@ -56,14 +42,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { error } = await supabase.from("notificaciones_stock").insert({
-      producto_id,
-      email,
-      notificado: false,
-    });
-
-    if (error) {
-      console.error("Error creating stock notification:", error);
+    try {
+      await notificacionesStockRepo.create(producto_id, email);
+    } catch (e) {
+      console.error("Error creating stock notification:", e);
       return NextResponse.json(
         { error: "Error al suscribirse a la notificacion" },
         { status: 500 }

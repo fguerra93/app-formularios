@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { respuestasAutomaticasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,22 +10,16 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("respuestas_automaticas")
-    .select("*")
-    .order("prioridad", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching respuestas automaticas:", error);
+  try {
+    const data = await respuestasAutomaticasRepo.listAll();
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching respuestas automaticas:", e);
     return NextResponse.json(
       { error: "Error al obtener respuestas automaticas" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -35,11 +29,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("respuestas_automaticas")
-    .insert({
+  try {
+    const data = await respuestasAutomaticasRepo.create({
       nombre: body.nombre,
       canales: body.canales || [],
       palabras_clave: body.palabras_clave || [],
@@ -50,17 +42,13 @@ export async function POST(request: NextRequest) {
       prioridad: body.prioridad || 0,
       horario_inicio: body.horario_inicio || null,
       horario_fin: body.horario_fin || null,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating respuesta automatica:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating respuesta automatica:", e);
     return NextResponse.json(
       { error: "Error al crear respuesta automatica" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

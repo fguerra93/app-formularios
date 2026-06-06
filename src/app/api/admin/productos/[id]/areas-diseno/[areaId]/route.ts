@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { areasDisenoRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,6 @@ export async function PUT(
 
   const { areaId } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
 
@@ -31,22 +30,16 @@ export async function PUT(
     }
   }
 
-  const { data, error } = await supabase
-    .from("producto_areas_diseno")
-    .update(updateData)
-    .eq("id", areaId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating area de diseno:", error);
+  try {
+    const data = await areasDisenoRepo.update(areaId, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating area de diseno:", e);
     return NextResponse.json(
       { error: "Error al actualizar area de diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -59,20 +52,15 @@ export async function DELETE(
   }
 
   const { areaId } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("producto_areas_diseno")
-    .delete()
-    .eq("id", areaId);
-
-  if (error) {
-    console.error("Error deleting area de diseno:", error);
+  try {
+    await areasDisenoRepo.remove(areaId);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting area de diseno:", e);
     return NextResponse.json(
       { error: "Error al eliminar area de diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }

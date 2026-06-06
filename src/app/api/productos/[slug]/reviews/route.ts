@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { productosRepo, reviewsRepo, pedidosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,37 +8,24 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabase();
 
   // Buscar producto por slug para obtener ID
-  const { data: producto, error: prodError } = await supabase
-    .from("productos")
-    .select("id")
-    .eq("slug", slug)
-    .eq("activo", true)
-    .single();
+  const producto = await productosRepo.findActivoBySlug(slug);
 
-  if (prodError || !producto) {
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
     );
   }
 
-  // Lista reviews aprobadas del producto
-  const { data: reviews, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("producto_id", producto.id)
-    .eq("aprobada", true)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching reviews:", error);
+  try {
+    const reviews = await reviewsRepo.listAprobadasByProducto(producto.id);
+    return NextResponse.json(reviews);
+  } catch (e) {
+    console.error("Error fetching reviews:", e);
     return NextResponse.json({ error: "Error al obtener reviews" }, { status: 500 });
   }
-
-  return NextResponse.json(reviews || []);
 }
 
 export async function POST(
@@ -46,17 +33,11 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabase();
 
   // Buscar producto por slug
-  const { data: producto, error: prodError } = await supabase
-    .from("productos")
-    .select("id")
-    .eq("slug", slug)
-    .eq("activo", true)
-    .single();
+  const producto = await productosRepo.findActivoBySlug(slug);
 
-  if (prodError || !producto) {
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
@@ -96,13 +77,9 @@ export async function POST(
   // Verificar si el email tiene pedidos con este producto
   let verificada = false;
   try {
-    const { data: pedidos } = await supabase
-      .from("pedidos")
-      .select("id, items")
-      .ilike("cliente_email", autor_email)
-      .in("estado", ["confirmado", "enviado", "entregado"]);
+    const pedidos = await pedidosRepo.listParaVerificarReview(autor_email);
 
-    if (pedidos && pedidos.length > 0) {
+    if (pedidos.length > 0) {
       // Buscar si alguno de los pedidos contiene este producto
       verificada = pedidos.some((pedido) => {
         if (!pedido.items || !Array.isArray(pedido.items)) return false;
@@ -115,9 +92,8 @@ export async function POST(
     // Si falla la verificacion, continuar con verificada = false
   }
 
-  const { data, error } = await supabase
-    .from("reviews")
-    .insert({
+  try {
+    const data = await reviewsRepo.createPublica({
       producto_id: producto.id,
       autor_nombre,
       autor_email,
@@ -127,14 +103,10 @@ export async function POST(
       fotos: fotos || [],
       verificada,
       aprobada: false,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating review:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating review:", e);
     return NextResponse.json({ error: "Error al crear review" }, { status: 500 });
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

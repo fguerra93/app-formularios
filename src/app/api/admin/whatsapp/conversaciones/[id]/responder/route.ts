@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { whatsappRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -26,16 +26,10 @@ export async function POST(
       );
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Verify conversation exists
-    const { data: conversacion, error: convError } = await supabase
-      .from("conversaciones_whatsapp")
-      .select("id, telefono")
-      .eq("id", id)
-      .single();
+    const conversacion = await whatsappRepo.findConversacionBasica(id);
 
-    if (convError || !conversacion) {
+    if (!conversacion) {
       return NextResponse.json(
         { error: "Conversacion no encontrada" },
         { status: 404 }
@@ -45,20 +39,17 @@ export async function POST(
     const now = new Date().toISOString();
 
     // Insert outgoing message
-    const { data: mensaje, error: msgError } = await supabase
-      .from("mensajes_whatsapp")
-      .insert({
+    let mensaje;
+    try {
+      mensaje = await whatsappRepo.insertMensaje({
         conversacion_id: id,
         direccion: "saliente",
         contenido: contenido.trim(),
         procesado_por: "humano",
         created_at: now,
-      })
-      .select()
-      .single();
-
-    if (msgError) {
-      console.error("Error inserting message:", msgError);
+      });
+    } catch (e) {
+      console.error("Error inserting message:", e);
       return NextResponse.json(
         { error: "Error al enviar mensaje" },
         { status: 500 }
@@ -66,16 +57,13 @@ export async function POST(
     }
 
     // Update conversation's ultimo_mensaje_at
-    const { error: updateError } = await supabase
-      .from("conversaciones_whatsapp")
-      .update({
+    try {
+      await whatsappRepo.updateConversacion(id, {
         ultimo_mensaje_at: now,
         estado: "activa",
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      console.error("Error updating conversacion:", updateError);
+      });
+    } catch (e) {
+      console.error("Error updating conversacion:", e);
     }
 
     // In production, this is where you would call the Meta WhatsApp Business API

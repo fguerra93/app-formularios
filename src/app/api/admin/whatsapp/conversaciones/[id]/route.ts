@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { whatsappRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +14,11 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
   // Get conversation
-  const { data: conversacion, error: convError } = await supabase
-    .from("conversaciones_whatsapp")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const conversacion = await whatsappRepo.findConversacion(id);
 
-  if (convError || !conversacion) {
+  if (!conversacion) {
     return NextResponse.json(
       { error: "Conversacion no encontrada" },
       { status: 404 }
@@ -31,14 +26,11 @@ export async function GET(
   }
 
   // Get all messages ordered chronologically
-  const { data: mensajes, error: msgError } = await supabase
-    .from("mensajes_whatsapp")
-    .select("*")
-    .eq("conversacion_id", id)
-    .order("created_at", { ascending: true });
-
-  if (msgError) {
-    console.error("Error fetching mensajes:", msgError);
+  let mensajes;
+  try {
+    mensajes = await whatsappRepo.listMensajes(id);
+  } catch (e) {
+    console.error("Error fetching mensajes:", e);
     return NextResponse.json(
       { error: "Error al obtener mensajes" },
       { status: 500 }

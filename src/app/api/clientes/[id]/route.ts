@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clientesRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -20,15 +20,9 @@ export async function GET(
     return NextResponse.json({ error: "Invalid id" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
+  const data = await clientesRepo.findBasicById(id);
 
-  const { data, error } = await supabase
-    .from("clientes")
-    .select("nombre, email, telefono")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json(
       { error: "Cliente no encontrado" },
       { status: 404 }

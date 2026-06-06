@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { cuponesRepo } from "@/server/repositories";
 
 export async function GET() {
   const authenticated = await verifyAuth();
@@ -8,19 +8,13 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("cupones")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching cupones:", error);
+  try {
+    const data = await cuponesRepo.listAll();
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching cupones:", e);
     return NextResponse.json({ error: "Error al obtener cupones" }, { status: 500 });
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -30,11 +24,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("cupones")
-    .insert({
+  try {
+    const data = await cuponesRepo.create({
       codigo: body.codigo,
       tipo: body.tipo,
       valor: body.valor,
@@ -47,14 +39,10 @@ export async function POST(request: NextRequest) {
       activo: body.activo !== undefined ? body.activo : true,
       aplica_a: body.aplica_a || "todo",
       aplica_ids: body.aplica_ids || [],
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating cupon:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating cupon:", e);
     return NextResponse.json({ error: "Error al crear cupon" }, { status: 500 });
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

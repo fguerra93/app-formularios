@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -9,22 +9,11 @@ export const dynamic = "force-dynamic";
 const PUBLIC_KEYS = ["ga4_measurement_id", "social_proof_activo"];
 
 export async function GET() {
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("configuracion")
-    .select("clave, valor")
-    .in("clave", PUBLIC_KEYS);
-
-  if (error) {
-    console.error("Error fetching public config:", error);
+  try {
+    const config = await configuracionRepo.getMany(PUBLIC_KEYS);
+    return NextResponse.json(config);
+  } catch (e) {
+    console.error("Error fetching public config:", e);
     return NextResponse.json({});
   }
-
-  const config: Record<string, string> = {};
-  for (const row of data || []) {
-    config[row.clave] = row.valor;
-  }
-
-  return NextResponse.json(config);
 }

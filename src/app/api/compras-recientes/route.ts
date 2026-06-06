@@ -1,42 +1,30 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo, pedidosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const supabase = getSupabaseAdmin();
-
-  // Check if social proof is active
-  try {
-    const { data: config } = await supabase
-      .from("configuracion")
-      .select("valor")
-      .eq("clave", "social_proof_activo")
-      .single();
-
-    if (config && config.valor === "false") {
-      return NextResponse.json([]);
-    }
-  } catch {
-    // If config not found, default to active
+  // Check if social proof is active (default: active if not set)
+  const activo = await configuracionRepo.get("social_proof_activo");
+  if (activo === "false") {
+    return NextResponse.json([]);
   }
 
   // Get orders from the last 48 hours
   const since = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
 
-  const { data: pedidos, error } = await supabase
-    .from("pedidos")
-    .select("cliente_nombre, items, created_at")
-    .gte("created_at", since)
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Error fetching compras recientes:", error);
-    return NextResponse.json({ error: "Error al obtener compras recientes" }, { status: 500 });
+  let pedidos;
+  try {
+    pedidos = await pedidosRepo.findRecientes(since, 10);
+  } catch (e) {
+    console.error("Error fetching compras recientes:", e);
+    return NextResponse.json(
+      { error: "Error al obtener compras recientes" },
+      { status: 500 }
+    );
   }
 
-  if (!pedidos || pedidos.length === 0) {
+  if (pedidos.length === 0) {
     return NextResponse.json([]);
   }
 

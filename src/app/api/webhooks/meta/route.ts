@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import {
+  configuracionRepo,
+  mensajeriaRepo,
+  webhookEventosRepo,
+} from "@/server/repositories";
 import {
   getMetaConfig,
   verifyWebhookSignature,
@@ -43,14 +47,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data: config } = await supabase
-      .from("configuracion")
-      .select("valor")
-      .eq("clave", "meta_webhook_verify_token")
-      .single();
-
-    const verifyToken = config?.valor || "";
+    const verifyToken =
+      (await configuracionRepo.get("meta_webhook_verify_token")) || "";
 
     if (token === verifyToken) {
       // Meta expects the challenge echoed back as plain text
@@ -117,12 +115,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true });
     }
 
-    // Process each message
-    const supabase = getSupabaseAdmin();
-
+    // Process each message (idempotente: dedupe por meta_message_id).
     for (const msg of messages) {
       try {
-        await processIncomingMessage(supabase, msg, metaConfig.pageAccessToken);
+        if (msg.messageId) {
+          if (await webhookEventosRepo.yaProcesado("meta", msg.messageId)) {
+            continue;
+          }
+        }
+        await processIncomingMessage(msg, metaConfig.pageAccessToken);
+        if (msg.messageId) {
+          await webhookEventosRepo.registrar("meta", msg.messageId, msg);
+        }
       } catch (err) {
         console.error("Error processing message:", err);
         // Continue with next message – don't fail the whole webhook
@@ -302,64 +306,49 @@ function extractWhatsAppMediaUrl(
 // ---------------------------------------------------------------------------
 
 async function processIncomingMessage(
-  supabase: ReturnType<typeof getSupabaseAdmin>,
   msg: ParsedMessage,
   accessToken: string
 ) {
+  void accessToken;
   const now = new Date().toISOString();
 
   // 1. Find or create conversation
-  const { data: existingConv } = await supabase
-    .from("conversaciones")
-    .select("*")
-    .eq("canal", msg.canal)
-    .eq("contacto_id", msg.senderId)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
+  const existingConv = await mensajeriaRepo.findByContacto(msg.canal, msg.senderId);
 
   let conversacionId: string;
 
   if (existingConv) {
-    conversacionId = existingConv.id;
+    conversacionId = existingConv.id as string;
 
     // Update conversation
-    await supabase
-      .from("conversaciones")
-      .update({
-        ultimo_mensaje: msg.contenido || `[${msg.tipo}]`,
-        ultimo_mensaje_at: now,
-        no_leidos: (existingConv.no_leidos || 0) + 1,
-        estado: "abierta",
-        contacto_nombre: msg.senderName || existingConv.contacto_nombre,
-        contacto_telefono: msg.senderPhone || existingConv.contacto_telefono,
-        updated_at: now,
-      })
-      .eq("id", conversacionId);
+    await mensajeriaRepo.updateConversacion(conversacionId, {
+      ultimo_mensaje: msg.contenido || `[${msg.tipo}]`,
+      ultimo_mensaje_at: now,
+      no_leidos: ((existingConv.no_leidos as number) || 0) + 1,
+      estado: "abierta",
+      contacto_nombre: msg.senderName || existingConv.contacto_nombre,
+      contacto_telefono: msg.senderPhone || existingConv.contacto_telefono,
+      updated_at: now,
+    });
   } else {
     // Create new conversation
-    const { data: newConv, error: convError } = await supabase
-      .from("conversaciones")
-      .insert({
-        canal: msg.canal,
-        contacto_id: msg.senderId,
-        contacto_nombre: msg.senderName || msg.senderId,
-        contacto_telefono: msg.senderPhone || "",
-        contacto_username: msg.senderUsername || "",
-        estado: "abierta",
-        etiquetas: [],
-        ultimo_mensaje: msg.contenido || `[${msg.tipo}]`,
-        ultimo_mensaje_at: now,
-        no_leidos: 1,
-        metadata: {},
-        created_at: now,
-        updated_at: now,
-      })
-      .select("id")
-      .single();
+    const newConv = await mensajeriaRepo.createConversacion({
+      canal: msg.canal,
+      contacto_id: msg.senderId,
+      contacto_nombre: msg.senderName || msg.senderId,
+      contacto_telefono: msg.senderPhone || "",
+      contacto_username: msg.senderUsername || "",
+      estado: "abierta",
+      etiquetas: [],
+      ultimo_mensaje: msg.contenido || `[${msg.tipo}]`,
+      ultimo_mensaje_at: now,
+      no_leidos: 1,
+      metadata: {},
+      created_at: now,
+      updated_at: now,
+    });
 
-    if (convError || !newConv) {
-      console.error("Error creating conversacion:", convError);
+    if (!newConv) {
       return;
     }
 
@@ -367,7 +356,7 @@ async function processIncomingMessage(
   }
 
   // 2. Save incoming message
-  await supabase.from("mensajes").insert({
+  await mensajeriaRepo.insertMensaje({
     conversacion_id: conversacionId,
     direccion: "entrante",
     tipo: msg.tipo,

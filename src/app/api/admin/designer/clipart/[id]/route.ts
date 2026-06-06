@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clipartRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
 
@@ -25,22 +24,16 @@ export async function PUT(
   if (body.tags !== undefined) updateData.tags = body.tags;
   if (body.activo !== undefined) updateData.activo = body.activo;
 
-  const { data, error } = await supabase
-    .from("clipart")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating clipart:", error);
+  try {
+    const data = await clipartRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating clipart:", e);
     return NextResponse.json(
       { error: "Error al actualizar clipart" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -53,20 +46,15 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("clipart")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting clipart:", error);
+  try {
+    await clipartRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting clipart:", e);
     return NextResponse.json(
       { error: "Error al eliminar clipart" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }

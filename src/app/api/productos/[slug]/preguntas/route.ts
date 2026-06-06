@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { preguntasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,36 +8,22 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabaseAdmin();
 
-  // Find product by slug
-  const { data: producto, error: prodError } = await supabase
-    .from("productos")
-    .select("id")
-    .eq("slug", slug)
-    .single();
-
-  if (prodError || !producto) {
+  const producto = await preguntasRepo.findProductoIdBySlug(slug);
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
     );
   }
 
-  // List public preguntas for this product
-  const { data: preguntas, error } = await supabase
-    .from("preguntas_producto")
-    .select("*")
-    .eq("producto_id", producto.id)
-    .eq("publica", true)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching preguntas:", error);
+  try {
+    const preguntas = await preguntasRepo.listPublicasByProducto(producto.id);
+    return NextResponse.json(preguntas);
+  } catch (e) {
+    console.error("Error fetching preguntas:", e);
     return NextResponse.json({ error: "Error al obtener preguntas" }, { status: 500 });
   }
-
-  return NextResponse.json(preguntas || []);
 }
 
 export async function POST(
@@ -45,16 +31,9 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabaseAdmin();
 
-  // Find product by slug
-  const { data: producto, error: prodError } = await supabase
-    .from("productos")
-    .select("id")
-    .eq("slug", slug)
-    .single();
-
-  if (prodError || !producto) {
+  const producto = await preguntasRepo.findProductoIdBySlug(slug);
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
@@ -82,23 +61,18 @@ export async function POST(
     );
   }
 
-  const { data, error } = await supabase
-    .from("preguntas_producto")
-    .insert({
+  try {
+    const data = await preguntasRepo.create({
       producto_id: producto.id,
       autor_nombre,
       autor_email,
       pregunta,
       cliente_id: cliente_id || null,
       publica: false,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating pregunta:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating pregunta:", e);
     return NextResponse.json({ error: "Error al crear pregunta" }, { status: 500 });
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

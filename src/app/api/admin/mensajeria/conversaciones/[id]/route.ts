@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajeriaRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -14,16 +14,11 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
   // Get conversation
-  const { data: conversacion, error: convError } = await supabase
-    .from("conversaciones")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const conversacion = await mensajeriaRepo.findConversacion(id);
 
-  if (convError || !conversacion) {
+  if (!conversacion) {
     return NextResponse.json(
       { error: "Conversacion no encontrada" },
       { status: 404 }
@@ -31,14 +26,11 @@ export async function GET(
   }
 
   // Get all messages ordered chronologically
-  const { data: mensajes, error: msgError } = await supabase
-    .from("mensajes")
-    .select("*")
-    .eq("conversacion_id", id)
-    .order("created_at", { ascending: true });
-
-  if (msgError) {
-    console.error("Error fetching mensajes:", msgError);
+  let mensajes;
+  try {
+    mensajes = await mensajeriaRepo.listMensajes(id);
+  } catch (e) {
+    console.error("Error fetching mensajes:", e);
     return NextResponse.json(
       { error: "Error al obtener mensajes" },
       { status: 500 }
@@ -46,14 +38,14 @@ export async function GET(
   }
 
   // Reset unread count
-  if (conversacion.no_leidos > 0) {
-    const { error: updateError } = await supabase
-      .from("conversaciones")
-      .update({ no_leidos: 0, updated_at: new Date().toISOString() })
-      .eq("id", id);
-
-    if (updateError) {
-      console.error("Error resetting no_leidos:", updateError);
+  if ((conversacion.no_leidos as number) > 0) {
+    try {
+      await mensajeriaRepo.updateConversacion(id, {
+        no_leidos: 0,
+        updated_at: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.error("Error resetting no_leidos:", e);
     }
   }
 
@@ -74,7 +66,6 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
@@ -84,20 +75,14 @@ export async function PATCH(
   if (body.etiquetas !== undefined) updateData.etiquetas = body.etiquetas;
   if (body.asignado_a !== undefined) updateData.asignado_a = body.asignado_a;
 
-  const { data, error } = await supabase
-    .from("conversaciones")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating conversacion:", error);
+  try {
+    const data = await mensajeriaRepo.updateConversacionReturning(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating conversacion:", e);
     return NextResponse.json(
       { error: "Error al actualizar conversacion" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }

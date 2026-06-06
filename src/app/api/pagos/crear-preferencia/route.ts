@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo, pedidosRepo } from "@/server/repositories";
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,31 +9,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "pedido_id requerido" }, { status: 400 });
     }
 
-    const supabase = getSupabaseAdmin();
-
-    // Get MercadoPago credentials from config or env
-    let accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN || "";
-    try {
-      const { data: config } = await supabase
-        .from("configuracion")
-        .select("*")
-        .eq("clave", "mercadopago_access_token")
-        .single();
-      if (config?.valor) accessToken = config.valor;
-    } catch {}
+    // Get MercadoPago credentials from config or env (config overrides env)
+    const accessToken =
+      (await configuracionRepo.get("mercadopago_access_token")) ||
+      process.env.MERCADOPAGO_ACCESS_TOKEN ||
+      "";
 
     if (!accessToken) {
       return NextResponse.json({ error: "MercadoPago no configurado" }, { status: 400 });
     }
 
     // Fetch order
-    const { data: pedido, error } = await supabase
-      .from("pedidos")
-      .select("*")
-      .eq("id", pedido_id)
-      .single();
+    const pedido = await pedidosRepo.findById(pedido_id);
 
-    if (error || !pedido) {
+    if (!pedido) {
       return NextResponse.json({ error: "Pedido no encontrado" }, { status: 404 });
     }
 

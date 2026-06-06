@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { productosRepo } from "@/server/repositories";
 
 export async function GET(
   _request: NextRequest,
@@ -12,15 +12,9 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
+  const data = await productosRepo.findByIdWithCategoria(id);
 
-  const { data, error } = await supabase
-    .from("productos")
-    .select("*, categoria:categorias(*)")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
   }
 
@@ -38,7 +32,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
@@ -58,19 +51,13 @@ export async function PUT(
     }
   }
 
-  const { data, error } = await supabase
-    .from("productos")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating producto:", error);
+  try {
+    const data = await productosRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating producto:", e);
     return NextResponse.json({ error: "Error al actualizar producto" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -83,17 +70,12 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("productos")
-    .update({ activo: false, updated_at: new Date().toISOString() })
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting producto:", error);
+  try {
+    await productosRepo.softDelete(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting producto:", e);
     return NextResponse.json({ error: "Error al eliminar producto" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

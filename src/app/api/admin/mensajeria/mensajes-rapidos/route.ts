@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajesRapidosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,23 +10,16 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("mensajes_rapidos")
-    .select("*")
-    .order("categoria", { ascending: true })
-    .order("titulo", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching mensajes rapidos:", error);
+  try {
+    const data = await mensajesRapidosRepo.listAll();
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching mensajes rapidos:", e);
     return NextResponse.json(
       { error: "Error al obtener mensajes rapidos" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -36,27 +29,21 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("mensajes_rapidos")
-    .insert({
+  try {
+    const data = await mensajesRapidosRepo.create({
       titulo: body.titulo,
       contenido: body.contenido,
       categoria: body.categoria || null,
       atajo: body.atajo || null,
       canales: body.canales || [],
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating mensaje rapido:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating mensaje rapido:", e);
     return NextResponse.json(
       { error: "Error al crear mensaje rapido" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

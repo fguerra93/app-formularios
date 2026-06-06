@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo } from "@/server/repositories";
 import { sendWhatsAppMessage } from "@/lib/meta";
 import type { IncomingMessage } from "./types";
 
@@ -113,15 +113,10 @@ async function sendEmailNotification(
   html: string
 ): Promise<void> {
   try {
-    const supabase = getSupabaseAdmin();
-    let apiKey = process.env.RESEND_API_KEY || "";
-
-    const { data: config } = await supabase
-      .from("configuracion")
-      .select("valor")
-      .eq("clave", "resend_api_key")
-      .single();
-    if (config?.valor) apiKey = config.valor;
+    const apiKey =
+      (await configuracionRepo.get("resend_api_key")) ||
+      process.env.RESEND_API_KEY ||
+      "";
 
     if (!apiKey) return;
 
@@ -156,22 +151,13 @@ async function sendEmailNotification(
 
 async function sendWhatsAppNotification(message: string): Promise<void> {
   try {
-    const supabase = getSupabaseAdmin();
+    const config = await configuracionRepo.getMany([
+      "meta_page_access_token",
+      "meta_whatsapp_phone_number_id",
+    ]);
 
-    const { data: tokenConfig } = await supabase
-      .from("configuracion")
-      .select("valor")
-      .eq("clave", "meta_page_access_token")
-      .single();
-
-    const { data: phoneConfig } = await supabase
-      .from("configuracion")
-      .select("valor")
-      .eq("clave", "meta_whatsapp_phone_number_id")
-      .single();
-
-    const token = tokenConfig?.valor;
-    const phoneId = phoneConfig?.valor;
+    const token = config.meta_page_access_token;
+    const phoneId = config.meta_whatsapp_phone_number_id;
 
     if (!token || !phoneId) {
       console.log("[Bot WA Notify] No Meta config, skipping:", message);

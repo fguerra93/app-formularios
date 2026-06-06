@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { areasDisenoRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -14,23 +14,17 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("producto_areas_diseno")
-    .select("*")
-    .eq("producto_id", id)
-    .order("orden", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching areas de diseno:", error);
+  try {
+    const data = await areasDisenoRepo.listByProducto(id);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching areas de diseno:", e);
     return NextResponse.json(
       { error: "Error al obtener areas de diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(
@@ -44,11 +38,9 @@ export async function POST(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("producto_areas_diseno")
-    .insert({
+  try {
+    const data = await areasDisenoRepo.create({
       producto_id: id,
       nombre: body.nombre,
       mockup_url: body.mockup_url || null,
@@ -59,17 +51,13 @@ export async function POST(
       dpi_recomendado: body.dpi_recomendado || 300,
       max_colores: body.max_colores || null,
       orden: body.orden || 0,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating area de diseno:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating area de diseno:", e);
     return NextResponse.json(
       { error: "Error al crear area de diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

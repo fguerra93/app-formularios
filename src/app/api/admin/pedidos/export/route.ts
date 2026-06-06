@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { pedidosRepo } from "@/server/repositories";
 
 export async function GET(request: NextRequest) {
   const authenticated = await verifyAuth();
@@ -8,31 +8,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
   const { searchParams } = request.nextUrl;
 
-  const estado = searchParams.get("estado");
-  const desde = searchParams.get("desde");
-  const hasta = searchParams.get("hasta");
-
-  let query = supabase
-    .from("pedidos")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (estado && estado !== "todos") {
-    query = query.eq("estado", estado);
-  }
-  if (desde) {
-    query = query.gte("created_at", desde);
-  }
-  if (hasta) {
-    query = query.lte("created_at", hasta);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
+  let data;
+  try {
+    data = await pedidosRepo.listForExport({
+      estado: searchParams.get("estado"),
+      desde: searchParams.get("desde"),
+      hasta: searchParams.get("hasta"),
+    });
+  } catch {
     return NextResponse.json({ error: "Error al exportar" }, { status: 500 });
   }
 
@@ -51,7 +36,7 @@ export async function GET(request: NextRequest) {
     "Pago",
   ];
 
-  const rows = (data || []).map((p) => [
+  const rows = data.map((p) => [
     p.numero_pedido,
     new Date(p.created_at).toLocaleDateString("es-CL"),
     p.cliente_nombre,

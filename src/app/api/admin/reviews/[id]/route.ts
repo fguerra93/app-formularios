@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { reviewsRepo } from "@/server/repositories";
 
 export async function PATCH(
   request: NextRequest,
@@ -13,24 +13,17 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.aprobada !== undefined) updateData.aprobada = body.aprobada;
 
-  const { data, error } = await supabase
-    .from("reviews")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating review:", error);
+  try {
+    const data = await reviewsRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating review:", e);
     return NextResponse.json({ error: "Error al actualizar review" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -43,17 +36,12 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("reviews")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting review:", error);
+  try {
+    await reviewsRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting review:", e);
     return NextResponse.json({ error: "Error al eliminar review" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

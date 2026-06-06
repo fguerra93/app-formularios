@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { productosRepo, areasDisenoRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,36 +8,25 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabase();
 
   // Buscar producto por slug para obtener ID
-  const { data: producto, error: prodError } = await supabase
-    .from("productos")
-    .select("id")
-    .eq("slug", slug)
-    .eq("activo", true)
-    .single();
+  const producto = await productosRepo.findActivoBySlug(slug);
 
-  if (prodError || !producto) {
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
     );
   }
 
-  const { data, error } = await supabase
-    .from("producto_areas_diseno")
-    .select("*")
-    .eq("producto_id", producto.id)
-    .order("orden", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching areas de diseno:", error);
+  try {
+    const data = await areasDisenoRepo.listByProducto(producto.id);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching areas de diseno:", e);
     return NextResponse.json(
       { error: "Error al obtener areas de diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }

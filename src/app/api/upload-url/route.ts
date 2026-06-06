@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { storageRepo } from "@/server/repositories";
 
 export async function POST(request: NextRequest) {
   try {
-    const { fileName, folderName, contentType } = await request.json();
+    const { fileName, folderName } = await request.json();
 
     if (!fileName || !folderName) {
       return NextResponse.json(
@@ -12,31 +12,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
-    const filePath = `${folderName}/${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from("formularios-archivos")
-      .createSignedUploadUrl(filePath);
-
-    if (error) {
-      console.error("Error creating signed URL:", error);
-      return NextResponse.json(
-        { error: "Error generando URL de subida" },
-        { status: 500 }
-      );
-    }
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage
-      .from("formularios-archivos")
-      .getPublicUrl(filePath);
+    const result = await storageRepo.createSignedUploadUrl(folderName, fileName);
 
     return NextResponse.json({
-      signedUrl: data.signedUrl,
-      token: data.token,
-      publicUrl,
+      signedUrl: result.signedUrl,
+      token: result.token,
+      publicUrl: result.publicUrl,
     });
   } catch (err) {
     console.error("Upload URL error:", err);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajeriaRepo } from "@/server/repositories";
 import { processBotMessage } from "@/lib/bot/engine";
 import type { IncomingMessage } from "@/lib/bot/types";
 
@@ -33,56 +33,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
     const now = new Date().toISOString();
 
     // Find or create conversation in the unified table
-    const { data: existingConv } = await supabase
-      .from("conversaciones")
-      .select("*")
-      .eq("canal", canal)
-      .eq("contacto_id", from)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+    const existingConv = await mensajeriaRepo.findByContacto(canal, from);
 
     let conversacionId: string;
 
     if (existingConv) {
-      conversacionId = existingConv.id;
-      await supabase
-        .from("conversaciones")
-        .update({
-          ultimo_mensaje: message,
-          ultimo_mensaje_at: now,
-          no_leidos: (existingConv.no_leidos || 0) + 1,
-          estado: "abierta",
-          updated_at: now,
-        })
-        .eq("id", conversacionId);
+      conversacionId = existingConv.id as string;
+      await mensajeriaRepo.updateConversacion(conversacionId, {
+        ultimo_mensaje: message,
+        ultimo_mensaje_at: now,
+        no_leidos: ((existingConv.no_leidos as number) || 0) + 1,
+        estado: "abierta",
+        updated_at: now,
+      });
     } else {
-      const { data: newConv, error: convError } = await supabase
-        .from("conversaciones")
-        .insert({
-          canal,
-          contacto_id: from,
-          contacto_nombre: name,
-          contacto_telefono: canal === "whatsapp" ? from : "",
-          contacto_username: "",
-          estado: "abierta",
-          etiquetas: [],
-          ultimo_mensaje: message,
-          ultimo_mensaje_at: now,
-          no_leidos: 1,
-          metadata: {},
-          created_at: now,
-          updated_at: now,
-        })
-        .select("id")
-        .single();
+      const newConv = await mensajeriaRepo.createConversacion({
+        canal,
+        contacto_id: from,
+        contacto_nombre: name,
+        contacto_telefono: canal === "whatsapp" ? from : "",
+        contacto_username: "",
+        estado: "abierta",
+        etiquetas: [],
+        ultimo_mensaje: message,
+        ultimo_mensaje_at: now,
+        no_leidos: 1,
+        metadata: {},
+        created_at: now,
+        updated_at: now,
+      });
 
-      if (convError || !newConv) {
-        console.error("Error creating conversacion:", convError);
+      if (!newConv) {
         return NextResponse.json(
           { error: "Error al crear conversacion" },
           { status: 500 }
@@ -92,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save incoming message
-    await supabase.from("mensajes").insert({
+    await mensajeriaRepo.insertMensaje({
       conversacion_id: conversacionId,
       direccion: "entrante",
       tipo: type,
@@ -125,26 +109,16 @@ export async function POST(request: NextRequest) {
     await processBotMessage(conversacionId, msg);
 
     // Fetch bot responses from DB
-    const { data: responses } = await supabase
-      .from("mensajes")
-      .select("contenido, tipo, created_at")
-      .eq("conversacion_id", conversacionId)
-      .eq("direccion", "saliente")
-      .order("created_at", { ascending: false })
-      .limit(3);
+    const responses = await mensajeriaRepo.listMensajesSalientes(conversacionId, 3);
 
     // Fetch conversation state
-    const { data: convState } = await supabase
-      .from("conversaciones")
-      .select("bot_context, cliente_id, estado")
-      .eq("id", conversacionId)
-      .single();
+    const convState = await mensajeriaRepo.getConversacionContext(conversacionId);
 
     return NextResponse.json({
       success: true,
       conversacion_id: conversacionId,
       mensaje_entrante: message,
-      respuestas_bot: (responses || []).reverse(),
+      respuestas_bot: responses.reverse(),
       bot_context: convState?.bot_context || {},
       cliente_id: convState?.cliente_id || null,
       estado_conversacion: convState?.estado || "abierta",

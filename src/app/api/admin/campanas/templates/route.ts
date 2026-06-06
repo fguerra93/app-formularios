@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { templatesRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,31 +10,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
   const { searchParams } = request.nextUrl;
   const categoria = searchParams.get("categoria");
 
-  let query = supabase
-    .from("email_templates")
-    .select("*")
-    .eq("activo", true)
-    .order("updated_at", { ascending: false });
-
-  if (categoria) {
-    query = query.eq("categoria", categoria);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("Error fetching templates:", error);
+  try {
+    const data = await templatesRepo.listActivos(categoria);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching templates:", e);
     return NextResponse.json(
       { error: "Error al obtener templates" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -54,11 +42,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("email_templates")
-    .insert({
+  try {
+    const data = await templatesRepo.create({
       nombre,
       descripcion: descripcion || null,
       categoria: categoria || null,
@@ -66,17 +51,13 @@ export async function POST(request: NextRequest) {
       contenido_html: contenido_html || null,
       es_preset: false,
       activo: true,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating template:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating template:", e);
     return NextResponse.json(
       { error: "Error al crear template" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { newsletterRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -17,15 +17,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Email es requerido" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { error } = await supabase
-    .from("suscriptores")
-    .update({ activo: false })
-    .eq("email", email.toLowerCase());
-
-  if (error) {
-    console.error("Error unsubscribing:", error);
+  try {
+    await newsletterRepo.desuscribir(email.toLowerCase());
+  } catch (e) {
+    console.error("Error unsubscribing:", e);
     return NextResponse.json({ error: "Error al desuscribirse" }, { status: 500 });
   }
 

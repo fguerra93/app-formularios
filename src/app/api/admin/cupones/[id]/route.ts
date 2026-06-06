@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { cuponesRepo } from "@/server/repositories";
 
 export async function PUT(
   request: NextRequest,
@@ -13,7 +13,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.codigo !== undefined) updateData.codigo = body.codigo;
@@ -29,19 +28,13 @@ export async function PUT(
   if (body.aplica_a !== undefined) updateData.aplica_a = body.aplica_a;
   if (body.aplica_ids !== undefined) updateData.aplica_ids = body.aplica_ids;
 
-  const { data, error } = await supabase
-    .from("cupones")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating cupon:", error);
+  try {
+    const data = await cuponesRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating cupon:", e);
     return NextResponse.json({ error: "Error al actualizar cupon" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -54,17 +47,12 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("cupones")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting cupon:", error);
+  try {
+    await cuponesRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting cupon:", e);
     return NextResponse.json({ error: "Error al eliminar cupon" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { fuentesRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
 
@@ -26,22 +25,16 @@ export async function PUT(
   if (body.popular !== undefined) updateData.popular = body.popular;
   if (body.activo !== undefined) updateData.activo = body.activo;
 
-  const { data, error } = await supabase
-    .from("fuentes_diseno")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating fuente:", error);
+  try {
+    const data = await fuentesRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating fuente:", e);
     return NextResponse.json(
       { error: "Error al actualizar fuente" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -54,20 +47,15 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("fuentes_diseno")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting fuente:", error);
+  try {
+    await fuentesRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting fuente:", e);
     return NextResponse.json(
       { error: "Error al eliminar fuente" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { campanasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -13,13 +13,7 @@ export async function GET(
 
   // Update tracking
   try {
-    const supabase = getSupabaseAdmin();
-
-    const { data: envio } = await supabase
-      .from("campana_envios")
-      .select("id, campana_id, estado")
-      .eq("id", envioId)
-      .single();
+    const envio = await campanasRepo.getEnvio(envioId);
 
     if (envio && envio.estado !== "click") {
       const updateData: Record<string, unknown> = {
@@ -32,17 +26,10 @@ export async function GET(
         updateData.abierto_at = new Date().toISOString();
       }
 
-      await supabase
-        .from("campana_envios")
-        .update(updateData)
-        .eq("id", envioId);
+      await campanasRepo.updateEnvio(envioId, updateData);
 
       // Increment the campaign's click counter
-      const { data: campana } = await supabase
-        .from("campanas")
-        .select("total_clicks, total_abiertos")
-        .eq("id", envio.campana_id)
-        .single();
+      const campana = await campanasRepo.getContadores(envio.campana_id);
 
       if (campana) {
         const updates: Record<string, number> = {
@@ -54,10 +41,7 @@ export async function GET(
           updates.total_abiertos = (campana.total_abiertos || 0) + 1;
         }
 
-        await supabase
-          .from("campanas")
-          .update(updates)
-          .eq("id", envio.campana_id);
+        await campanasRepo.updateCampana(envio.campana_id, updates);
       }
     }
   } catch (e) {

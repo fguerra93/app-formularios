@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clipartRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,23 +10,16 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("clipart")
-    .select("*")
-    .order("categoria", { ascending: true })
-    .order("nombre", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching clipart:", error);
+  try {
+    const data = await clipartRepo.listAll();
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching clipart:", e);
     return NextResponse.json(
       { error: "Error al obtener clipart" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -36,7 +29,6 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   if (!body.nombre || !body.url) {
     return NextResponse.json(
@@ -45,25 +37,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase
-    .from("clipart")
-    .insert({
+  try {
+    const data = await clipartRepo.create({
       nombre: body.nombre,
       categoria: body.categoria || null,
       url: body.url,
       tags: body.tags || [],
       activo: body.activo !== undefined ? body.activo : true,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating clipart:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating clipart:", e);
     return NextResponse.json(
       { error: "Error al crear clipart" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

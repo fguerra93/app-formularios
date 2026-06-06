@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { whatsappRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -9,8 +9,6 @@ export async function GET() {
   if (!authenticated) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
-
-  const supabase = getSupabaseAdmin();
 
   const now = new Date();
   const todayStart = new Date(
@@ -32,48 +30,28 @@ export async function GET() {
   ).toISOString();
 
   // Total conversations
-  const { count: totalConversaciones } = await supabase
-    .from("conversaciones_whatsapp")
-    .select("*", { count: "exact", head: true });
+  const totalConversaciones = await whatsappRepo.countConversaciones();
 
   // Conversations by estado
-  const { data: conversacionesPorEstado } = await supabase
-    .from("conversaciones_whatsapp")
-    .select("estado");
+  const conversacionesPorEstado = await whatsappRepo.listConversacionEstados();
 
   const estadoCount: Record<string, number> = {};
-  (conversacionesPorEstado || []).forEach((conv) => {
+  conversacionesPorEstado.forEach((conv) => {
     const est = conv.estado || "sin_estado";
     estadoCount[est] = (estadoCount[est] || 0) + 1;
   });
 
-  // Messages today
-  const { count: mensajesHoy } = await supabase
-    .from("mensajes_whatsapp")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", todayStart);
-
-  // Messages this week
-  const { count: mensajesSemana } = await supabase
-    .from("mensajes_whatsapp")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", weekStart);
-
-  // Messages this month
-  const { count: mensajesMes } = await supabase
-    .from("mensajes_whatsapp")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", monthStart);
+  // Messages today / week / month
+  const mensajesHoy = await whatsappRepo.countMensajesDesde(todayStart);
+  const mensajesSemana = await whatsappRepo.countMensajesDesde(weekStart);
+  const mensajesMes = await whatsappRepo.countMensajesDesde(monthStart);
 
   // Messages by procesado_por
-  const { data: mensajesPorProcesador } = await supabase
-    .from("mensajes_whatsapp")
-    .select("procesado_por")
-    .eq("direccion", "saliente");
+  const mensajesPorProcesador = await whatsappRepo.listMensajesSalientesProcesador();
 
   const procesadorCount: Record<string, number> = {};
   let totalSalientes = 0;
-  (mensajesPorProcesador || []).forEach((msg) => {
+  mensajesPorProcesador.forEach((msg) => {
     const proc = msg.procesado_por || "desconocido";
     procesadorCount[proc] = (procesadorCount[proc] || 0) + 1;
     totalSalientes++;
@@ -87,17 +65,13 @@ export async function GET() {
   }
 
   // Cotizaciones count
-  const { count: totalCotizaciones } = await supabase
-    .from("cotizaciones_whatsapp")
-    .select("*", { count: "exact", head: true });
+  const totalCotizaciones = await whatsappRepo.countCotizaciones();
 
   // Cotizaciones by estado
-  const { data: cotizacionesPorEstado } = await supabase
-    .from("cotizaciones_whatsapp")
-    .select("estado");
+  const cotizacionesPorEstado = await whatsappRepo.listCotizacionEstados();
 
   const cotEstadoCount: Record<string, number> = {};
-  (cotizacionesPorEstado || []).forEach((cot) => {
+  cotizacionesPorEstado.forEach((cot) => {
     const est = cot.estado || "sin_estado";
     cotEstadoCount[est] = (cotEstadoCount[est] || 0) + 1;
   });

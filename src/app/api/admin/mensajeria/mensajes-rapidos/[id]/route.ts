@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { mensajesRapidosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.titulo !== undefined) updateData.titulo = body.titulo;
@@ -24,22 +23,16 @@ export async function PUT(
   if (body.atajo !== undefined) updateData.atajo = body.atajo;
   if (body.canales !== undefined) updateData.canales = body.canales;
 
-  const { data, error } = await supabase
-    .from("mensajes_rapidos")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating mensaje rapido:", error);
+  try {
+    const data = await mensajesRapidosRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating mensaje rapido:", e);
     return NextResponse.json(
       { error: "Error al actualizar mensaje rapido" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -52,20 +45,15 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("mensajes_rapidos")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting mensaje rapido:", error);
+  try {
+    await mensajesRapidosRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting mensaje rapido:", e);
     return NextResponse.json(
       { error: "Error al eliminar mensaje rapido" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ success: true });
 }

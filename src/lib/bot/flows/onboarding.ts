@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { clientesRepo } from "@/server/repositories";
 import type { BotContext, BotResponse, IncomingMessage } from "../types";
 
 /**
@@ -115,8 +115,6 @@ async function finishOnboarding(
   data: Record<string, string>,
   msg: IncomingMessage
 ): Promise<BotResponse> {
-  const supabase = getSupabaseAdmin();
-
   const clienteData: Record<string, unknown> = {
     nombre: data.nombre,
     email: data.email,
@@ -136,38 +134,25 @@ async function finishOnboarding(
   }
 
   // Verificar si ya existe por email
-  const { data: existing } = await supabase
-    .from("clientes")
-    .select("id")
-    .eq("email", data.email)
-    .limit(1)
-    .single();
+  const existing = await clientesRepo.findIdByEmail(data.email);
 
   let clienteId: string;
 
   if (existing) {
-    await supabase
-      .from("clientes")
-      .update({
-        ...clienteData,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", existing.id);
+    await clientesRepo.updateById(existing.id, {
+      ...clienteData,
+      updated_at: new Date().toISOString(),
+    });
     clienteId = existing.id;
   } else {
-    const { data: newCliente, error } = await supabase
-      .from("clientes")
-      .insert({
-        ...clienteData,
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .select("id")
-      .single();
+    const newCliente = await clientesRepo.insertReturningId({
+      ...clienteData,
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
-    if (error) {
-      console.error("Error creating cliente:", error);
+    if (!newCliente) {
       return {
         messages: [
           `Gracias ${data.nombre}! Tus datos quedaron registrados.\n\n` +

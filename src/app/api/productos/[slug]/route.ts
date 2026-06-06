@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { productosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -8,21 +8,14 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const supabase = getSupabase();
+  const producto = await productosRepo.findActivoBySlug(slug);
 
-  const { data, error } = await supabase
-    .from("productos")
-    .select("*, categoria:categorias(*)")
-    .eq("slug", slug)
-    .eq("activo", true)
-    .single();
-
-  if (error || !data) {
+  if (!producto) {
     return NextResponse.json(
       { error: "Producto no encontrado" },
       { status: 404 }
     );
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json(producto);
 }

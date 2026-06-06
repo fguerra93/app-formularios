@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { productosRepo } from "@/server/repositories";
 
 export async function POST(request: NextRequest) {
   const authenticated = await verifyAuth();
@@ -9,17 +9,15 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const slug = body.slug || body.nombre
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const { data, error } = await supabase
-    .from("productos")
-    .insert({
+  try {
+    const data = await productosRepo.create({
       nombre: body.nombre,
       slug,
       descripcion: body.descripcion || null,
@@ -36,14 +34,10 @@ export async function POST(request: NextRequest) {
       tags: body.tags || [],
       peso_gramos: body.peso_gramos || null,
       sku: body.sku || null,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating producto:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating producto:", e);
     return NextResponse.json({ error: "Error al crear producto" }, { status: 500 });
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

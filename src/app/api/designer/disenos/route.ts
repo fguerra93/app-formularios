@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase";
+import { disenosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const supabase = getSupabase();
-
   let body: {
     producto_id?: string;
     nombre?: string;
@@ -29,9 +27,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data, error } = await supabase
-    .from("disenos_cliente")
-    .insert({
+  try {
+    const data = await disenosRepo.create({
       producto_id,
       nombre,
       diseno_json,
@@ -39,17 +36,13 @@ export async function POST(request: NextRequest) {
       variante: variante || null,
       cliente_id: cliente_id || null,
       estado: "borrador",
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating diseno:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating diseno:", e);
     return NextResponse.json(
       { error: "Error al guardar diseno" },
       { status: 500 }
     );
   }
-
-  return NextResponse.json(data, { status: 201 });
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo, newsletterRepo } from "@/server/repositories";
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
@@ -18,47 +18,27 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Asunto y contenido son requeridos" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
+  // Read config (resend_api_key, from_email, from_name) from configuracion table
+  const config = await configuracionRepo.getMany([
+    "resend_api_key",
+    "from_email",
+    "from_name",
+  ]);
 
-  // Read resend_api_key from configuracion table
-  let apiKey = process.env.RESEND_API_KEY || "";
-  try {
-    const { data: config } = await supabase
-      .from("configuracion")
-      .select("*")
-      .eq("clave", "resend_api_key")
-      .single();
-    if (config) apiKey = config.valor;
-  } catch {}
+  const apiKey = config.resend_api_key || process.env.RESEND_API_KEY || "";
+  const fromEmail = config.from_email || process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromName = config.from_name || process.env.FROM_NAME || "PrintUp Tienda";
 
   if (!apiKey) {
     return NextResponse.json({ error: "API key de Resend no configurada" }, { status: 500 });
   }
 
-  // Read from_email and from_name from config
-  let fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-  let fromName = process.env.FROM_NAME || "PrintUp Tienda";
-  try {
-    const { data: configs } = await supabase
-      .from("configuracion")
-      .select("*")
-      .in("clave", ["from_email", "from_name"]);
-    if (configs) {
-      const emailConfig = configs.find((c: { clave: string }) => c.clave === "from_email");
-      const nameConfig = configs.find((c: { clave: string }) => c.clave === "from_name");
-      if (emailConfig?.valor) fromEmail = emailConfig.valor;
-      if (nameConfig?.valor) fromName = nameConfig.valor;
-    }
-  } catch {}
-
   // Get all active subscribers
-  const { data: suscriptores, error: subError } = await supabase
-    .from("suscriptores")
-    .select("email")
-    .eq("activo", true);
-
-  if (subError) {
-    console.error("Error fetching suscriptores:", subError);
+  let suscriptores: { email: string }[];
+  try {
+    suscriptores = await newsletterRepo.listActivosEmails();
+  } catch (e) {
+    console.error("Error fetching suscriptores:", e);
     return NextResponse.json({ error: "Error al obtener suscriptores" }, { status: 500 });
   }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { portafolioRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -10,19 +10,13 @@ export async function GET() {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { data, error } = await supabase
-    .from("portafolio_trabajos")
-    .select("*")
-    .order("orden", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching portafolio:", error);
+  try {
+    const data = await portafolioRepo.listAdmin();
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error fetching portafolio:", e);
     return NextResponse.json({ error: "Error al obtener trabajos" }, { status: 500 });
   }
-
-  return NextResponse.json(data || []);
 }
 
 export async function POST(request: NextRequest) {
@@ -32,11 +26,9 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
-  const { data, error } = await supabase
-    .from("portafolio_trabajos")
-    .insert({
+  try {
+    const data = await portafolioRepo.create({
       titulo: body.titulo,
       descripcion: body.descripcion || null,
       cliente_nombre: body.cliente_nombre || null,
@@ -45,16 +37,12 @@ export async function POST(request: NextRequest) {
       destacado: body.destacado || false,
       activo: body.activo !== undefined ? body.activo : true,
       orden: body.orden || 0,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating trabajo:", error);
+    });
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    console.error("Error creating trabajo:", e);
     return NextResponse.json({ error: "Error al crear trabajo" }, { status: 500 });
   }
-
-  return NextResponse.json(data, { status: 201 });
 }
 
 export async function PUT(request: NextRequest) {
@@ -64,7 +52,6 @@ export async function PUT(request: NextRequest) {
   }
 
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   if (!body.id) {
     return NextResponse.json({ error: "ID requerido" }, { status: 400 });
@@ -80,19 +67,13 @@ export async function PUT(request: NextRequest) {
   if (body.activo !== undefined) updateData.activo = body.activo;
   if (body.orden !== undefined) updateData.orden = body.orden;
 
-  const { data, error } = await supabase
-    .from("portafolio_trabajos")
-    .update(updateData)
-    .eq("id", body.id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating trabajo:", error);
+  try {
+    const data = await portafolioRepo.update(body.id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating trabajo:", e);
     return NextResponse.json({ error: "Error al actualizar trabajo" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(request: NextRequest) {
@@ -108,17 +89,11 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "ID requerido" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
-
-  const { error } = await supabase
-    .from("portafolio_trabajos")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting trabajo:", error);
+  try {
+    await portafolioRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting trabajo:", e);
     return NextResponse.json({ error: "Error al eliminar trabajo" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

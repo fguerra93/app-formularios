@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { campanasRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -17,38 +17,22 @@ export async function GET(
 
   // Update tracking in the background - don't block the response
   try {
-    const supabase = getSupabaseAdmin();
-
     // Only update if not already tracked as opened
-    const { data: envio } = await supabase
-      .from("campana_envios")
-      .select("id, campana_id, estado")
-      .eq("id", envioId)
-      .single();
+    const envio = await campanasRepo.getEnvio(envioId);
 
     if (envio && envio.estado !== "abierto" && envio.estado !== "click") {
-      await supabase
-        .from("campana_envios")
-        .update({
-          estado: "abierto",
-          abierto_at: new Date().toISOString(),
-        })
-        .eq("id", envioId);
+      await campanasRepo.updateEnvio(envioId, {
+        estado: "abierto",
+        abierto_at: new Date().toISOString(),
+      });
 
       // Increment the campaign's total_abiertos counter
-      const { data: campana } = await supabase
-        .from("campanas")
-        .select("total_abiertos")
-        .eq("id", envio.campana_id)
-        .single();
+      const campana = await campanasRepo.getContadores(envio.campana_id);
 
       if (campana) {
-        await supabase
-          .from("campanas")
-          .update({
-            total_abiertos: (campana.total_abiertos || 0) + 1,
-          })
-          .eq("id", envio.campana_id);
+        await campanasRepo.updateCampana(envio.campana_id, {
+          total_abiertos: (campana.total_abiertos || 0) + 1,
+        });
       }
     }
   } catch (e) {

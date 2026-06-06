@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { productosRepo } from "@/server/repositories";
 
 /**
  * Genera una respuesta con Claude para preguntas que no matchean
@@ -23,14 +23,9 @@ export async function handleAIResponse(
   }
 
   try {
-    const supabase = getSupabaseAdmin();
-    const { data: productos } = await supabase
-      .from("productos")
-      .select("nombre, precio, stock")
-      .eq("activo", true)
-      .limit(15);
+    const productos = await productosRepo.listParaBot(15);
 
-    const productosCtx = (productos || [])
+    const productosCtx = productos
       .map((p) => `- ${p.nombre}: $${p.precio?.toLocaleString("es-CL")}`)
       .join("\n");
 

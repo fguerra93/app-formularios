@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { portafolioRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,6 @@ export async function PUT(
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
 
   const updateData: Record<string, unknown> = {};
   if (body.titulo !== undefined) updateData.titulo = body.titulo;
@@ -27,19 +26,13 @@ export async function PUT(
   if (body.activo !== undefined) updateData.activo = body.activo;
   if (body.orden !== undefined) updateData.orden = body.orden;
 
-  const { data, error } = await supabase
-    .from("portafolio_trabajos")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error updating trabajo:", error);
+  try {
+    const data = await portafolioRepo.update(id, updateData);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error("Error updating trabajo:", e);
     return NextResponse.json({ error: "Error al actualizar trabajo" }, { status: 500 });
   }
-
-  return NextResponse.json(data);
 }
 
 export async function DELETE(
@@ -52,17 +45,12 @@ export async function DELETE(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
-    .from("portafolio_trabajos")
-    .delete()
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error deleting trabajo:", error);
+  try {
+    await portafolioRepo.remove(id);
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    console.error("Error deleting trabajo:", e);
     return NextResponse.json({ error: "Error al eliminar trabajo" }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }

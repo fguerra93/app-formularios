@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { configuracionRepo, formulariosRepo } from "@/server/repositories";
 import { getNextcloudFileUrl } from "@/lib/nextcloud";
 import type { ArchivoInfo } from "@/lib/types";
 
@@ -39,59 +39,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Insert record into formularios table
-    const { data: formulario, error: insertError } = await supabase
-      .from("formularios")
-      .insert({
-        nombre,
-        email,
-        telefono,
-        material,
-        mensaje,
-        archivos,
-        estado: "nuevo",
-        nextcloud_path: folderName,
-        nextcloud_synced: false,
-        email_enviado: false,
-      })
-      .select()
-      .single();
+    const formulario = await formulariosRepo.create({
+      nombre,
+      email,
+      telefono,
+      material,
+      mensaje,
+      archivos,
+      estado: "nuevo",
+      nextcloud_path: folderName,
+      nextcloud_synced: false,
+      email_enviado: false,
+    });
 
-    if (insertError || !formulario) {
-      console.error("Error inserting formulario:", insertError);
+    if (!formulario) {
       return NextResponse.json(
         { error: "Error al guardar el formulario" },
         { status: 500 }
       );
     }
 
-    // Send notification email via Resend
-    let apiKey = process.env.RESEND_API_KEY || "";
-    try {
-      const { data: config } = await supabase
-        .from("configuracion")
-        .select("*")
-        .eq("clave", "resend_api_key")
-        .single();
-      if (config) apiKey = config.valor;
-    } catch {}
+    // Read config: resend_api_key + notification recipient
+    const config = await configuracionRepo.getMany([
+      "resend_api_key",
+      "notification_email",
+      "notify_to",
+    ]);
 
-    let notifyTo = process.env.NOTIFY_TO || "guerrafelipe93@gmail.com";
-    try {
-      // Try both possible config keys
-      const { data: configs } = await supabase
-        .from("configuracion")
-        .select("*")
-        .in("clave", ["notification_email", "notify_to"]);
-      if (configs && configs.length > 0) {
-        // Prefer notification_email over notify_to
-        const preferred = configs.find((c: { clave: string }) => c.clave === "notification_email")
-          || configs.find((c: { clave: string }) => c.clave === "notify_to");
-        if (preferred?.valor) notifyTo = preferred.valor;
-      }
-    } catch {}
+    const apiKey = config.resend_api_key || process.env.RESEND_API_KEY || "";
+    // Prefer notification_email over notify_to
+    const notifyTo =
+      config.notification_email ||
+      config.notify_to ||
+      process.env.NOTIFY_TO ||
+      "guerrafelipe93@gmail.com";
     const fromName = process.env.FROM_NAME || "PrintUp Formulario";
     const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -168,14 +150,11 @@ export async function POST(request: NextRequest) {
 
     // Update email_enviado status
     if (emailSent) {
-      await supabase
-        .from("formularios")
-        .update({ email_enviado: true })
-        .eq("id", formulario.id);
+      await formulariosRepo.markEmailEnviado(formulario.id as string);
     }
 
     // Log email to email_log table
-    await supabase.from("email_log").insert({
+    await formulariosRepo.logEmail({
       formulario_id: formulario.id,
       destinatario: notifyTo,
       asunto: `Nuevo formulario de ${nombre}`,

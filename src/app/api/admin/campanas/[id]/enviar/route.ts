@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import {
+  campanasRepo,
+  clientesRepo,
+  configuracionRepo,
+  newsletterRepo,
+  templatesRepo,
+} from "@/server/repositories";
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
@@ -10,71 +16,37 @@ interface Destinatario {
   nombre: string;
 }
 
-async function getResendConfig(supabase: ReturnType<typeof getSupabaseAdmin>) {
-  let apiKey = process.env.RESEND_API_KEY || "";
-  let fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-  let fromName = process.env.FROM_NAME || "PrintUp Tienda";
-
-  try {
-    const { data: configs } = await supabase
-      .from("configuracion")
-      .select("*")
-      .in("clave", ["resend_api_key", "from_email", "from_name"]);
-
-    if (configs) {
-      const keyConfig = configs.find(
-        (c: { clave: string }) => c.clave === "resend_api_key"
-      );
-      const emailConfig = configs.find(
-        (c: { clave: string }) => c.clave === "from_email"
-      );
-      const nameConfig = configs.find(
-        (c: { clave: string }) => c.clave === "from_name"
-      );
-      if (keyConfig?.valor) apiKey = keyConfig.valor;
-      if (emailConfig?.valor) fromEmail = emailConfig.valor;
-      if (nameConfig?.valor) fromName = nameConfig.valor;
-    }
-  } catch {
-    // Use env defaults
-  }
-
+async function getResendConfig() {
+  const config = await configuracionRepo.getMany([
+    "resend_api_key",
+    "from_email",
+    "from_name",
+  ]);
+  const apiKey = config.resend_api_key || process.env.RESEND_API_KEY || "";
+  const fromEmail =
+    config.from_email || process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const fromName = config.from_name || process.env.FROM_NAME || "PrintUp Tienda";
   return { apiKey, fromEmail, fromName };
 }
 
-async function resolveDestinatarios(
-  supabase: ReturnType<typeof getSupabaseAdmin>,
-  segmento: { tipo: string; emails?: string[] }
-): Promise<Destinatario[]> {
+async function resolveDestinatarios(segmento: {
+  tipo: string;
+  emails?: string[];
+}): Promise<Destinatario[]> {
   if (segmento.tipo === "todos") {
-    const { data } = await supabase
-      .from("suscriptores")
-      .select("email, nombre")
-      .eq("activo", true);
-    return (data || []).map((s: { email: string; nombre?: string }) => ({
-      email: s.email,
-      nombre: s.nombre || "",
-    }));
+    const data = await newsletterRepo.listActivosEmailNombre();
+    return data.map((s) => ({ email: s.email, nombre: s.nombre || "" }));
   }
 
   if (segmento.tipo === "clientes") {
-    const { data } = await supabase
-      .from("clientes")
-      .select("email, nombre")
-      .not("email", "is", null);
-    return (data || [])
-      .filter((c: { email?: string }) => c.email)
-      .map((c: { email: string; nombre?: string }) => ({
-        email: c.email,
-        nombre: c.nombre || "",
-      }));
+    const data = await clientesRepo.listConEmail();
+    return data
+      .filter((c) => c.email)
+      .map((c) => ({ email: c.email, nombre: c.nombre || "" }));
   }
 
   if (segmento.tipo === "custom" && segmento.emails) {
-    return segmento.emails.map((email: string) => ({
-      email,
-      nombre: "",
-    }));
+    return segmento.emails.map((email: string) => ({ email, nombre: "" }));
   }
 
   return [];
@@ -115,18 +87,12 @@ export async function POST(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
-  const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
 
   // Get campaign
-  const { data: campana, error: campError } = await supabase
-    .from("campanas")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const campana = await campanasRepo.findCampana(id);
 
-  if (campError || !campana) {
+  if (!campana) {
     return NextResponse.json(
       { error: "Campana no encontrada" },
       { status: 404 }
@@ -141,14 +107,11 @@ export async function POST(
   }
 
   // Get email HTML: from campaign or from template
-  let html = campana.contenido_html;
+  let html = campana.contenido_html as string | null;
   if (!html && campana.template_id) {
-    const { data: template } = await supabase
-      .from("email_templates")
-      .select("contenido_html")
-      .eq("id", campana.template_id)
-      .single();
-
+    const template = await templatesRepo.findContenidoHtml(
+      campana.template_id as string
+    );
     if (template) {
       html = template.contenido_html;
     }
@@ -162,7 +125,7 @@ export async function POST(
   }
 
   // Get Resend config
-  const { apiKey, fromEmail, fromName } = await getResendConfig(supabase);
+  const { apiKey, fromEmail, fromName } = await getResendConfig();
 
   if (!apiKey) {
     return NextResponse.json(
@@ -172,8 +135,10 @@ export async function POST(
   }
 
   // Resolve recipients
-  const segmento = campana.segmento || { tipo: "todos" };
-  const destinatarios = await resolveDestinatarios(supabase, segmento);
+  const segmento = (campana.segmento as { tipo: string; emails?: string[] }) || {
+    tipo: "todos",
+  };
+  const destinatarios = await resolveDestinatarios(segmento);
 
   if (destinatarios.length === 0) {
     return NextResponse.json(
@@ -183,14 +148,11 @@ export async function POST(
   }
 
   // Mark campaign as sending
-  await supabase
-    .from("campanas")
-    .update({
-      estado: "enviando",
-      total_destinatarios: destinatarios.length,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
+  await campanasRepo.updateCampana(id, {
+    estado: "enviando",
+    total_destinatarios: destinatarios.length,
+    updated_at: new Date().toISOString(),
+  });
 
   // Create envio records for each recipient
   const envioRecords = destinatarios.map((d) => ({
@@ -200,17 +162,13 @@ export async function POST(
     estado: "pendiente",
   }));
 
-  const { data: envios, error: envioError } = await supabase
-    .from("campana_envios")
-    .insert(envioRecords)
-    .select("id, email, nombre");
+  const envios = await campanasRepo.createEnvios(envioRecords);
 
-  if (envioError || !envios) {
-    console.error("Error creating envio records:", envioError);
-    await supabase
-      .from("campanas")
-      .update({ estado: "borrador", updated_at: new Date().toISOString() })
-      .eq("id", id);
+  if (!envios) {
+    await campanasRepo.updateCampana(id, {
+      estado: "borrador",
+      updated_at: new Date().toISOString(),
+    });
     return NextResponse.json(
       { error: "Error al crear registros de envio" },
       { status: 500 }
@@ -242,14 +200,11 @@ export async function POST(
         await resend.emails.send({
           from: `${fromName} <${fromEmail}>`,
           to: [envio.email],
-          subject: campana.asunto,
+          subject: campana.asunto as string,
           html: personalizedHtml,
         });
 
-        await supabase
-          .from("campana_envios")
-          .update({ estado: "enviado" })
-          .eq("id", envio.id);
+        await campanasRepo.updateEnvio(envio.id, { estado: "enviado" });
 
         totalEnviados++;
       } catch (e) {
@@ -257,10 +212,10 @@ export async function POST(
           e instanceof Error ? e.message : "Error desconocido";
         console.error(`Error sending to ${envio.email}:`, e);
 
-        await supabase
-          .from("campana_envios")
-          .update({ estado: "error", error_msg: errorMsg })
-          .eq("id", envio.id);
+        await campanasRepo.updateEnvio(envio.id, {
+          estado: "error",
+          error_msg: errorMsg,
+        });
 
         totalErrores++;
       }
@@ -270,16 +225,13 @@ export async function POST(
   }
 
   // Update campaign with final stats
-  await supabase
-    .from("campanas")
-    .update({
-      estado: "enviada",
-      enviada_at: new Date().toISOString(),
-      total_enviados: totalEnviados,
-      total_errores: totalErrores,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
+  await campanasRepo.updateCampana(id, {
+    estado: "enviada",
+    enviada_at: new Date().toISOString(),
+    total_enviados: totalEnviados,
+    total_errores: totalErrores,
+    updated_at: new Date().toISOString(),
+  });
 
   return NextResponse.json({
     success: true,
