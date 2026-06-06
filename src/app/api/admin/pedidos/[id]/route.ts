@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAuth } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getSession, verifyAuth } from "@/lib/auth";
+import {
+  pedidosRepo,
+  configuracionRepo,
+  auditRepo,
+  domainEventsRepo,
+  stockRepo,
+} from "@/server/repositories";
+import { puedeTransicionar } from "@/server/services/pedido-fsm";
+import type { Pedido } from "@/server/domain";
 import { Resend } from "resend";
 
 export async function GET(
@@ -13,15 +21,9 @@ export async function GET(
   }
 
   const { id } = await params;
-  const supabase = getSupabaseAdmin();
+  const data = await pedidosRepo.findById(id);
 
-  const { data, error } = await supabase
-    .from("pedidos")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json({ error: "Pedido no encontrado" }, { status: 404 });
   }
 
@@ -32,37 +34,76 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authenticated = await verifyAuth();
-  if (!authenticated) {
+  const session = await getSession();
+  if (!session) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
   const { id } = await params;
   const body = await request.json();
-  const supabase = getSupabaseAdmin();
+
+  // FSM (Patrón 1): validar la transición de estado contra el estado actual.
+  if (body.estado) {
+    const actual = await pedidosRepo.findById(id);
+    if (!actual) {
+      return NextResponse.json({ error: "Pedido no encontrado" }, { status: 404 });
+    }
+    if (!puedeTransicionar(String(actual.estado), body.estado)) {
+      return NextResponse.json(
+        { error: `Transición de estado no permitida: ${actual.estado} → ${body.estado}` },
+        { status: 400 }
+      );
+    }
+  }
 
   const updateData: Record<string, unknown> = { updated_at: new Date().toISOString() };
-
   if (body.estado) updateData.estado = body.estado;
   if (body.pago_estado) updateData.pago_estado = body.pago_estado;
   if (body.notas !== undefined) updateData.notas = body.notas;
 
-  const { data, error } = await supabase
-    .from("pedidos")
-    .update(updateData)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error || !data) {
-    console.error("Error updating pedido:", error);
+  let data: Pedido;
+  try {
+    data = await pedidosRepo.update(id, updateData);
+  } catch (e) {
+    console.error("Error updating pedido:", e);
     return NextResponse.json({ error: "Error al actualizar pedido" }, { status: 500 });
+  }
+
+  // Evento de dominio (Patrón 2) + liberación de reserva al cancelar.
+  if (body.estado) {
+    await domainEventsRepo.emit("pedido.estado", {
+      pedido_id: id,
+      numero_pedido: data.numero_pedido,
+      estado: body.estado,
+    });
+    if (body.estado === "cancelado") {
+      try {
+        await stockRepo.liberarReserva(id);
+      } catch (e) {
+        console.error("liberarReserva error (no fatal):", e);
+      }
+    }
+  }
+
+  // Audit log de acciones sensibles (cambio de estado / validación de pago).
+  if (body.estado || body.pago_estado) {
+    await auditRepo.log({
+      usuario: session.sub,
+      accion: body.pago_estado ? "pago.validar" : "pedido.estado",
+      entidad: "pedido",
+      entidad_id: id,
+      datos: {
+        numero_pedido: data.numero_pedido,
+        estado: body.estado,
+        pago_estado: body.pago_estado,
+      },
+    });
   }
 
   // Send email notification on status change
   if (body.estado && (body.estado === "confirmado" || body.estado === "enviado" || body.estado === "entregado")) {
     try {
-      await sendStatusEmail(supabase, data, body.estado);
+      await sendStatusEmail(data, body.estado);
     } catch (e) {
       console.error("Error sending status email:", e);
     }
@@ -71,20 +112,10 @@ export async function PATCH(
   return NextResponse.json(data);
 }
 
-async function sendStatusEmail(
-  supabase: ReturnType<typeof getSupabaseAdmin>,
-  pedido: Record<string, unknown>,
-  estado: string
-) {
+async function sendStatusEmail(pedido: Pedido, estado: string) {
   let apiKey = process.env.RESEND_API_KEY || "";
-  try {
-    const { data: config } = await supabase
-      .from("configuracion")
-      .select("*")
-      .eq("clave", "resend_api_key")
-      .single();
-    if (config) apiKey = config.valor;
-  } catch {}
+  const cfg = await configuracionRepo.get("resend_api_key");
+  if (cfg) apiKey = cfg;
 
   if (!apiKey) return;
 
@@ -112,7 +143,7 @@ async function sendStatusEmail(
 
   await resend.emails.send({
     from: `${fromName} <${fromEmail}>`,
-    to: [pedido.cliente_email as string],
+    to: [pedido.cliente_email],
     subject: texto.asunto,
     html: `
 <!DOCTYPE html>
