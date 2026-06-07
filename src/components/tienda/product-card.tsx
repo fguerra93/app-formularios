@@ -47,97 +47,79 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
   return (
     <Link
       href={`/productos/${categoriaSlug}/${producto.slug}`}
-      className="group block bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover-glow transition-all duration-200"
+      className="mc-card mc-card-hover group block overflow-hidden"
     >
-      {/* Image */}
-      <div className="relative aspect-square bg-[#F0F7FF] overflow-hidden">
+      {/* Imagen */}
+      <div className="relative aspect-square overflow-hidden" style={{ background: "var(--mc-surface)" }}>
         {mainImage?.url ? (
           <img
             src={mainImage.url}
             alt={mainImage.alt || producto.nombre}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 will-change-transform"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Package className="size-16 text-[#00B4D8]/30" />
+            <Package className="size-14" style={{ color: "var(--mc-ink-3)" }} />
           </div>
         )}
 
-        {/* Ver detalles overlay */}
-        <div className="absolute inset-0 bg-[#1B2A6B]/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <span className="text-white text-sm font-semibold tracking-wide">Ver detalles</span>
-        </div>
-
-        {/* Badges */}
         <div className="absolute top-3 left-3">
           <ProductBadges producto={producto} />
         </div>
 
-        {/* Wishlist button */}
         <button
           onClick={handleToggleWishlist}
           aria-label={wishlisted ? "Quitar de favoritos" : "Agregar a favoritos"}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-white/70 hover:bg-white transition-all duration-200"
+          className="absolute top-3 right-3 flex items-center justify-center size-9 rounded-full bg-white/90 backdrop-blur border border-[#e8eaee] hover:bg-white transition-colors"
         >
-          <Heart
-            className={`size-5 transition-all duration-200 ${
-              wishlisted
-                ? "fill-red-500 text-red-500"
-                : "text-white drop-shadow"
-            }`}
-          />
+          <Heart className={`size-[18px] transition-colors ${wishlisted ? "fill-[#e11d48] text-[#e11d48]" : "text-[#5b6472]"}`} />
         </button>
       </div>
 
       {/* Info */}
       <div className="p-4">
-        <p className="text-xs text-[#64748B] mb-1">
+        <p className="text-[11px] uppercase tracking-wider font-semibold mb-1.5" style={{ color: "var(--mc-ink-3)" }}>
           {producto.categoria?.nombre || "Producto"}
         </p>
 
-        {/* Rating */}
         {rating !== undefined && rating > 0 && (
           <div className="flex items-center gap-1 mb-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`size-3 ${
-                  i < Math.round(rating)
-                    ? "fill-[#FFD100] text-[#FFD100]"
-                    : "fill-none text-[#E2E8F0]"
-                }`}
+                className={`size-3 ${i < Math.round(rating) ? "fill-[#f5a623] text-[#f5a623]" : "fill-none text-[#d7dbe2]"}`}
               />
             ))}
             {reviewCount !== undefined && reviewCount > 0 && (
-              <span className="text-xs text-[#64748B] ml-0.5">
-                ({reviewCount})
-              </span>
+              <span className="text-xs ml-0.5" style={{ color: "var(--mc-ink-3)" }}>({reviewCount})</span>
             )}
           </div>
         )}
 
-        <h3 className="font-semibold text-[#1E293B] text-sm leading-snug line-clamp-2 min-h-[2.5rem]">
+        <h3 className="font-semibold text-[15px] leading-snug line-clamp-2 min-h-[2.5rem]" style={{ color: "var(--mc-ink)" }}>
           {producto.nombre}
         </h3>
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-lg font-bold text-[#1B2A6B]">
+
+        <div className="flex items-baseline gap-2 mt-2">
+          <span className="text-xl font-extrabold" style={{ color: "var(--mc-ink)" }}>
             {formatCLP(displayPrice)}
           </span>
           {hasOffer && (
-            <span className="text-sm text-[#64748B] line-through">
+            <span className="text-sm line-through" style={{ color: "var(--mc-ink-3)" }}>
               {formatCLP(producto.precio)}
             </span>
           )}
         </div>
+
         <div className="mt-3 flex gap-2">
           <button
             onClick={handleAddToCart}
             disabled={producto.stock === 0}
             aria-label={`Agregar ${producto.nombre} al carrito`}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 bg-[#1B2A6B] text-white hover:bg-[#152259] hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2"
+            className="mc-btn mc-btn-primary flex-1 py-2.5"
           >
             <ShoppingCart className="size-4" aria-hidden="true" />
-            {producto.stock === 0 ? "Agotado" : "Agregar al carrito"}
+            {producto.stock === 0 ? "Agotado" : "Agregar"}
           </button>
           <a
             href={`https://wa.me/56966126645?text=${encodeURIComponent(`Hola PrintUp! Me interesa: ${producto.nombre} - ${formatCLP(displayPrice)}`)}`}
@@ -145,9 +127,9 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             aria-label={`Cotizar ${producto.nombre} por WhatsApp`}
-            className="flex items-center justify-center w-11 rounded-lg bg-[#25D366] text-white hover:bg-[#1ebe5a] hover:scale-[1.05] transition-all duration-200 shrink-0"
+            className="mc-btn mc-btn-ghost w-11 px-0 shrink-0"
           >
-            <MessageCircle className="size-4" />
+            <MessageCircle className="size-4 text-[#25D366]" />
           </a>
         </div>
       </div>

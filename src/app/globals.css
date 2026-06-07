@@ -514,6 +514,80 @@
   animation: slide-in-from-bottom 0.3s ease-out;
 }
 
+/* ===================================================================
+   MINIMAL CLARO — sistema de diseño del rediseño del storefront
+   Paleta: blanco · tinta casi-negra · 1 acento cyan. Bordes 1px,
+   sombras suaves, tipografía grande, sin degradados multicolor.
+   =================================================================== */
+:root {
+  --mc-ink: #0f1115;        /* texto principal (casi negro) */
+  --mc-ink-2: #5b6472;      /* texto secundario */
+  --mc-ink-3: #8b94a3;      /* texto terciario / placeholder */
+  --mc-line: #e8eaee;       /* bordes 1px */
+  --mc-line-2: #d7dbe2;     /* borde hover */
+  --mc-surface: #fafafb;    /* fondo de secciones alternas */
+  --mc-accent: #00b4d8;     /* acento cyan (brand) */
+  --mc-accent-ink: #0e7490; /* cyan oscuro legible sobre blanco */
+  --mc-shadow-soft: 0 1px 2px rgba(15,17,21,.04), 0 2px 8px rgba(15,17,21,.05);
+  --mc-shadow-lift: 0 14px 34px -12px rgba(15,17,21,.18);
+}
+
+/* Tipografía / encabezados */
+.mc-eyebrow {
+  font-size: .75rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--mc-accent-ink);
+}
+.mc-display {
+  font-weight: 800; letter-spacing: -.03em; line-height: 1.02;
+  color: var(--mc-ink);
+}
+.mc-h2 {
+  font-size: clamp(1.65rem, 3.2vw, 2.5rem); font-weight: 800;
+  letter-spacing: -.025em; line-height: 1.05; color: var(--mc-ink);
+}
+.mc-sub { color: var(--mc-ink-2); font-size: .975rem; line-height: 1.6; }
+.mc-rule { height: 1px; background: var(--mc-line); border: 0; }
+
+/* Tarjeta minimal con lift sutil al hover (el "chiche" con gusto) */
+.mc-card {
+  background: #fff; border: 1px solid var(--mc-line); border-radius: 16px;
+  box-shadow: var(--mc-shadow-soft);
+  transition: box-shadow .28s ease, transform .28s ease, border-color .28s ease;
+}
+.mc-card-hover:hover {
+  box-shadow: var(--mc-shadow-lift); transform: translateY(-3px);
+  border-color: var(--mc-line-2);
+}
+
+/* Botones */
+.mc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-weight: 600; font-size: .9rem; border-radius: 11px; padding: .72rem 1.3rem;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+  cursor: pointer;
+}
+.mc-btn-primary { background: var(--mc-ink); color: #fff; }
+.mc-btn-primary:hover { background: #000; }
+.mc-btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+.mc-btn-ghost { background: #fff; color: var(--mc-ink); border: 1px solid var(--mc-line-2); }
+.mc-btn-ghost:hover { border-color: var(--mc-ink); }
+.mc-btn-accent { background: var(--mc-accent); color: #fff; }
+.mc-btn-accent:hover { background: #009ec0; }
+
+.mc-link {
+  color: var(--mc-accent-ink); font-weight: 600;
+  display: inline-flex; align-items: center; gap: .4rem;
+}
+.mc-link:hover { color: var(--mc-ink); }
+
+/* Chip / etiqueta tipográfica */
+.mc-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .72rem; font-weight: 600; color: var(--mc-ink-2);
+  border: 1px solid var(--mc-line); border-radius: 999px; padding: .25rem .7rem;
+  background: #fff;
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-float,

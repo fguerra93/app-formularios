@@ -11,7 +11,6 @@ import { useWishlist } from "@/lib/wishlist";
 import { useAuth } from "@/components/auth/auth-provider";
 import { signOut } from "@/lib/auth-client";
 import { ScheduleBadge } from "./schedule-badge";
-import { AccentLine } from "./decorative";
 
 const navLinks = [
   { href: "/", label: "Inicio" },
@@ -358,9 +357,6 @@ export function Navbar() {
             </nav>
           </div>
         )}
-
-        {/* Accent line at bottom */}
-        <AccentLine />
       </header>
 
       {/* Info bar */}
