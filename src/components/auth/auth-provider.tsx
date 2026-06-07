@@ -1,12 +1,15 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { getSupabaseBrowser } from "@/lib/auth-client";
-import type { User } from "@supabase/supabase-js";
 import type { Cliente } from "@/lib/types";
 
+interface UserLite {
+  id: string;
+  email: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: UserLite | null;
   cliente: Cliente | null;
   loading: boolean;
   refreshCliente: () => Promise<void>;
@@ -24,52 +27,30 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserLite | null>(null);
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchCliente = useCallback(async (userId: string) => {
-    const supabase = getSupabaseBrowser();
-    const { data } = await supabase
-      .from("clientes")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setCliente(data as Cliente | null);
+  const fetchSession = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cliente/auth/session", { credentials: "include" });
+      const data = await res.json();
+      setUser(data.user ?? null);
+      setCliente((data.cliente as Cliente | null) ?? null);
+    } catch {
+      setUser(null);
+      setCliente(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const refreshCliente = useCallback(async () => {
-    if (user) await fetchCliente(user.id);
-  }, [user, fetchCliente]);
-
   useEffect(() => {
-    const supabase = getSupabaseBrowser();
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchCliente(session.user.id);
-      }
-      setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchCliente(session.user.id);
-        } else {
-          setCliente(null);
-        }
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [fetchCliente]);
+    fetchSession();
+  }, [fetchSession]);
 
   return (
-    <AuthContext.Provider value={{ user, cliente, loading, refreshCliente }}>
+    <AuthContext.Provider value={{ user, cliente, loading, refreshCliente: fetchSession }}>
       {children}
     </AuthContext.Provider>
   );

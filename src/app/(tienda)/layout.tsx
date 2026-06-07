@@ -1,5 +1,10 @@
 import { Navbar } from "@/components/tienda/navbar";
 import { Footer } from "@/components/tienda/footer";
+
+// Render dinámico de TODO el storefront: lee datos (productos, stock, precios)
+// desde Cloud SQL en cada request. Evita el SSG en build (que leería Supabase y
+// horneaba IDs de producto distintos a los de Cloud SQL, rompiendo el checkout).
+export const dynamic = "force-dynamic";
 import { WhatsAppButton } from "@/components/tienda/whatsapp-button";
 import { RecentPurchasePopup } from "@/components/tienda/recent-purchase-popup";
 import { ScrollToTop } from "@/components/tienda/scroll-to-top";

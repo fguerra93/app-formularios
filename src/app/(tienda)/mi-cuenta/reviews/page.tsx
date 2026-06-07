@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
-import { getSupabaseBrowser } from "@/lib/auth-client";
 import { Star, Loader2, MessageSquare, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -56,29 +55,10 @@ export default function MisReviewsPage() {
     const fetchReviews = async () => {
       setLoading(true);
       try {
-        const supabase = getSupabaseBrowser();
-
-        // Try fetching by cliente_id first
-        let { data, error } = await supabase
-          .from("reviews")
-          .select("*, productos(nombre, slug, imagenes)")
-          .eq("cliente_id", user.id)
-          .order("created_at", { ascending: false });
-
-        // If no results and we have a cliente email, try by email
-        if ((!data || data.length === 0) && cliente?.email) {
-          const result = await supabase
-            .from("reviews")
-            .select("*, productos(nombre, slug, imagenes)")
-            .eq("autor_email", cliente.email)
-            .order("created_at", { ascending: false });
-
-          data = result.data;
-          error = result.error;
-        }
-
-        if (error) throw error;
-        setReviews((data as ReviewWithProduct[]) || []);
+        const res = await fetch("/api/cliente/reviews", { credentials: "include" });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Error");
+        setReviews((json.data as ReviewWithProduct[]) || []);
       } catch (err) {
         console.error("Error fetching reviews:", err);
         setReviews([]);

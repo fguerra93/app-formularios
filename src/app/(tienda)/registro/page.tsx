@@ -97,7 +97,7 @@ export default function RegistroPage() {
           body: JSON.stringify({ email: form.email.trim(), nombre: form.nombre.trim(), fuente: "registro" }),
         }).catch(() => {});
       }
-      router.push("/mi-cuenta");
+      window.location.assign("/mi-cuenta");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Error al crear la cuenta";

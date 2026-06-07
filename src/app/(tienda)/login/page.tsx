@@ -57,7 +57,8 @@ export default function LoginPage() {
     try {
       await signIn(form.email.trim(), form.password);
       toast.success("Sesion iniciada");
-      router.push("/mi-cuenta");
+      // Recarga completa para que AuthProvider relea la sesión (cookie).
+      window.location.assign("/mi-cuenta");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Email o contrasena incorrectos";

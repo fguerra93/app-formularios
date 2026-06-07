@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
-import { getSupabaseBrowser } from "@/lib/auth-client";
 import { useCart } from "@/lib/cart";
 import { formatCLP } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -46,15 +45,10 @@ export default function MisPedidosPage() {
     const fetchPedidos = async () => {
       setLoading(true);
       try {
-        const supabase = getSupabaseBrowser();
-        const { data, error } = await supabase
-          .from("pedidos")
-          .select("*")
-          .eq("cliente_id", user.id)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
-        setPedidos((data as Pedido[]) || []);
+        const res = await fetch("/api/cliente/pedidos", { credentials: "include" });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Error");
+        setPedidos((json.data as Pedido[]) || []);
       } catch (err) {
         console.error("Error fetching pedidos:", err);
         setPedidos([]);

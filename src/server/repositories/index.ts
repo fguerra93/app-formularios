@@ -14,6 +14,7 @@ export { categoriasRepo } from "./categorias";
 export { cuponesRepo } from "./cupones";
 export { notificacionesStockRepo } from "./notificaciones-stock";
 export { clientesRepo } from "./clientes";
+export { favoritosRepo } from "./favoritos";
 export { statsRepo } from "./stats";
 export { reviewsRepo } from "./reviews";
 export { preguntasRepo } from "./preguntas";

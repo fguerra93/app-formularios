@@ -6,18 +6,12 @@
 -- ============================================================
 
 -- ── Zonas de envío (O'Higgins) ──────────────────────────────
-INSERT INTO zonas_envio (nombre, comunas, precio, envio_gratis_desde, activa, orden)
+INSERT INTO zonas_envio (nombre, comunas, precio, envio_gratis_desde, activa)
 SELECT * FROM (VALUES
-  ('Doñihue y alrededores', ARRAY['Doñihue','Coltauco','Las Cabras'], 2500, 50000, true, 1),
-  ('Rancagua y Machalí',    ARRAY['Rancagua','Machalí','Graneros'],   3500, 50000, true, 2),
-  ('Resto O''Higgins',      ARRAY['San Fernando','Santa Cruz','Rengo','San Vicente'], 4500, 60000, true, 3)
-) AS v(nombre, comunas, precio, envio_gratis_desde, activa, orden)
+  ('Doñihue y alrededores', ARRAY['Doñihue','Coltauco','Las Cabras'], 2500, 50000, true),
+  ('Rancagua y Machalí',    ARRAY['Rancagua','Machalí','Graneros'],   3500, 50000, true),
+  ('Resto O''Higgins',      ARRAY['San Fernando','Santa Cruz','Rengo','San Vicente'], 4500, 60000, true)
+) AS v(nombre, comunas, precio, envio_gratis_desde, activa)
 WHERE NOT EXISTS (SELECT 1 FROM zonas_envio WHERE nombre = v.nombre);
 
--- ── Cupones de demo ─────────────────────────────────────────
-INSERT INTO cupones (codigo, tipo, valor, activo, usos_maximos, descripcion)
-SELECT * FROM (VALUES
-  ('BIENVENIDO10', 'porcentaje', 10, true, 100, '10% de descuento de bienvenida'),
-  ('ENVIOGRATIS',  'envio_gratis', 0, true, 50, 'Envío gratis en tu compra')
-) AS v(codigo, tipo, valor, activo, usos_maximos, descripcion)
-WHERE NOT EXISTS (SELECT 1 FROM cupones WHERE codigo = v.codigo);
+-- Los cupones de demo (BIENVENIDO10, ENVIOGRATIS) ya los crea schema-fase4.sql.

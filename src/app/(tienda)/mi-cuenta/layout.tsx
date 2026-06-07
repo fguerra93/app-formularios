@@ -52,7 +52,7 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/");
+    window.location.assign("/");
   };
 
   const isActive = (item: typeof navItems[number]) => {

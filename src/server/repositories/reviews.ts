@@ -58,6 +58,29 @@ export const reviewsRepo = {
     return (data || []) as Record<string, unknown>[];
   },
 
+  /** Reseñas de un cliente (por cliente_id o, en su defecto, por email). */
+  async listByClienteOrEmail(
+    clienteId: string,
+    email: string | null
+  ): Promise<Record<string, unknown>[]> {
+    const sel = "*, productos(nombre, slug, imagenes)";
+    const { data } = await getDb()
+      .from("reviews")
+      .select(sel)
+      .eq("cliente_id", clienteId)
+      .order("created_at", { ascending: false });
+    if (data && data.length > 0) return data as Record<string, unknown>[];
+    if (email) {
+      const { data: porEmail } = await getDb()
+        .from("reviews")
+        .select(sel)
+        .eq("autor_email", email)
+        .order("created_at", { ascending: false });
+      return (porEmail || []) as Record<string, unknown>[];
+    }
+    return [];
+  },
+
   /** Crea una reseña pública (queda no aprobada hasta moderación). */
   async createPublica(
     values: Record<string, unknown>

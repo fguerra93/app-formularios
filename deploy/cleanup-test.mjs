@@ -1,0 +1,14 @@
+import pg from "pg";
+const c = new pg.Client({ host: process.env.DB_HOST, port: 5432, database: "printup", user: "postgres", password: process.env.DB_PASS, ssl: { rejectUnauthorized: false } });
+await c.connect();
+const names = ["E2E Test", "Smoke Test"];
+await c.query("DELETE FROM movimientos_stock WHERE pedido_id IN (SELECT id FROM pedidos WHERE cliente_nombre = ANY($1))", [names]);
+await c.query("DELETE FROM aprobaciones WHERE payload->>'pedido_id' IN (SELECT id::text FROM pedidos WHERE cliente_nombre = ANY($1))", [names]);
+await c.query("DELETE FROM pedidos WHERE cliente_nombre = ANY($1)", [names]);
+await c.query("DELETE FROM clientes WHERE email LIKE 'e2e-cliente-%@test.cl'");
+await c.query("DELETE FROM domain_events");
+await c.query("DELETE FROM notificaciones");
+const p = (await c.query("SELECT count(*)::int n FROM pedidos")).rows[0].n;
+const prod = (await c.query("SELECT count(*)::int n FROM productos")).rows[0].n;
+console.log(`pedidos tras limpieza: ${p} | productos: ${prod}`);
+await c.end();

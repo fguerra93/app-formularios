@@ -1,69 +1,69 @@
-import { getDb } from "@/server/db";
+import { Storage } from "@google-cloud/storage";
 
 /**
- * Acceso a Storage. Encapsula el SDK de Supabase Storage tras esta capa.
- * En Fase 8B se reemplaza por Cloudflare R2 (S3) sin tocar las rutas.
+ * Acceso a Storage en Google Cloud Storage (Variante B, all-GCP).
+ * Bucket público de lectura `printup-archivos-sandbox` (uniform access +
+ * allUsers objectViewer). En Cloud Run usa ADC del service account; las URLs
+ * firmadas de subida (v4) se firman vía IAM SignBlob (rol
+ * serviceAccountTokenCreator). El cliente sube con un PUT directo a la URL.
  */
+const BUCKET = process.env.GCS_BUCKET || "printup-archivos-sandbox";
+
+let _storage: Storage | null = null;
+function bucket() {
+  if (!_storage) _storage = new Storage();
+  return _storage.bucket(BUCKET);
+}
+function publicUrlFor(filePath: string): string {
+  return `https://storage.googleapis.com/${BUCKET}/${filePath
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/")}`;
+}
+
 export const storageRepo = {
-  /** URL firmada de subida + URL pública para un archivo de formulario. */
+  /** URL firmada de subida (PUT directo) + URL pública para un archivo. */
   async createSignedUploadUrl(
     folderName: string,
     fileName: string
   ): Promise<{ signedUrl: string; token: string; publicUrl: string }> {
-    const db = getDb();
     const filePath = `${folderName}/${fileName}`;
-
-    const { data, error } = await db.storage
-      .from("formularios-archivos")
-      .createSignedUploadUrl(filePath);
-    if (error || !data) {
-      throw new Error(error?.message || "Error generando URL de subida");
-    }
-
-    const {
-      data: { publicUrl },
-    } = db.storage.from("formularios-archivos").getPublicUrl(filePath);
-
-    return { signedUrl: data.signedUrl, token: data.token, publicUrl };
+    const [signedUrl] = await bucket()
+      .file(filePath)
+      .getSignedUrl({
+        version: "v4",
+        action: "write",
+        expires: Date.now() + 15 * 60 * 1000,
+      });
+    // token vacío: el cliente hace PUT directo (no usa uploadToSignedUrl).
+    return { signedUrl, token: "", publicUrl: publicUrlFor(filePath) };
   },
 
   /** Sube una imagen de producto y devuelve su URL pública y path. */
   async uploadProductImage(
     file: File
   ): Promise<{ url: string; path: string }> {
-    const db = getDb();
     const ext = file.name.split(".").pop() || "jpg";
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const filePath = `productos/${fileName}`;
-
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-
-    const { error } = await db.storage
-      .from("productos-imagenes")
-      .upload(filePath, buffer, { contentType: file.type, upsert: false });
-    if (error) throw new Error(error.message);
-
-    const { data: urlData } = db.storage
-      .from("productos-imagenes")
-      .getPublicUrl(filePath);
-
-    return { url: urlData.publicUrl, path: filePath };
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await bucket().file(filePath).save(buffer, {
+      contentType: file.type || "application/octet-stream",
+      resumable: false,
+    });
+    return { url: publicUrlFor(filePath), path: filePath };
   },
 
-  /** Sube un archivo recibido por chat al bucket `archivos`; devuelve su URL pública. */
+  /** Sube un archivo recibido por chat; devuelve su URL pública. */
   async uploadChatFile(
     storagePath: string,
     buffer: Uint8Array | Buffer,
     contentType: string
   ): Promise<{ publicUrl: string }> {
-    const db = getDb();
-    const { error } = await db.storage
-      .from("archivos")
-      .upload(storagePath, buffer, { contentType });
-    if (error) throw new Error(error.message);
-
-    const { data: urlData } = db.storage.from("archivos").getPublicUrl(storagePath);
-    return { publicUrl: urlData.publicUrl };
+    await bucket().file(storagePath).save(Buffer.from(buffer), {
+      contentType,
+      resumable: false,
+    });
+    return { publicUrl: publicUrlFor(storagePath) };
   },
 };

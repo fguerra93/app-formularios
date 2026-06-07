@@ -45,6 +45,40 @@ export const clientesRepo = {
     return (data as Record<string, unknown> | null) ?? null;
   },
 
+  // --- Auth propia (JWT) sobre Cloud SQL ---
+  /** Cliente completo por email (incluye password_hash) para login, o null. */
+  async findByEmailFull(email: string): Promise<Record<string, unknown> | null> {
+    const { data } = await getDb()
+      .from("clientes")
+      .select("*")
+      .eq("email", email.toLowerCase())
+      .limit(1)
+      .single();
+    return (data as Record<string, unknown> | null) ?? null;
+  },
+
+  /** Cliente completo por id (perfil de sesión), o null. */
+  async findByIdFull(id: string): Promise<Record<string, unknown> | null> {
+    const { data } = await getDb().from("clientes").select("*").eq("id", id).single();
+    return (data as Record<string, unknown> | null) ?? null;
+  },
+
+  /** Crea un cliente con hash de contraseña; devuelve la fila o null. */
+  async createConPassword(
+    values: Record<string, unknown>
+  ): Promise<Record<string, unknown> | null> {
+    const { data, error } = await getDb()
+      .from("clientes")
+      .insert(values)
+      .select()
+      .single();
+    if (error || !data) {
+      console.error("Error creando cliente:", error);
+      return null;
+    }
+    return data as Record<string, unknown>;
+  },
+
   /** id de un cliente por email, o null. */
   async findIdByEmail(email: string): Promise<{ id: string } | null> {
     const { data } = await getDb()

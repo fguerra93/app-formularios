@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
-import { getSupabaseBrowser } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,10 +54,11 @@ export default function MiPerfilPage() {
     setSaving(true);
 
     try {
-      const supabase = getSupabaseBrowser();
-      const { error } = await supabase
-        .from("clientes")
-        .update({
+      const res = await fetch("/api/cliente/perfil", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
           nombre: form.nombre.trim(),
           telefono: form.telefono.trim() || null,
           rut: form.rut.trim() || null,
@@ -70,11 +70,9 @@ export default function MiPerfilPage() {
             region: direccion.region.trim(),
             notas: direccion.notas.trim(),
           },
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.id);
-
-      if (error) throw error;
+        }),
+      });
+      if (!res.ok) throw new Error("Error al guardar");
 
       await refreshCliente();
       toast.success("Datos actualizados correctamente");

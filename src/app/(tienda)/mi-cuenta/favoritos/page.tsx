@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
-import { getSupabaseBrowser } from "@/lib/auth-client";
 import { useCart } from "@/lib/cart";
 import { formatCLP } from "@/lib/format";
 import { Button } from "@/components/ui/button";
@@ -29,14 +28,10 @@ export default function MisFavoritosPage() {
     const fetchFavoritos = async () => {
       setLoading(true);
       try {
-        const supabase = getSupabaseBrowser();
-        const { data, error } = await supabase
-          .from("favoritos")
-          .select("*, productos(*)")
-          .eq("cliente_id", user.id);
-
-        if (error) throw error;
-        setFavoritos((data as FavoritoRow[]) || []);
+        const res = await fetch("/api/cliente/favoritos", { credentials: "include" });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Error");
+        setFavoritos((json.data as FavoritoRow[]) || []);
       } catch (err) {
         console.error("Error fetching favoritos:", err);
         setFavoritos([]);
@@ -51,13 +46,11 @@ export default function MisFavoritosPage() {
   const handleRemove = async (favoritoId: string) => {
     setRemovingId(favoritoId);
     try {
-      const supabase = getSupabaseBrowser();
-      const { error } = await supabase
-        .from("favoritos")
-        .delete()
-        .eq("id", favoritoId);
-
-      if (error) throw error;
+      const res = await fetch(`/api/cliente/favoritos?id=${favoritoId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Error");
       setFavoritos((prev) => prev.filter((f) => f.id !== favoritoId));
     } catch (err) {
       console.error("Error removing favorito:", err);

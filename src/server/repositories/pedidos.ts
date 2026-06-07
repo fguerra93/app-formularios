@@ -159,6 +159,16 @@ export const pedidosRepo = {
     return (data && data.length > 0 ? data[0] : null) as Record<string, unknown> | null;
   },
 
+  /** Pedidos de un cliente (por cliente_id), recientes primero. */
+  async listByClienteId(clienteId: string): Promise<Pedido[]> {
+    const { data } = await getDb()
+      .from("pedidos")
+      .select("*")
+      .eq("cliente_id", clienteId)
+      .order("created_at", { ascending: false });
+    return (data as Pedido[] | null) ?? [];
+  },
+
   /** Todos los pedidos de un email (Cliente 360), recientes primero. */
   async listByEmail(email: string): Promise<Pedido[]> {
     const { data } = await getDb()
