@@ -28,6 +28,7 @@ import {
   Factory,
   Coins,
   Receipt,
+  LineChart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -69,6 +70,7 @@ const navSections: NavSection[] = [
     items: [
       { href: "/admin/costos", label: "Costos & Margenes", icon: Coins },
       { href: "/admin/ordenes-compra", label: "Ordenes de Compra", icon: Receipt },
+      { href: "/admin/mercado", label: "Inteligencia Mercado", icon: LineChart },
     ],
   },
   {

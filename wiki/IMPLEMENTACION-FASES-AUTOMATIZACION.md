@@ -240,3 +240,45 @@ amarillo/rojo=escala, reusando el motor del bot existente.
   hoy el tablero es por producto (extensión directa).
 - La recepción marca `cantidad_recibida = cantidad`; recepción parcial por ítem
   ya está soportada por la API (`recibidos[]`), falta UI fina.
+
+---
+
+## F5 — Inteligencia de mercado ✅
+
+**Objetivo:** comparar mis precios con el mercado y sugerir precio respetando el
+margen mínimo.
+
+### Datos (`supabase/schema-fase-f5-mercado.sql`)
+- `competidores` (nombre, url), `productos_competencia` (mapeo mi producto ↔
+  producto del competidor), `precios_competencia` (histórico con fecha).
+
+### Lógica (`src/server/services/mercado.ts`, PURA)
+- `calcularComparativa(productos, costos, mapeos, precios, margenMin)` → por
+  producto: mi precio, mercado (min/prom), posición %, **precio sugerido**
+  (iguala al mínimo del mercado pero **nunca baja del piso de margen** que sale
+  del costo real de F4) y margen actual/sugerido. `bajo_margen` marca cuando no
+  se puede igualar al mercado sin perder el margen mínimo.
+- El costo real lo aporta `calcularRentabilidad` (F4); el umbral es
+  `configuracion.margen_minimo_pct` (default 25).
+
+### API/UI (admin)
+- Repos `src/server/repositories/mercado.ts`. Rutas: `/api/admin/mercado`
+  (comparativa), `…/mercado/aplicar` (aplica precio + **auditoría**),
+  `…/competidores[/:id]`, `…/productos-competencia`, `…/precios-competencia`
+  (carga manual y por **lote/CSV**; gancho para scraper opcional).
+- `/admin/mercado` (pestañas **Comparativa** con botón "Aplicar", **Competidores**,
+  **Mapeos & Precios**). "Aplicar" actualiza `productos.precio` y registra
+  auditoría (`auditRepo`, acción `mercado.aplicar_precio`).
+
+### Validación
+- `npx tsc --noEmit` limpio · `npm run build` verde (7 rutas + 1 página).
+- Playwright con sesión admin: `/admin/mercado` renderiza (3 pestañas, tabla
+  comparativa) con degradación elegante (tablas F5 ausentes en el Supabase local).
+
+### Pendiente / notas
+- Aplicar `schema-fase-f5-mercado.sql` para datos reales.
+- **Scraper de competencia**: queda como gancho (la ingesta acepta lote). Cuidar
+  legalidad/robustez del scraping; partir con pocos competidores y precios
+  públicos (riesgo en §6 de la propuesta).
+- "Aplicar a planilla" se implementa como actualización del **precio del
+  producto** (interpretación concreta de "planilla de venta") con auditoría.

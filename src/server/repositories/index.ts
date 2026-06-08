@@ -50,6 +50,11 @@ export {
   bomRepo,
   ordenesCompraRepo,
 } from "./costos";
+export {
+  competidoresRepo,
+  productosCompetenciaRepo,
+  preciosCompetenciaRepo,
+} from "./mercado";
 export { pagosRepo } from "./pagos";
 export { whatsappRepo } from "./whatsapp";
 export {
