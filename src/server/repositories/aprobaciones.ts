@@ -31,6 +31,14 @@ export const aprobacionesRepo = {
       console.error("Error creando aprobacion:", error);
       return null;
     }
+    // Push al dueño (Fase F6), best-effort. Import dinámico para no acoplar el
+    // repo al servicio (evita ciclo) y no-op si VAPID no está configurado.
+    try {
+      const { pushNuevaAprobacion } = await import("@/server/services/push");
+      await pushNuevaAprobacion(values.titulo);
+    } catch {
+      /* push opcional */
+    }
     return data as Record<string, unknown>;
   },
 

@@ -55,6 +55,7 @@ export {
   productosCompetenciaRepo,
   preciosCompetenciaRepo,
 } from "./mercado";
+export { pushSubscriptionsRepo } from "./push";
 export { pagosRepo } from "./pagos";
 export { whatsappRepo } from "./whatsapp";
 export {

@@ -282,3 +282,69 @@ margen mínimo.
   públicos (riesgo en §6 de la propuesta).
 - "Aplicar a planilla" se implementa como actualización del **precio del
   producto** (interpretación concreta de "planilla de venta") con auditoría.
+
+---
+
+## F6 — App del dueño (PWA + push) ✅
+
+**Objetivo:** dashboard móvil del dueño con aprobaciones push y alertas, como PWA.
+
+### Datos (`supabase/schema-fase-f6-push.sql`)
+- `push_subscriptions` (endpoint único, p256dh, auth, usuario, `preferencias`
+  jsonb: aprobaciones/margen/stock/op).
+
+### Web Push (VAPID, dependencia `web-push`)
+- `src/server/services/push.ts`: `enviarPushATodos(payload, pref)` (respeta
+  preferencias y **poda** suscripciones 404/410) + conveniencias
+  `pushNuevaAprobacion`, `pushMargenBajo`, `pushStockCritico`, `pushOpAtascada`.
+  **No-op elegante** si no hay claves VAPID en env.
+- Disparo real: `aprobacionesRepo.crear` envía `pushNuevaAprobacion` best-effort
+  (import dinámico para evitar ciclo). Toda aprobación nueva → push al dueño.
+
+### API
+- `GET /api/push/vapid-public-key`, `POST /api/push/subscribe`,
+  `POST /api/push/unsubscribe`, `POST /api/admin/push/test` (push de prueba),
+  `GET /api/admin/dueno/resumen` (ventas hoy + pendientes + OP por estado,
+  resiliente a tablas ausentes).
+
+### UI — superficie "dueño" (`/m`, PWA móvil)
+- `src/app/m/*`: `layout.tsx` (manifest + theme + registro SW), `page.tsx`
+  (**server**, guard rol admin/vendedor), `dueno-dashboard.tsx` (**client**):
+  cards (ventas hoy, aprobaciones, taller, listo), **bandeja de aprobaciones con
+  aprobar/rechazar de 1 toque** (reusa `/api/admin/aprobaciones/:id`), botón
+  **Activar notificaciones** (suscribe Web Push), polling 15s.
+- PWA: `public/m/manifest.json` + `public/m/sw.js` (maneja `push` y
+  `notificationclick` → abre `/m`) + íconos 192/512.
+
+### Validación
+- `npx tsc --noEmit` limpio · `npm run build` verde (`/m` + 5 rutas).
+- Playwright con sesión admin: `/m` renderiza (cards, botón de push, bandeja
+  "Todo al día", tema móvil oscuro). PWA: manifest/sw/icon/vapid **200**.
+
+### Pendiente / notas
+- Configurar VAPID en prod: `npx web-push generate-vapid-keys` →
+  `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`. Sin claves, el botón
+  avisa "falta configurar VAPID" (degradación elegante).
+- **iOS:** el push de PWA exige "agregar a inicio" (instalar) y el alcance es
+  menor que nativo (ver §4 y fuente [17]); para uso interno del dueño es
+  suficiente.
+- Aplicar `schema-fase-f6-push.sql` para persistir suscripciones.
+- Más alertas (margen bajo, stock crítico, OP atascada): las conveniencias ya
+  existen; falta engancharlas a un cron/umbral (extensión directa).
+
+---
+
+## Cómo aplicar el esquema (para validar con datos reales)
+
+Las 6 fases agregan tablas/columnas. En local caen con **degradación elegante**;
+para datos reales, aplica el esquema:
+
+- **Cloud SQL (prod):** `node deploy/apply-cloudsql.mjs` (regenera el consolidado
+  desde `supabase/schema-*.sql` y lo aplica). Requiere `DB_HOST/DB_USER/DB_PASS`.
+- **Supabase (local):** corre cada `supabase/schema-fase-fN-*.sql` (F1, F2, F4,
+  F5, F6) en el SQL editor. Nota: este entorno local ya tenía solo el e-commerce
+  (faltaban incluso `ordenes_produccion` de fase 7); aplica también las fases
+  base que falten.
+
+**Orden de fases:** F1 → F2 → F3 → F4 → F5 → F6 (cada una entrega valor sola;
+F1 y F2 son la base). Convención de commits: `feat(fase-N): …`.

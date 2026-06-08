@@ -36,6 +36,7 @@ const ORDER = [
   "schema-fase-f2-taller.sql",
   "schema-fase-f4-costos.sql",
   "schema-fase-f5-mercado.sql",
+  "schema-fase-f6-push.sql",
 ];
 
 // Versiones limpias que se anteponen para que los IF NOT EXISTS posteriores

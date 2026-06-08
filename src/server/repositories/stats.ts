@@ -2,6 +2,22 @@ import { getDb } from "@/server/db";
 
 /** Métricas del dashboard del admin (formularios, emails, ventas). */
 export const statsRepo = {
+  /** Resumen liviano para la app del dueño (Fase F6): ventas/pedidos de hoy. */
+  async resumenDueno(): Promise<{ ventas_hoy: number; pedidos_hoy: number }> {
+    const db = getDb();
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const { data } = await db
+      .from("pedidos")
+      .select("total")
+      .gte("created_at", todayStart);
+    const rows = (data || []) as { total: number | null }[];
+    return {
+      ventas_hoy: rows.reduce((s, p) => s + (Number(p.total) || 0), 0),
+      pedidos_hoy: rows.length,
+    };
+  },
+
   async getDashboard() {
     const db = getDb();
     const now = new Date();
