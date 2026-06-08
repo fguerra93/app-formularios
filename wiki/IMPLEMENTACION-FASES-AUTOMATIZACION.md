@@ -197,3 +197,46 @@ amarillo/rojo=escala, reusando el motor del bot existente.
   (parser de Flow responses) — punto de extensión señalado.
 - Recuperación de carrito abandonado: reusar el cron `carritos-abandonados`
   añadiendo un recordatorio por WhatsApp (plantilla *utility*).
+
+---
+
+## F4 — Inteligencia de insumos / costos / márgenes ✅
+
+**Objetivo:** saber el costo real y el margen (¿compro bien?), con proveedores y
+órdenes de compra.
+
+### Datos (`supabase/schema-fase-f4-costos.sql`)
+- `insumos` (sku, nombre, unidad, **costo_actual**), `proveedores`,
+  `precios_proveedor` (insumo, proveedor, precio, fecha — histórico para alertas),
+  `bom` (producto → insumo + cantidad, UNIQUE producto+insumo),
+  `ordenes_compra` (+ `oc_items` con recepción).
+
+### Lógica (`src/server/services/costos.ts`, funciones PURAS)
+- `calcularRentabilidad(productos, bom, insumos)` → por producto:
+  **costo real = Σ(BOM.cantidad × insumo.costo_actual)**, margen y margen %.
+- `detectarAlertasInsumos(insumos, precios, umbral=15)` → alerta cuando el
+  `costo_actual` supera el promedio histórico en ≥ umbral %.
+
+### API/UI (admin, estilo admin actual)
+- Repos en `src/server/repositories/costos.ts` (coerción de `numeric`) +
+  `productosRepo.listBasico()`.
+- Rutas: `/api/admin/costos` (rentabilidad + alertas), `…/insumos[/:id]`,
+  `…/proveedores[/:id]`, `…/precios-proveedor`, `…/bom`,
+  `…/ordenes-compra[/:id]` (enviar / recibir / cancelar).
+- `/admin/costos` (4 pestañas: **Rentabilidad** con tablero y alertas, **Insumos**,
+  **Proveedores**, **Ficha de costos / BOM** por producto con costo real por unidad).
+- `/admin/ordenes-compra` (crear OC con ítems desde insumos, **enviar**,
+  **registrar recepción**, cancelar). Nueva sección "COSTOS & MERCADO" en el menú.
+
+### Validación
+- `npx tsc --noEmit` limpio · `npm run build` verde (10 rutas + 2 páginas).
+- Playwright con sesión admin: `/admin/costos` renderiza (sidebar con la sección
+  nueva, 4 pestañas, tablero) con **degradación elegante** ("Sin productos")
+  porque las tablas F4 no existen en el Supabase local.
+
+### Pendiente / notas
+- Aplicar `schema-fase-f4-costos.sql` para datos reales (insumos/BOM/OC).
+- Margen por **pedido/OP**: derivable del costo real de los productos del pedido;
+  hoy el tablero es por producto (extensión directa).
+- La recepción marca `cantidad_recibida = cantidad`; recepción parcial por ítem
+  ya está soportada por la API (`recibidos[]`), falta UI fina.

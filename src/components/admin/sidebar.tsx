@@ -26,6 +26,8 @@ import {
   Palette,
   Inbox,
   Factory,
+  Coins,
+  Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -60,6 +62,13 @@ const navSections: NavSection[] = [
     label: "FORMULARIOS",
     items: [
       { href: "/admin/historial", label: "Historial", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "COSTOS & MERCADO",
+    items: [
+      { href: "/admin/costos", label: "Costos & Margenes", icon: Coins },
+      { href: "/admin/ordenes-compra", label: "Ordenes de Compra", icon: Receipt },
     ],
   },
   {

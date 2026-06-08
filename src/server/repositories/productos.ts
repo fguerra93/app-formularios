@@ -85,6 +85,27 @@ export const productosRepo = {
     return (data as Producto[] | null) ?? [];
   },
 
+  /** Lista mínima (id, nombre, precio, oferta) para costos/rentabilidad (F4). */
+  async listBasico(): Promise<
+    { id: string; nombre: string; precio: number; precio_oferta: number | null; activo: boolean }[]
+  > {
+    const { data, error } = await getDb()
+      .from("productos")
+      .select("id, nombre, precio, precio_oferta, activo")
+      .order("nombre", { ascending: true });
+    if (error) throw new Error(error.message);
+    return (data || []).map((r) => {
+      const row = r as Record<string, unknown>;
+      return {
+        id: String(row.id),
+        nombre: String(row.nombre),
+        precio: Number(row.precio) || 0,
+        precio_oferta: row.precio_oferta == null ? null : Number(row.precio_oferta),
+        activo: row.activo !== false,
+      };
+    });
+  },
+
   /** Un producto por slug (con su categoría), sin filtrar `activo`. */
   async findBySlug(slug: string): Promise<Producto | null> {
     const { data } = await getDb()

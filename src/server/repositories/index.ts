@@ -43,6 +43,13 @@ export { ordenesProduccionRepo } from "./ordenes-produccion";
 export { areasDisenoRepo, clipartRepo, fuentesRepo, disenosRepo } from "./designer";
 export { tarifasGangSheetRepo, gangSheetsRepo } from "./gang-sheets";
 export type { TarifaGangSheet, TramoDescuento } from "./gang-sheets";
+export {
+  insumosRepo,
+  proveedoresRepo,
+  preciosProveedorRepo,
+  bomRepo,
+  ordenesCompraRepo,
+} from "./costos";
 export { pagosRepo } from "./pagos";
 export { whatsappRepo } from "./whatsapp";
 export {
