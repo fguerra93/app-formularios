@@ -143,3 +143,57 @@ taller en tiempo real (PWA) por estación, estilo KDS de restaurante.
 - Ruteo por operario (cada uno ve solo su estación) está como **filtro**; el
   gating por rol fino por estación es extensión.
 - Tiempo real por **polling** (5s); SSE/WebSocket es una mejora opcional.
+
+---
+
+## F3 — Bot de WhatsApp que cierra pedidos ✅ (andamiaje documentado)
+
+**Objetivo:** que el bot tome el pedido COMPLETO (no solo cotice): verde=cierra,
+amarillo/rojo=escala, reusando el motor del bot existente.
+
+### Cierre de pedido (lo nuevo y testeable por tipos)
+- `src/server/services/op-desde-pedido.ts` (**nuevo**): se extrajo
+  `crearOPDesdePedido` del cron a un servicio para que lo usen **el cron (al
+  pagar) y el bot (al cerrar)** — misma comanda, misma lógica (incl. gang sheet
+  y canal). `cron/procesar-eventos` ahora lo importa.
+- `src/lib/bot/orders.ts` (**nuevo**): `crearPedidoDesdeBot(...)` crea el pedido
+  (canal=whatsapp, email sintetizado si falta), emite `pedido.creado`, abre la
+  aprobación `validar_pago` (el dueño valida la transferencia) y **encola la
+  comanda** (`crearOPDesdePedido`). `puedeEnviarPromo(cliente)` = opt-in.
+- `src/lib/bot/flows/menu.ts`: tras cotizar por planilla, si el dueño activó
+  `bot_autoclose=true` (config), el bot **envía el precio y ofrece confirmar**;
+  al confirmar, cierra el pedido sin intervención. Si no, mantiene el
+  comportamiento actual (cotización a la **cola de aprobación**, amarillo).
+
+### WhatsApp Flows / catálogo / plantillas (andamiaje)
+- `src/lib/bot/whatsapp-flows.ts` (**nuevo**): definición JSON del Flow de
+  cotización in-chat, `parseFlowCotizacion`, `cotizarDesdeFlow` /
+  `cotizarPliegoDesdeFlow` (reusan **el mismo motor** de precios) y
+  `construirMensajeFlow` (mensaje interactivo para Cloud API). Queda listo para
+  publicar el Flow en Meta y referenciarlo por `flow_id`.
+- Webhook de producción **ya existe**: `/api/webhooks/meta` (verifica firma
+  `x-hub-signature-256`, verify-token, idempotencia por `meta_message_id`).
+  No se tocó. El `/api/test/whatsapp-webhook` queda como simulador de dev.
+
+### Cobro y cumplimiento (documentado)
+- **Cobro:** transferencia / pago al retirar por defecto (**sin MercadoPago**);
+  gancho de pago en línea queda en el flujo de aprobación.
+- **WhatsApp pricing (jul-2025):** el envío se cobra **por mensaje y por
+  categoría** (marketing / utility / authentication / service). Diseñar
+  plantillas como *utility* (confirmación/estado) y reservar *marketing* solo
+  con opt-in. El bot aquí solo envía utilitarios (cotización pedida, confirmación).
+- **Política IA 2026:** bot **acotado a tareas** (responder, cotizar, tomar
+  pedidos, logística). Promos **solo con opt-in** (`puedeEnviarPromo`).
+
+### Validación
+- `npx tsc --noEmit` limpio · `npm run build` verde.
+- **No** se valida end-to-end en local: requiere número/app de Meta y tablas que
+  el Supabase local no tiene (`planillas_precios`, `aprobaciones`,
+  `domain_events`, `ordenes_produccion`). En prod (GCP) esas tablas existen.
+
+### Pendiente / notas
+- Activar el cierre verde: `configuracion.bot_autoclose = 'true'` (opt-in del dueño).
+- Publicar el Flow en Meta y enrutar `interactive`/`nfm_reply` en el webhook
+  (parser de Flow responses) — punto de extensión señalado.
+- Recuperación de carrito abandonado: reusar el cron `carritos-abandonados`
+  añadiendo un recordatorio por WhatsApp (plantilla *utility*).

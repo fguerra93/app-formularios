@@ -1,7 +1,13 @@
-import { aprobacionesRepo, notificacionesRepo, pedidosRepo } from "@/server/repositories";
+import {
+  aprobacionesRepo,
+  notificacionesRepo,
+  pedidosRepo,
+  configuracionRepo,
+} from "@/server/repositories";
 import { detectIntent } from "../intents";
-import { calcularCotizacion } from "../pricing";
+import { calcularCotizacion, type Cotizacion } from "../pricing";
 import { formatearCotizacion } from "../tools";
+import { crearPedidoDesdeBot } from "../orders";
 import type { BotContext, BotResponse, IncomingMessage } from "../types";
 
 const MENU_TEXT =
@@ -38,6 +44,10 @@ export async function handleMenu(
 
   if (pending === "cotizar_cantidad") {
     return handleCotizarCantidad(context, msg, text);
+  }
+
+  if (pending === "confirmar_pedido") {
+    return handleConfirmarPedido(context, msg, text);
   }
 
   // --- Opciones del menu ---
@@ -336,7 +346,31 @@ async function handleCotizarCantidad(
     };
   }
 
-  // AMARILLO: dejar la cotización como borrador en la cola de aprobación.
+  // VERDE (opt-in del dueño vía config `bot_autoclose`): el bot envía el precio
+  // y ofrece CERRAR el pedido sin pasar por aprobación de cotización.
+  const autoclose = (await configuracionRepo.get("bot_autoclose")) === "true";
+  if (autoclose) {
+    return {
+      messages: [
+        `${formatearCotizacion(cotizacion)}\n\n` +
+          `¿Confirmas el pedido?\n1. Sí, confirmar\n2. No, gracias`,
+      ],
+      newContext: {
+        ...context,
+        flow: "menu",
+        step: 0,
+        data: {
+          ...context.data,
+          pending_action: "confirmar_pedido",
+          cotizar_tipo: tipo,
+          cotizar_cantidad: cantidad,
+          cotizacion,
+        },
+      },
+    };
+  }
+
+  // AMARILLO (por defecto): dejar la cotización como borrador en la cola de aprobación.
   await aprobacionesRepo.crear({
     tipo: "enviar_cotizacion",
     titulo: `Cotización ${tipo} x${cantidad}`,
@@ -362,6 +396,82 @@ async function handleCotizarCantidad(
       `¡Listo! Preparé una cotización para ${cantidad} unidades de ${tipo}. ` +
         `La estoy revisando con el equipo y te la confirmamos a la brevedad. ` +
         `¿Algo más en lo que te ayude?`,
+    ],
+    newContext: { ...context, flow: null, data: {} },
+  };
+}
+
+/**
+ * VERDE — cierre del pedido. El cliente confirmó la cotización: el bot crea el
+ * pedido y lo encola en la comanda (sin intervención). El cobro queda por
+ * transferencia y el dueño valida el pago desde la cola de aprobación.
+ */
+async function handleConfirmarPedido(
+  context: BotContext,
+  msg: IncomingMessage,
+  text: string
+): Promise<BotResponse> {
+  const t = text.trim().toLowerCase();
+  const dijoNo = t === "2" || t === "no" || t.includes("no gracias");
+  const dijoSi = t === "1" || t === "si" || t === "sí" || t.includes("confirm");
+
+  if (dijoNo) {
+    return {
+      messages: ["Sin problema, no confirmé el pedido. ¿Te ayudo con algo más?"],
+      newContext: { ...context, flow: null, data: {} },
+    };
+  }
+  if (!dijoSi) {
+    return {
+      messages: ["Responde 1 para confirmar el pedido o 2 para cancelar."],
+      newContext: context,
+    };
+  }
+
+  const cotizacion = context.data.cotizacion as Cotizacion | undefined;
+  const tipo = (context.data.cotizar_tipo as string) || "";
+  const cantidad = Number(context.data.cotizar_cantidad) || 0;
+
+  if (!cotizacion || !tipo || !cantidad) {
+    return {
+      messages: ["Se me perdieron los datos de la cotización. ¿La repetimos? Escribe 1 para cotizar."],
+      newContext: { ...context, flow: null, data: {} },
+    };
+  }
+
+  const res = await crearPedidoDesdeBot({
+    cliente_id: context.cliente_id,
+    cliente_nombre: msg.senderName,
+    cliente_telefono: msg.senderPhone,
+    canal: msg.canal,
+    tipo,
+    cantidad,
+    cotizacion,
+  });
+
+  if (!res) {
+    return {
+      messages: [
+        "No pude cerrar el pedido automáticamente. Un ejecutivo lo toma enseguida.",
+      ],
+      newContext: { ...context, flow: null, data: {} },
+      escalate: true,
+      notify: {
+        type: "escalacion",
+        data: {
+          cliente_nombre: msg.senderName || "Cliente",
+          canal: msg.canal,
+          mensaje: `Confirmó pedido ${tipo} x${cantidad} pero falló el cierre automático`,
+        },
+      },
+    };
+  }
+
+  return {
+    messages: [
+      `¡Pedido #${res.numeroPedido} confirmado! Total $${res.total.toLocaleString("es-CL")}.\n\n` +
+        `Datos para transferencia:\nServicios Graficos Spa\nRUT 78.114.353-7\n\n` +
+        `Envíame el comprobante por aquí. Ya dejé tu trabajo en cola de producción. ¡Gracias!`,
     ],
     newContext: { ...context, flow: null, data: {} },
   };
