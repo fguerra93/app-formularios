@@ -85,3 +85,61 @@ archivo listo + la OP.
   precio igual se calcula (solo no persiste el `arte_url`).
 - Admin de tarifas (CRUD de `tarifas_gang_sheet`) se puede añadir; hoy se editan
   por SQL/seed.
+
+---
+
+## F2 — Pipeline omnicanal + Comanda/KDS de taller ✅
+
+**Objetivo:** una sola cola para todo pedido (web/bot/manual) y una comanda de
+taller en tiempo real (PWA) por estación, estilo KDS de restaurante.
+
+### Datos (`supabase/schema-fase-f2-taller.sql`)
+- `pedidos.canal` y `ordenes_produccion.canal` (`web|whatsapp|manual`), **aditivo
+  con DEFAULT 'web'** para no romper inserts existentes. El semáforo de SLA usa
+  `updated_at` (entrada a la etapa actual); el historial por transición ya vive
+  en `domain_events` (`op.estado`).
+
+### Máquina de estados (reusa lo existente)
+- Estado canónico = FSM del taller existente (`src/server/services/op-fsm.ts`):
+  `en_cola → imprimiendo → acabado → control_calidad → listo → entregado`. Las
+  **estaciones del KDS son esos estados**; "bump" = avanzar/retroceder un paso.
+- `src/server/services/op-eventos.ts` (**nuevo**): centraliza los efectos al
+  cambiar estado (evento `op.estado` + aviso al cliente `pedido.estado`). Lo usan
+  el admin (`/api/admin/op/[id]`, refactorizado) y el taller, sin duplicar lógica.
+
+### API
+- `GET /api/taller/cola` — cola para el KDS (polling). Auth rol **bodega/admin**.
+- `POST /api/taller/op/:id/avanzar` — bump (`dir:1` avanza, `dir:-1` retrocede);
+  valida con la FSM y dispara los mismos avisos al cliente que el admin.
+- `crearOPDesdePedido` etiqueta el `canal` de la OP desde el pedido (best-effort).
+
+### UI — superficie "taller" (PWA kiosko)
+- `src/app/taller/*`: `layout.tsx` (tema oscuro + manifest + theme-color),
+  `page.tsx` (**server**, guard por rol; sin sesión → CTA de login),
+  `taller-board.tsx` (**client**): columnas por estación, tarjetas-comanda con
+  OP/material/dimensiones/canal/entrega + enlace al archivo, **semáforo de SLA**
+  por etapa, **filtro por estación** (vista de un operario), polling 5s.
+- PWA instalable: `public/taller/manifest.json` + `public/taller/sw.js`
+  (network-first, offline básico) + íconos 192/512; registro vía `sw-register.tsx`.
+
+### Integración
+- El Kanban admin `/admin/produccion` se conserva intacto (base del KDS).
+- Web (checkout) y bot crean pedidos que pagan → `pedido.pagado` → **misma cola**
+  de OP. Sin tocar la cola de aprobación.
+
+### Validación
+- `npx tsc --noEmit` limpio · `npm run build` verde (`/taller`,
+  `/api/taller/cola`, `/api/taller/op/[id]/avanzar` en el árbol).
+- Guards: cola **401** sin sesión, **autoriza** con sesión rol bodega (token de
+  prueba). PWA: manifest/sw/icon **200**.
+- Playwright con sesión bodega: el **tablero KDS renderiza completo** (header,
+  filtros por estación, 6 columnas en tema kiosko oscuro).
+
+### Pendiente / notas
+- **Importante:** el Supabase local de este entorno **no tiene la tabla
+  `ordenes_produccion`** (la fase 7 de producción no se aplicó aquí; sí el
+  e-commerce). Por eso el tablero se ve vacío en local. Aplicar
+  `schema-fase7-produccion.sql` + `schema-fase-f2-taller.sql` puebla la cola.
+- Ruteo por operario (cada uno ve solo su estación) está como **filtro**; el
+  gating por rol fino por estación es extensión.
+- Tiempo real por **polling** (5s); SSE/WebSocket es una mejora opcional.

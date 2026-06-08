@@ -47,6 +47,17 @@ async function crearOPDesdePedido(pedidoId: string): Promise<void> {
 
     const op = await ordenesProduccionRepo.create(datosOP);
 
+    // Etiqueta el canal del pedido en la OP (web|whatsapp|manual). Best-effort:
+    // si la columna aún no existe (migración F2 sin aplicar) no rompe la OP.
+    if (op) {
+      const canal = (pedido as { canal?: string }).canal || "web";
+      try {
+        await ordenesProduccionRepo.update(String(op.id), { canal });
+      } catch {
+        /* columna canal no aplicada todavía: ignorar */
+      }
+    }
+
     // Enlaza el pliego a su OP/pedido (trazabilidad).
     if (gangSheet && op) {
       await gangSheetsRepo.update(String(gangSheet.id), {

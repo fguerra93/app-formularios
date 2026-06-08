@@ -2,19 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import {
   ordenesProduccionRepo,
-  domainEventsRepo,
   auditRepo,
 } from "@/server/repositories";
 import { puedeTransicionarOP } from "@/server/services/op-fsm";
+import { emitirEfectosCambioEstadoOP } from "@/server/services/op-eventos";
 
 export const dynamic = "force-dynamic";
-
-// Estado de taller -> notificación al cliente (reutiliza el worker proactivo).
-const OP_A_CLIENTE: Record<string, string> = {
-  imprimiendo: "preparando",
-  listo: "listo",
-  entregado: "entregado",
-};
 
 export async function PATCH(
   request: NextRequest,
@@ -55,19 +48,12 @@ export async function PATCH(
 
   // Al cambiar estado: evento + (si corresponde) aviso proactivo al cliente.
   if (body.estado) {
-    await domainEventsRepo.emit("op.estado", {
-      op_id: id,
-      numero_op: op.numero_op,
+    await emitirEfectosCambioEstadoOP({
+      opId: id,
+      numeroOp: op.numero_op,
+      pedidoId: (actual.pedido_id as string | null) ?? null,
       estado: body.estado,
     });
-    const estadoCliente = OP_A_CLIENTE[body.estado];
-    if (estadoCliente && actual.pedido_id) {
-      await domainEventsRepo.emit("pedido.estado", {
-        pedido_id: actual.pedido_id,
-        numero_pedido: null,
-        estado: estadoCliente,
-      });
-    }
     await auditRepo.log({
       usuario: session.sub,
       accion: "op.estado",
