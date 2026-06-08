@@ -1,4 +1,4 @@
-import { productosRepo, zonasRepo } from "@/server/repositories";
+import { productosRepo, zonasRepo, gangSheetsRepo } from "@/server/repositories";
 import type { Producto, PrecioCantidad, Variante } from "./types";
 
 // ============================================================
@@ -107,6 +107,28 @@ export async function calcularPedido(opts: {
   );
 
   for (const item of opts.items) {
+    // ── Gang sheet (Fase F1) ───────────────────────────────
+    // El pliego trae su precio YA calculado en el servidor al guardarse
+    // (`gang_sheets.precio`). Es la fuente de verdad: no se confía en el
+    // navegador ni se requiere una fila en `productos`.
+    const gangSheetId = item.variante?.gang_sheet_id;
+    if (gangSheetId) {
+      const gs = await gangSheetsRepo.findById(gangSheetId);
+      if (!gs) {
+        errores.push(`Pliego no encontrado: ${item.nombre ?? gangSheetId}`);
+        continue;
+      }
+      const cantidad = Math.max(1, Math.floor(item.cantidad));
+      itemsCalc.push({
+        producto_id: item.producto_id,
+        nombre: String(gs.nombre || `Pliego ${gs.material}`),
+        cantidad,
+        precio_unitario: Number(gs.precio) || 0,
+        variante: item.variante ?? null,
+      });
+      continue;
+    }
+
     const producto = porId.get(item.producto_id);
 
     if (!producto) {

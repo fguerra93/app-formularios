@@ -41,6 +41,8 @@ export type { Planilla, RangoPrecio } from "./planillas";
 export { botCacheRepo } from "./bot-cache";
 export { ordenesProduccionRepo } from "./ordenes-produccion";
 export { areasDisenoRepo, clipartRepo, fuentesRepo, disenosRepo } from "./designer";
+export { tarifasGangSheetRepo, gangSheetsRepo } from "./gang-sheets";
+export type { TarifaGangSheet, TramoDescuento } from "./gang-sheets";
 export { pagosRepo } from "./pagos";
 export { whatsappRepo } from "./whatsapp";
 export {

@@ -1,4 +1,9 @@
 import { planillasRepo, type RangoPrecio } from "@/server/repositories/planillas";
+import {
+  calcularGangSheet,
+  type CalcularGangSheetInput,
+  type GangSheetResult,
+} from "@/server/domain/gang-sheet";
 
 export interface Cotizacion {
   tipo: string;
@@ -49,4 +54,15 @@ export async function calcularCotizacion(opts: {
     dias_produccion: planilla.dias_produccion,
     unidad: planilla.unidad,
   };
+}
+
+/**
+ * Cotización de un gang sheet por el BOT, usando EXACTAMENTE el mismo motor que
+ * la web (`calcularGangSheet`). Si el cliente dicta medidas por WhatsApp, el
+ * precio coincide con el del constructor self-service para el mismo input.
+ */
+export async function cotizarGangSheet(
+  input: CalcularGangSheetInput
+): Promise<GangSheetResult> {
+  return calcularGangSheet(input);
 }
