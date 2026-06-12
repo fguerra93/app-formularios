@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useState, useEffect, Fragment } from "react";
+import { Suspense, useState, useEffect, useRef, Fragment } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/components/auth/auth-provider";
 import { formatCLP } from "@/lib/format";
+import { validarRut, formatearRut } from "@/lib/rut";
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,6 +95,7 @@ function CheckoutContent() {
     const errs: Record<string, string> = {};
     if (!form.nombre.trim()) errs.nombre = "Ingresa tu nombre";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Ingresa un email valido";
+    if (form.rut.trim() && !validarRut(form.rut)) errs.rut = "RUT inválido — revisa el dígito verificador";
     if (tipoEntrega === "despacho") {
       if (!form.calle.trim()) errs.calle = "Ingresa la calle";
       if (!form.numero.trim()) errs.numero = "Ingresa el numero";
@@ -102,6 +104,27 @@ function CheckoutContent() {
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
+  };
+
+  // Captura temprana del carrito (materia prima del recordatorio de
+  // abandono). Silenciosa: jamás molesta al cliente si falla.
+  const capturaPrevia = useRef("");
+  const capturarCarrito = () => {
+    const email = form.email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    if (items.length === 0 || capturaPrevia.current === email) return;
+    capturaPrevia.current = email;
+    fetch("/api/carritos/capturar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        telefono: form.telefono.trim() || null,
+        items,
+        total,
+        cliente_id: user?.id || null,
+      }),
+    }).catch(() => {});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -344,6 +367,7 @@ function CheckoutContent() {
                     type="email"
                     value={form.email}
                     onChange={(e) => updateField("email", e.target.value)}
+                    onBlur={capturarCarrito}
                     placeholder="tu@email.com"
                     className={errors.email ? "border-red-500" : ""}
                   />
@@ -367,8 +391,16 @@ function CheckoutContent() {
                     id="rut"
                     value={form.rut}
                     onChange={(e) => updateField("rut", e.target.value)}
+                    onBlur={() => {
+                      const v = form.rut.trim();
+                      if (v && validarRut(v)) updateField("rut", formatearRut(v));
+                    }}
                     placeholder="12.345.678-9"
+                    className={errors.rut ? "border-red-500" : ""}
                   />
+                  {errors.rut && (
+                    <p className="text-xs text-red-500 mt-1">{errors.rut}</p>
+                  )}
                 </div>
               </div>
             </div>

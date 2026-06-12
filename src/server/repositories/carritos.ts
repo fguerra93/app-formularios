@@ -72,8 +72,103 @@ export const carritosRepo = {
   async markEmailEnviado(ids: string[]): Promise<void> {
     const { error } = await getDb()
       .from("carritos_guardados")
-      .update({ email_enviado: true, updated_at: new Date().toISOString() })
+      .update({ email_enviado: true, email_enviado_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .in("id", ids);
     if (error) throw new Error(error.message);
+  },
+
+  /**
+   * Captura temprana de un carrito de INVITADO (email tipeado en el checkout,
+   * compra aún no concretada). Upsert por email sobre el carrito activo.
+   */
+  async capturarAbandonado(input: {
+    email: string;
+    telefono?: string | null;
+    items: unknown;
+    total: number;
+    cliente_id?: string | null;
+  }): Promise<void> {
+    const db = getDb();
+    const values = {
+      email: input.email,
+      telefono: input.telefono ?? null,
+      items: input.items,
+      total: input.total,
+      cliente_id: input.cliente_id ?? null,
+      email_enviado: false,
+      recuperado: false,
+      updated_at: new Date().toISOString(),
+    };
+    const { data: existing } = await db
+      .from("carritos_guardados")
+      .select("id")
+      .eq("email", input.email)
+      .eq("recuperado", false)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (existing?.id) {
+      const { error } = await db.from("carritos_guardados").update(values).eq("id", existing.id);
+      if (error) throw new Error(error.message);
+      return;
+    }
+    const { error } = await db.from("carritos_guardados").insert(values);
+    if (error) throw new Error(error.message);
+  },
+
+  /** Carrito por token de recuperación (link del email). */
+  async findByToken(token: string): Promise<Record<string, unknown> | null> {
+    const { data } = await getDb()
+      .from("carritos_guardados")
+      .select("*")
+      .eq("token", token)
+      .maybeSingle();
+    return (data as Record<string, unknown> | null) ?? null;
+  },
+
+  /** Marca un carrito como recuperado (el cliente volvió por el link). */
+  async markRecuperado(id: string): Promise<void> {
+    const { error } = await getDb()
+      .from("carritos_guardados")
+      .update({ recuperado: true, updated_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) throw new Error(error.message);
+  },
+
+  /** Marca como recuperados los carritos activos de un email (compró). */
+  async markRecuperadoPorEmail(email: string): Promise<void> {
+    const { error } = await getDb()
+      .from("carritos_guardados")
+      .update({ recuperado: true, updated_at: new Date().toISOString() })
+      .eq("email", email)
+      .eq("recuperado", false);
+    if (error) throw new Error(error.message);
+  },
+
+  /** Abandonados con datos para el recordatorio (ventana desde→hasta). */
+  async findParaRecordatorio(opts: {
+    antesDeISO: string;
+    despuesDeISO: string;
+    limit?: number;
+  }): Promise<
+    { id: string; email: string | null; token: string | null; items: unknown; total: number | null }[]
+  > {
+    const { data, error } = await getDb()
+      .from("carritos_guardados")
+      .select("id, email, token, items, total")
+      .lt("updated_at", opts.antesDeISO)
+      .gt("updated_at", opts.despuesDeISO)
+      .eq("email_enviado", false)
+      .eq("recuperado", false)
+      .not("email", "is", null)
+      .limit(opts.limit ?? 50);
+    if (error) throw new Error(error.message);
+    return (data || []) as {
+      id: string;
+      email: string | null;
+      token: string | null;
+      items: unknown;
+      total: number | null;
+    }[];
   },
 };

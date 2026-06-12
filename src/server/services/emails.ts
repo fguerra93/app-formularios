@@ -218,6 +218,39 @@ export async function emailPagoConfirmado(pedido: Pedido): Promise<void> {
   );
 }
 
+/** Recordatorio de carrito abandonado con link de recuperación. */
+export async function emailCarritoAbandonado(input: {
+  email: string;
+  items: { nombre?: string; cantidad?: number; precio?: number }[];
+  total: number;
+  linkRecuperacion: string;
+}): Promise<boolean> {
+  const lista = input.items
+    .slice(0, 4)
+    .map(
+      (i) =>
+        `<li style="font-size:14px;color:#0f1115;margin:4px 0;">${i.nombre || "Producto"}${
+          i.cantidad && i.cantidad > 1 ? ` × ${i.cantidad}` : ""
+        }</li>`,
+    )
+    .join("");
+  const extra = input.items.length > 4 ? `<li style="font-size:13px;color:#5b6472;">…y ${input.items.length - 4} más</li>` : "";
+
+  const cuerpo = `
+    <p style="font-size:14px;color:#0f1115;margin:0 0 6px;">Hola,</p>
+    <p style="font-size:14px;color:#5b6472;margin:0 0 12px;">Dejaste tu impresión a medio camino. Tu carrito sigue guardado, listo para retomar donde quedaste:</p>
+    <ul style="margin:0 0 14px;padding-left:18px;">${lista}${extra}</ul>
+    <p style="font-size:18px;color:#0f1115;font-weight:bold;margin:0 0 18px;font-family:Consolas,Menlo,monospace;">Total: ${clp(input.total)} <span style="font-size:12px;font-weight:normal;color:#5b6472;">IVA incluido</span></p>
+    <a href="${input.linkRecuperacion}" style="display:inline-block;background:#0f1115;color:#ffffff;text-decoration:none;padding:12px 22px;font-size:14px;font-weight:bold;">Retomar mi compra</a>
+    <p style="font-size:12px;color:#8b94a3;margin:16px 0 0;">¿Dudas con medidas o archivos? Respondemos al tiro por WhatsApp.</p>`;
+
+  return enviar(
+    input.email,
+    "Tu impresión quedó esperando — PrintUp",
+    layout("Tu carrito sigue guardado", cuerpo),
+  );
+}
+
 /** Cambio de estado del pedido (con texto correcto según tipo de entrega). */
 export async function emailEstadoPedido(pedido: Pedido, estado: string): Promise<void> {
   const esRetiro = pedido.tipo_entrega !== "despacho";
@@ -248,12 +281,24 @@ export async function emailEstadoPedido(pedido: Pedido, estado: string): Promise
   const texto = textos[estado];
   if (!texto) return;
 
+  // Entregado → pedir la reseña con link directo a la ficha del producto.
+  let ctaReview = "";
+  if (estado === "entregado") {
+    const items = (pedido.items as { slug?: string }[]) || [];
+    const slug = items.find((i) => i.slug)?.slug;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
+    const link = slug ? `${appUrl}/r/${slug}#opiniones` : `${appUrl}/productos`;
+    ctaReview = `
+    <p style="font-size:14px;color:#5b6472;margin:18px 0 10px;">¿Cómo quedó tu impresión? Tu opinión (con foto, ojalá) ayuda a otros clientes y a nuestro taller:</p>
+    <a href="${link}" style="display:inline-block;background:#0f1115;color:#ffffff;text-decoration:none;padding:11px 20px;font-size:14px;font-weight:bold;">Dejar mi opinión</a>`;
+  }
+
   const cuerpo = `
     <p style="font-size:14px;color:#0f1115;margin:0 0 6px;">Hola ${pedido.cliente_nombre},</p>
     <p style="font-size:15px;color:#0f1115;margin:0 0 14px;">${texto.mensaje}</p>
     <div style="padding:12px 16px;background:#fafafb;border:1px solid #e8eaee;">
       <span style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#5b6472;">Estado actual</span><br>
       <strong style="font-size:15px;color:#0f1115;">${texto.asunto.includes("retiro") ? "Listo para retiro" : estado.charAt(0).toUpperCase() + estado.slice(1)}</strong>
-    </div>`;
+    </div>${ctaReview}`;
   await enviar(pedido.cliente_email, texto.asunto, layout(`Pedido #${pedido.numero_pedido}`, cuerpo));
 }

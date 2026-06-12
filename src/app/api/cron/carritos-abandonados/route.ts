@@ -1,74 +1,100 @@
 import { NextRequest, NextResponse } from "next/server";
 import { carritosRepo } from "@/server/repositories";
+import { emailCarritoAbandonado } from "@/server/services/emails";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
-  try {
-    // Verify CRON_SECRET
-    const authHeader = request.headers.get("authorization");
-    const cronSecret = process.env.CRON_SECRET;
+/**
+ * Cron de carrito abandonado (Cloud Scheduler, p. ej. cada hora):
+ *   POST/GET /api/cron/carritos-abandonados
+ *   Header: Authorization: Bearer $CRON_SECRET  (o x-cron-secret)
+ *
+ * Antes este endpoint solo marcaba los carritos; ahora ENVÍA el recordatorio
+ * real con link de recuperación (/carrito/recuperar/<token>) a los carritos
+ * con email capturado, abandonados hace entre 3 y 72 horas. Un solo
+ * recordatorio por carrito (email_enviado).
+ */
+async function procesar(request: NextRequest) {
+  const cronSecret = process.env.CRON_SECRET || "";
+  const auth = request.headers.get("authorization") || "";
+  const alt = request.headers.get("x-cron-secret") || "";
 
-    if (!cronSecret) {
-      console.error("CRON_SECRET not configured");
-      return NextResponse.json(
-        { error: "Cron no configurado" },
-        { status: 500 }
-      );
-    }
-
-    if (authHeader !== `Bearer ${cronSecret}`) {
+  if (cronSecret) {
+    if (auth !== `Bearer ${cronSecret}` && alt !== cronSecret) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
+  } else if (process.env.NODE_ENV === "production") {
+    console.error("CRON_SECRET not configured");
+    return NextResponse.json({ error: "Cron no configurado" }, { status: 503 });
+  }
 
-    // Find abandoned carts: updated more than 24h ago, not emailed, not recovered
-    const twentyFourHoursAgo = new Date(
-      Date.now() - 24 * 60 * 60 * 1000
-    ).toISOString();
+  const ahora = Date.now();
+  const antesDe = new Date(ahora - 3 * 60 * 60 * 1000).toISOString(); // > 3 h sin moverse
+  const despuesDe = new Date(ahora - 72 * 60 * 60 * 1000).toISOString(); // < 72 h (no revivir fósiles)
 
-    let carritos;
-    try {
-      carritos = await carritosRepo.findAbandonados(twentyFourHoursAgo);
-    } catch (e) {
-      console.error("Error fetching abandoned carts:", e);
-      return NextResponse.json(
-        { error: "Error al buscar carritos abandonados" },
-        { status: 500 }
-      );
-    }
-
-    if (!carritos || carritos.length === 0) {
-      return NextResponse.json({
-        success: true,
-        processed: 0,
-        message: "No hay carritos abandonados para procesar",
-      });
-    }
-
-    // Mark each cart as email_enviado = true
-    // In production, this is where you would send recovery emails via SES/Resend
-    const carritoIds = carritos.map((c) => c.id);
-
-    try {
-      await carritosRepo.markEmailEnviado(carritoIds);
-    } catch (e) {
-      console.error("Error updating abandoned carts:", e);
-      return NextResponse.json(
-        { error: "Error al actualizar carritos" },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      processed: carritos.length,
-      message: `${carritos.length} carritos abandonados marcados para envio de email`,
+  let candidatos: Awaited<ReturnType<typeof carritosRepo.findParaRecordatorio>>;
+  try {
+    candidatos = await carritosRepo.findParaRecordatorio({
+      antesDeISO: antesDe,
+      despuesDeISO: despuesDe,
     });
-  } catch (err) {
-    console.error("Cron carritos abandonados error:", err);
+  } catch (e) {
+    console.error("cron carritos: tabla/columnas no disponibles:", e);
     return NextResponse.json(
-      { error: "Error interno del servidor" },
-      { status: 500 }
+      { ok: false, error: "carritos_guardados sin migración etapa 3" },
+      { status: 500 },
     );
   }
+
+  if (candidatos.length === 0) {
+    return NextResponse.json({ ok: true, candidatos: 0, enviados: 0 });
+  }
+
+  const origin = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+  const enviados: string[] = [];
+  let fallidos = 0;
+
+  for (const c of candidatos) {
+    if (!c.email || !c.token) continue;
+    const items = Array.isArray(c.items)
+      ? (c.items as { nombre?: string; cantidad?: number }[])
+      : [];
+    if (items.length === 0) continue;
+    try {
+      const ok = await emailCarritoAbandonado({
+        email: c.email,
+        items,
+        total: Number(c.total) || 0,
+        linkRecuperacion: `${origin}/carrito/recuperar/${c.token}`,
+      });
+      if (ok) enviados.push(c.id);
+      else fallidos++;
+    } catch (e) {
+      console.error("cron carritos: email fallido", c.id, e);
+      fallidos++;
+    }
+  }
+
+  if (enviados.length > 0) {
+    try {
+      await carritosRepo.markEmailEnviado(enviados);
+    } catch (e) {
+      console.error("cron carritos: markEmailEnviado:", e);
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    candidatos: candidatos.length,
+    enviados: enviados.length,
+    fallidos,
+  });
+}
+
+export async function POST(request: NextRequest) {
+  return procesar(request);
+}
+
+export async function GET(request: NextRequest) {
+  return procesar(request);
 }

@@ -5,6 +5,7 @@ import {
   domainEventsRepo,
   stockRepo,
   aprobacionesRepo,
+  carritosRepo,
 } from "@/server/repositories";
 import type { Pedido } from "@/server/domain";
 import { calcularPedido } from "@/lib/checkout";
@@ -139,6 +140,14 @@ export async function POST(request: NextRequest) {
         payload: { pedido_id: pedido.id, numero_pedido: pedido.numero_pedido },
         creada_por: "sistema",
       });
+    }
+
+    // El cliente concretó: su carrito capturado deja de ser "abandonado"
+    // (evita mandarle un recordatorio de algo que ya compró).
+    try {
+      await carritosRepo.markRecuperadoPorEmail(cliente_email.toLowerCase().trim());
+    } catch {
+      /* best-effort: sin migración no hay captura que cerrar */
     }
 
     // Emails de confirmación (cliente + aviso al taller) — servicio único

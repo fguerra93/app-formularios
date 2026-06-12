@@ -31,6 +31,8 @@ export interface ItemCalculado {
   cantidad: number;
   precio_unitario: number;
   variante: Record<string, string> | null;
+  /** Slug del producto: permite enlazar la ficha desde emails (p. ej. pedir reseña). */
+  slug?: string;
 }
 
 export interface Faltante {
@@ -173,6 +175,7 @@ export async function calcularPedido(opts: {
       cantidad,
       precio_unitario: precioUnitario,
       variante: item.variante ?? null,
+      slug: producto.slug,
     });
   }
 
