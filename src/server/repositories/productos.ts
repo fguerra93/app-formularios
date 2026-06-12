@@ -315,6 +315,17 @@ export const productosRepo = {
     return (data || []) as { slug: string; updated_at: string; categoria: unknown }[];
   },
 
+  /** Productos activos con los campos que pide el feed de Google Merchant. */
+  async listParaFeed(): Promise<Record<string, unknown>[]> {
+    const { data } = await getDb()
+      .from("productos")
+      .select(
+        "id, nombre, slug, descripcion_corta, descripcion, precio, precio_oferta, precio_m2, imagenes, stock, sku, categoria:categorias(slug, nombre)"
+      )
+      .eq("activo", true);
+    return (data || []) as Record<string, unknown>[];
+  },
+
   /** Productos con control de stock por debajo del umbral (alertas dashboard). */
   async listStockBajo(umbral = 5): Promise<Record<string, unknown>[]> {
     const { data } = await getDb()

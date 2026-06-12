@@ -26,6 +26,7 @@ interface Review {
   rating: number;
   titulo?: string;
   comentario: string;
+  fotos?: string[];
   verificada: boolean;
   created_at: string;
 }
@@ -102,6 +103,8 @@ export default function ProductoPage() {
   const [reviewNombre, setReviewNombre] = useState("");
   const [reviewEmail, setReviewEmail] = useState("");
   const [reviewSending, setReviewSending] = useState(false);
+  const [reviewFotos, setReviewFotos] = useState<string[]>([]);
+  const [fotoSubiendo, setFotoSubiendo] = useState(false);
   const [stockNotifEmail, setStockNotifEmail] = useState("");
   const [stockNotifSending, setStockNotifSending] = useState(false);
   const [stockNotifDone, setStockNotifDone] = useState(false);
@@ -345,6 +348,7 @@ export default function ProductoPage() {
           comentario: reviewComentario,
           autor_nombre: reviewNombre,
           autor_email: reviewEmail,
+          fotos: reviewFotos,
         }),
       });
 
@@ -356,6 +360,7 @@ export default function ProductoPage() {
         setReviewComentario("");
         setReviewNombre("");
         setReviewEmail("");
+        setReviewFotos([]);
       } else {
         const data = await res.json().catch(() => ({}));
         toast.error(data.error || "Error al enviar opinion");
@@ -364,6 +369,41 @@ export default function ProductoPage() {
       toast.error("Error de conexion");
     }
     setReviewSending(false);
+  };
+
+  // Fotos de reseña: hasta 3 imágenes, subidas al storage antes de enviar.
+  const handleReviewFotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (files.length === 0) return;
+
+    const cupo = 3 - reviewFotos.length;
+    if (cupo <= 0) {
+      toast.error("Máximo 3 fotos por opinión");
+      return;
+    }
+
+    setFotoSubiendo(true);
+    for (const file of files.slice(0, cupo)) {
+      if (file.size > 4 * 1024 * 1024) {
+        toast.error(`${file.name}: supera los 4 MB`);
+        continue;
+      }
+      const fd = new FormData();
+      fd.append("file", file);
+      try {
+        const res = await fetch("/api/reviews/upload", { method: "POST", body: fd });
+        const data = await res.json();
+        if (res.ok && data.url) {
+          setReviewFotos((prev) => [...prev, data.url]);
+        } else {
+          toast.error(data.error || "No pudimos subir la foto");
+        }
+      } catch {
+        toast.error("No pudimos subir la foto. Puedes opinar sin ella.");
+      }
+    }
+    setFotoSubiendo(false);
   };
 
   const handleSubmitPregunta = async (e: React.FormEvent) => {
@@ -1837,6 +1877,7 @@ export default function ProductoPage() {
         >
           Opiniones de Clientes
         </h2>
+        <span id="opiniones" className="block -mt-24 pt-24" aria-hidden="true" />
 
         {reviewsLoading ? (
           <div className="space-y-3">
@@ -1885,6 +1926,20 @@ export default function ProductoPage() {
                     <p className="text-sm text-[#0f1115] leading-relaxed mb-2">
                       {review.comentario}
                     </p>
+                    {Array.isArray(review.fotos) && review.fotos.length > 0 && (
+                      <div className="flex gap-2 mb-2 flex-wrap">
+                        {review.fotos.map((foto, fi) => (
+                          <a key={fi} href={foto} target="_blank" rel="noopener noreferrer" className="block">
+                            <img
+                              src={foto}
+                              alt={`Foto de ${review.autor_nombre}`}
+                              className="size-20 object-cover rounded-lg border border-[#e8eaee] hover:opacity-90 transition-opacity"
+                              loading="lazy"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-xs text-[#5b6472]">
                       <span>{review.autor_nombre}</span>
                       <span>-</span>
@@ -1986,11 +2041,46 @@ export default function ProductoPage() {
                   </div>
                 </div>
 
+                {/* Fotos (opcional) */}
+                <div>
+                  <label className="text-sm font-semibold text-[#0f1115] block mb-1">
+                    Fotos de tu impresión <span className="font-normal text-[#5b6472]">(opcional, máx. 3)</span>
+                  </label>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {reviewFotos.map((foto, fi) => (
+                      <div key={fi} className="relative">
+                        <img src={foto} alt={`Foto ${fi + 1}`} className="size-16 object-cover rounded-lg border border-[#e8eaee]" />
+                        <button
+                          type="button"
+                          aria-label="Quitar foto"
+                          onClick={() => setReviewFotos((prev) => prev.filter((_, i) => i !== fi))}
+                          className="absolute -top-2 -right-2 size-5 rounded-full bg-[#0f1115] text-white text-xs leading-none flex items-center justify-center"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    {reviewFotos.length < 3 && (
+                      <label className="size-16 rounded-lg border border-dashed border-[#d7dbe2] flex items-center justify-center cursor-pointer text-[#5b6472] hover:border-[#0f1115] transition-colors text-xl">
+                        {fotoSubiendo ? "…" : "+"}
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          multiple
+                          onChange={handleReviewFotos}
+                          disabled={fotoSubiendo}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
+                </div>
+
                 {/* Actions */}
                 <div className="flex gap-3">
                   <Button
                     type="submit"
-                    disabled={reviewSending}
+                    disabled={reviewSending || fotoSubiendo}
                     className="gap-2 bg-[#0f1115] hover:bg-[#000000] text-white"
                   >
                     <Send className="size-4" />

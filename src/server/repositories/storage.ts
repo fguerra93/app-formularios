@@ -54,6 +54,19 @@ export const storageRepo = {
     return { url: publicUrlFor(filePath), path: filePath };
   },
 
+  /** Sube una foto de reseña de cliente y devuelve su URL pública. */
+  async uploadReviewImage(file: File): Promise<{ url: string; path: string }> {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext || "jpg"}`;
+    const filePath = `reviews/${fileName}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await bucket().file(filePath).save(buffer, {
+      contentType: file.type || "image/jpeg",
+      resumable: false,
+    });
+    return { url: publicUrlFor(filePath), path: filePath };
+  },
+
   /** Sube un archivo recibido por chat; devuelve su URL pública. */
   async uploadChatFile(
     storagePath: string,
