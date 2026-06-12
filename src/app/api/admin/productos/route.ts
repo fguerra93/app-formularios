@@ -34,6 +34,14 @@ export async function POST(request: NextRequest) {
       tags: body.tags || [],
       peso_gramos: body.peso_gramos || null,
       sku: body.sku || null,
+      precios_cantidad: body.precios_cantidad || [],
+      ficha_tecnica_url: body.ficha_tecnica_url || null,
+      precio_m2: body.precio_m2 || null,
+      ancho_max_cm: body.ancho_max_cm || null,
+      area_min_cm2: body.area_min_cm2 || null,
+      materiales_calculadora: body.materiales_calculadora || [],
+      acabados_calculadora: body.acabados_calculadora || [],
+      incluye: body.incluye || [],
     });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {

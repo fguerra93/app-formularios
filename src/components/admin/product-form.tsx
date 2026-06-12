@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import type { Producto, Categoria, Variante } from "@/lib/types";
+import type { Producto, Categoria, Variante, PrecioCantidad } from "@/lib/types";
 
 interface ProductFormProps {
   producto?: Producto;
@@ -40,6 +40,15 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
   const [metaTitle, setMetaTitle] = useState((producto as unknown as Record<string, unknown>)?.meta_title as string || "");
   const [metaDescription, setMetaDescription] = useState((producto as unknown as Record<string, unknown>)?.meta_description as string || "");
   const [fichaTecnicaUrl, setFichaTecnicaUrl] = useState(producto?.ficha_tecnica_url || "");
+  // Precios escalonados por cantidad (mayorista)
+  const [preciosCantidad, setPreciosCantidad] = useState<PrecioCantidad[]>(producto?.precios_cantidad || []);
+  // Calculadora m² (productos de gran formato)
+  const [precioM2, setPrecioM2] = useState(producto?.precio_m2 || 0);
+  const [anchoMaxCm, setAnchoMaxCm] = useState(producto?.ancho_max_cm || 0);
+  const [areaMinCm2, setAreaMinCm2] = useState(producto?.area_min_cm2 || 0);
+  const [materialesCalc, setMaterialesCalc] = useState<{ nombre: string; multiplicador: number }[]>(producto?.materiales_calculadora || []);
+  const [acabadosCalc, setAcabadosCalc] = useState<{ nombre: string; precioExtra: number }[]>(producto?.acabados_calculadora || []);
+  const [incluyeText, setIncluyeText] = useState((producto?.incluye || []).join("\n"));
 
   useEffect(() => {
     fetch("/api/categorias").then((r) => r.json()).then(setCategorias);
@@ -73,6 +82,13 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
         destacado, activo, variantes, imagenes,
         meta_title: metaTitle || null, meta_description: metaDescription || null,
         ficha_tecnica_url: fichaTecnicaUrl || null,
+        precios_cantidad: preciosCantidad.filter((p) => p.cantidad_min > 0 && p.precio > 0),
+        precio_m2: precioM2 || null,
+        ancho_max_cm: anchoMaxCm || null,
+        area_min_cm2: areaMinCm2 || null,
+        materiales_calculadora: materialesCalc.filter((m) => m.nombre.trim()),
+        acabados_calculadora: acabadosCalc.filter((a) => a.nombre.trim()),
+        incluye: incluyeText.split("\n").map((s) => s.trim()).filter(Boolean),
       };
 
       const url = isNew ? "/api/admin/productos" : `/api/admin/productos/${producto!.id}`;
@@ -170,6 +186,7 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
   const tabs = [
     { id: "general", label: "General" },
     { id: "precio", label: "Precio" },
+    { id: "m2", label: "Calculadora m²" },
     { id: "imagenes", label: "Imagenes" },
     { id: "inventario", label: "Inventario" },
     { id: "variantes", label: "Variantes" },
@@ -270,6 +287,16 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
               <Input value={fichaTecnicaUrl} onChange={(e) => setFichaTecnicaUrl(e.target.value)} placeholder="https://... (URL del PDF en Storage)" />
               <p className="mt-1 text-xs" style={{ color: "#64748B" }}>Sube el PDF a Supabase Storage y pega la URL aqui.</p>
             </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>Que incluye (uno por linea)</label>
+              <textarea
+                value={incluyeText}
+                onChange={(e) => setIncluyeText(e.target.value)}
+                rows={4}
+                placeholder={"Estructura de aluminio porta-banner\nBolso de transporte incluido\nVarilla telescopica superior"}
+                className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm"
+              />
+            </div>
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2">
                 <input type="checkbox" checked={destacado} onChange={(e) => setDestacado(e.target.checked)} />
@@ -301,6 +328,170 @@ export function ProductForm({ producto, isNew }: ProductFormProps) {
             <div>
               <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>SKU</label>
               <Input value={sku} onChange={(e) => setSku(e.target.value)} placeholder="Codigo de producto" />
+            </div>
+
+            {/* Precios escalonados por cantidad */}
+            <div className="rounded-lg border p-4">
+              <div className="mb-1 flex items-center justify-between">
+                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>Precios por cantidad (mayorista)</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                  onClick={() =>
+                    setPreciosCantidad((prev) => [
+                      ...prev,
+                      { cantidad_min: prev.length ? (prev[prev.length - 1].cantidad_max || prev[prev.length - 1].cantidad_min * 2) + 1 : 10, cantidad_max: null, precio: precio },
+                    ])
+                  }
+                >
+                  <Plus className="size-3" /> Tramo
+                </Button>
+              </div>
+              <p className="mb-3 text-xs" style={{ color: "#64748B" }}>
+                1 polera no cuesta lo mismo que 50: define tramos y el precio unitario de cada uno. Deja &quot;hasta&quot; vacio para el ultimo tramo.
+              </p>
+              {preciosCantidad.length === 0 ? (
+                <p className="py-2 text-center text-sm" style={{ color: "#64748B" }}>Sin tramos: se usa el precio base para cualquier cantidad.</p>
+              ) : (
+                <div className="space-y-2">
+                  <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-xs font-medium" style={{ color: "#64748B" }}>
+                    <span>Desde (unid.)</span><span>Hasta (unid.)</span><span>Precio unitario</span><span />
+                  </div>
+                  {preciosCantidad.map((p, idx) => (
+                    <div key={idx} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2">
+                      <Input
+                        type="number"
+                        value={p.cantidad_min}
+                        onChange={(e) =>
+                          setPreciosCantidad((prev) => prev.map((x, i) => (i === idx ? { ...x, cantidad_min: Number(e.target.value) } : x)))
+                        }
+                      />
+                      <Input
+                        type="number"
+                        value={p.cantidad_max ?? ""}
+                        placeholder="∞"
+                        onChange={(e) =>
+                          setPreciosCantidad((prev) =>
+                            prev.map((x, i) => (i === idx ? { ...x, cantidad_max: e.target.value === "" ? null : Number(e.target.value) } : x))
+                          )
+                        }
+                      />
+                      <Input
+                        type="number"
+                        value={p.precio}
+                        onChange={(e) =>
+                          setPreciosCantidad((prev) => prev.map((x, i) => (i === idx ? { ...x, precio: Number(e.target.value) } : x)))
+                        }
+                      />
+                      <Button variant="ghost" size="sm" onClick={() => setPreciosCantidad((prev) => prev.filter((_, i) => i !== idx))}>
+                        <Trash2 className="size-4 text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {activeTab === "m2" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base" style={{ color: "#1E293B" }}>Calculadora por m² (gran formato)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-xs" style={{ color: "#64748B" }}>
+              Si defines un precio por m², la ficha del producto muestra el configurador con vista a escala,
+              validacion de ancho imprimible y compra directa con la medida exacta.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>Precio por m² (CLP)</label>
+                <Input type="number" value={precioM2} onChange={(e) => setPrecioM2(Number(e.target.value))} placeholder="0 = no es producto m²" />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>Ancho imprimible (cm)</label>
+                <Input type="number" value={anchoMaxCm} onChange={(e) => setAnchoMaxCm(Number(e.target.value))} placeholder="ej: 85" />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium" style={{ color: "#1E293B" }}>Area minima (cm²)</label>
+                <Input type="number" value={areaMinCm2} onChange={(e) => setAreaMinCm2(Number(e.target.value))} placeholder="ej: 5000" />
+              </div>
+            </div>
+
+            {/* Materiales */}
+            <div className="rounded-lg border p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>Materiales (multiplican el precio/m²)</p>
+                <Button variant="outline" size="sm" className="gap-1" onClick={() => setMaterialesCalc((prev) => [...prev, { nombre: "", multiplicador: 1 }])}>
+                  <Plus className="size-3" /> Material
+                </Button>
+              </div>
+              {materialesCalc.length === 0 ? (
+                <p className="py-2 text-center text-sm" style={{ color: "#64748B" }}>Sin materiales definidos.</p>
+              ) : (
+                <div className="space-y-2">
+                  {materialesCalc.map((m, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <Input
+                        value={m.nombre}
+                        placeholder="ej: Tela PVC 10oz"
+                        className="flex-1"
+                        onChange={(e) => setMaterialesCalc((prev) => prev.map((x, i) => (i === idx ? { ...x, nombre: e.target.value } : x)))}
+                      />
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={m.multiplicador}
+                        className="w-28"
+                        title="Multiplicador del precio/m²"
+                        onChange={(e) => setMaterialesCalc((prev) => prev.map((x, i) => (i === idx ? { ...x, multiplicador: Number(e.target.value) } : x)))}
+                      />
+                      <Button variant="ghost" size="sm" onClick={() => setMaterialesCalc((prev) => prev.filter((_, i) => i !== idx))}>
+                        <Trash2 className="size-4 text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Terminaciones */}
+            <div className="rounded-lg border p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <p className="text-sm font-medium" style={{ color: "#1E293B" }}>Terminaciones (CLP extra por m²)</p>
+                <Button variant="outline" size="sm" className="gap-1" onClick={() => setAcabadosCalc((prev) => [...prev, { nombre: "", precioExtra: 0 }])}>
+                  <Plus className="size-3" /> Terminacion
+                </Button>
+              </div>
+              {acabadosCalc.length === 0 ? (
+                <p className="py-2 text-center text-sm" style={{ color: "#64748B" }}>Sin terminaciones definidas.</p>
+              ) : (
+                <div className="space-y-2">
+                  {acabadosCalc.map((a, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <Input
+                        value={a.nombre}
+                        placeholder="ej: Laminado mate"
+                        className="flex-1"
+                        onChange={(e) => setAcabadosCalc((prev) => prev.map((x, i) => (i === idx ? { ...x, nombre: e.target.value } : x)))}
+                      />
+                      <Input
+                        type="number"
+                        value={a.precioExtra}
+                        className="w-28"
+                        title="CLP extra por m²"
+                        onChange={(e) => setAcabadosCalc((prev) => prev.map((x, i) => (i === idx ? { ...x, precioExtra: Number(e.target.value) } : x)))}
+                      />
+                      <Button variant="ghost" size="sm" onClick={() => setAcabadosCalc((prev) => prev.filter((_, i) => i !== idx))}>
+                        <Trash2 className="size-4 text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

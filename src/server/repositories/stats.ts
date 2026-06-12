@@ -114,6 +114,39 @@ export const statsRepo = {
       .in("pago_estado", ["pagado", "pendiente"]);
 
     const ingresos_mes = (pedidosMes || []).reduce((sum, p) => sum + (p.total || 0), 0);
+    const pedidos_mes = (pedidosMes || []).length;
+    const ticket_promedio = pedidos_mes > 0 ? Math.round(ingresos_mes / pedidos_mes) : 0;
+
+    // Top productos del mes (agregado en memoria desde items JSONB)
+    const { data: itemsMes } = await db
+      .from("pedidos")
+      .select("items")
+      .gte("created_at", monthStart);
+    const topMap = new Map<string, { nombre: string; unidades: number; ingresos: number }>();
+    for (const row of (itemsMes || []) as { items: unknown }[]) {
+      const items = Array.isArray(row.items)
+        ? (row.items as { nombre?: string; cantidad?: number; precio_unitario?: number }[])
+        : [];
+      for (const it of items) {
+        const nombre = it.nombre || "(sin nombre)";
+        const prev = topMap.get(nombre) || { nombre, unidades: 0, ingresos: 0 };
+        const cant = Number(it.cantidad) || 0;
+        prev.unidades += cant;
+        prev.ingresos += cant * (Number(it.precio_unitario) || 0);
+        topMap.set(nombre, prev);
+      }
+    }
+    const top_productos = [...topMap.values()]
+      .sort((a, b) => b.ingresos - a.ingresos)
+      .slice(0, 5);
+
+    // Pedidos por estado (operación: qué hay en cada etapa)
+    const { data: estadosRows } = await db.from("pedidos").select("estado");
+    const pedidos_por_estado: Record<string, number> = {};
+    for (const r of (estadosRows || []) as { estado: string | null }[]) {
+      const e = r.estado || "pendiente";
+      pedidos_por_estado[e] = (pedidos_por_estado[e] || 0) + 1;
+    }
 
     const ventas_diarias: { fecha: string; total: number; count: number }[] = [];
     for (let i = 6; i >= 0; i--) {
@@ -152,6 +185,10 @@ export const statsRepo = {
       ventas_hoy,
       pedidos_pendientes: pedidos_pendientes || 0,
       ingresos_mes,
+      pedidos_mes,
+      ticket_promedio,
+      top_productos,
+      pedidos_por_estado,
       ventas_diarias,
       pedidos_recientes: pedidos_recientes || [],
     };

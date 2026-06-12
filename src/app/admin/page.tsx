@@ -44,6 +44,10 @@ interface StatsData {
   ventas_hoy: number;
   pedidos_pendientes: number;
   ingresos_mes: number;
+  pedidos_mes: number;
+  ticket_promedio: number;
+  top_productos: { nombre: string; unidades: number; ingresos: number }[];
+  pedidos_por_estado: Record<string, number>;
   ventas_diarias: { fecha: string; total: number; count: number }[];
   pedidos_recientes: PedidoReciente[];
 }
@@ -158,8 +162,9 @@ function DashboardContent() {
           index={1}
         />
         <MetricCard
-          title="Formularios Hoy"
-          value={stats?.hoy ?? 0}
+          title="Ticket Promedio"
+          value={formatCLP(stats?.ticket_promedio ?? 0)}
+          subtitle={`${stats?.pedidos_mes ?? 0} pedidos este mes`}
           icon={FileText}
           color="#E91E8C"
           index={2}
@@ -167,7 +172,7 @@ function DashboardContent() {
         <MetricCard
           title="Ingresos del Mes"
           value={formatCLP(stats?.ingresos_mes ?? 0)}
-          subtitle={`${stats?.emails_restantes_dia ?? 0} emails restantes hoy`}
+          subtitle={`${stats?.hoy ?? 0} formularios hoy · ${stats?.emails_restantes_dia ?? 0} emails restantes`}
           icon={TrendingUp}
           color="#FFD100"
           index={3}
@@ -246,6 +251,80 @@ function DashboardContent() {
         </motion.div>
       </div>
 
+      {/* Top productos + pipeline de pedidos */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle style={{ color: "#1E293B" }}>Top productos del mes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {(!stats?.top_productos || stats.top_productos.length === 0) ? (
+                <p className="py-4 text-center text-sm" style={{ color: "#64748B" }}>Sin ventas este mes todavía.</p>
+              ) : (
+                <ul className="flex flex-col divide-y">
+                  {stats.top_productos.map((tp, i) => (
+                    <li key={tp.nombre} className="flex items-center justify-between gap-3 px-1 py-2.5">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="text-xs font-bold tabular-nums" style={{ color: "#94A3B8" }}>{i + 1}</span>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium" style={{ color: "#1E293B" }}>{tp.nombre}</p>
+                          <p className="text-xs" style={{ color: "#64748B" }}>{tp.unidades} unidades</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-semibold tabular-nums" style={{ color: "#1E293B" }}>{formatCLP(tp.ingresos)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle style={{ color: "#1E293B" }}>Pedidos por estado</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {(!stats?.pedidos_por_estado || Object.keys(stats.pedidos_por_estado).length === 0) ? (
+                <p className="py-4 text-center text-sm" style={{ color: "#64748B" }}>No hay pedidos aún.</p>
+              ) : (
+                <ul className="flex flex-col gap-2">
+                  {["pendiente", "confirmado", "preparando", "enviado", "entregado", "cancelado"]
+                    .filter((e) => stats.pedidos_por_estado[e])
+                    .map((e) => (
+                      <li key={e} className="flex items-center justify-between gap-3">
+                        <span
+                          className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+                          style={{
+                            backgroundColor: `${estadoColors[e] || "#64748B"}20`,
+                            color: estadoColors[e] || "#64748B",
+                          }}
+                        >
+                          {e}
+                        </span>
+                        <div className="mx-3 h-1.5 flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "#F1F5F9" }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              backgroundColor: estadoColors[e] || "#64748B",
+                              width: `${Math.min(100, (stats.pedidos_por_estado[e] / Math.max(...Object.values(stats.pedidos_por_estado))) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-sm font-semibold tabular-nums" style={{ color: "#1E293B" }}>
+                          {stats.pedidos_por_estado[e]}
+                        </span>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
       {/* Recent lists */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent pedidos */}
@@ -275,6 +354,15 @@ function DashboardContent() {
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
+                          <span
+                            className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
+                            style={{
+                              backgroundColor: p.pago_estado === "pagado" ? "#10B98120" : p.pago_estado === "fallido" ? "#EF444420" : "#64748B20",
+                              color: p.pago_estado === "pagado" ? "#10B981" : p.pago_estado === "fallido" ? "#EF4444" : "#64748B",
+                            }}
+                          >
+                            {p.pago_estado === "pagado" ? "pagado" : p.pago_estado === "fallido" ? "pago fallido" : "por pagar"}
+                          </span>
                           <span
                             className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
                             style={{
