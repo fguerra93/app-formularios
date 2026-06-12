@@ -33,8 +33,8 @@ function CheckoutContent() {
   const [zonas, setZonas] = useState<ZonaEnvio[]>([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [pagoMetodo, setPagoMetodo] = useState<"mercadopago" | "transferencia" | "retiro">(
-    tipoEntrega === "retiro_tienda" ? "retiro" : "mercadopago"
+  const [pagoMetodo, setPagoMetodo] = useState<"webpay" | "mercadopago" | "transferencia" | "retiro">(
+    tipoEntrega === "retiro_tienda" ? "retiro" : "webpay"
   );
 
   const [newsletterOptIn, setNewsletterOptIn] = useState(true);
@@ -141,7 +141,14 @@ function CheckoutContent() {
         subtotal,
         costo_envio: costoEnvio,
         total,
-        pago_metodo: pagoMetodo === "mercadopago" ? "mercadopago" : pagoMetodo === "transferencia" ? "transferencia" : "pago_retiro",
+        pago_metodo:
+          pagoMetodo === "webpay"
+            ? "webpay"
+            : pagoMetodo === "mercadopago"
+              ? "mercadopago"
+              : pagoMetodo === "transferencia"
+                ? "transferencia"
+                : "pago_retiro",
         cliente_id: user?.id || null,
       };
 
@@ -163,6 +170,26 @@ function CheckoutContent() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: form.email, nombre: form.nombre, fuente: "checkout" }),
           }).catch(() => {});
+        }
+
+        if (pagoMetodo === "webpay") {
+          // Crear transacción Webpay Plus y redirigir a Transbank
+          const wpRes = await fetch("/api/pagos/webpay/crear", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pedido_id: pedidoId }),
+          });
+          const wpData = await wpRes.json();
+
+          if (wpRes.ok && wpData.url && wpData.token) {
+            clearCart();
+            window.location.assign(`${wpData.url}?token_ws=${wpData.token}`);
+            return;
+          } else {
+            clearCart();
+            router.push(`/checkout/confirmacion/${pedidoId}?pago=error_webpay`);
+            return;
+          }
         }
 
         if (pagoMetodo === "mercadopago") {
@@ -425,8 +452,32 @@ function CheckoutContent() {
             )}
             {/* Payment method */}
             <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
-              <h2 className="font-bold text-[#0f1115] mb-4">Metodo de Pago</h2>
+              <h2 className="font-bold text-[#0f1115] mb-4">Método de Pago</h2>
               <div className="space-y-3">
+                <label
+                  className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                    pagoMetodo === "webpay"
+                      ? "border-[#00B4D8] bg-[#fafafb]"
+                      : "border-[#e8eaee] hover:border-[#CBD5E1]"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="pago"
+                    value="webpay"
+                    checked={pagoMetodo === "webpay"}
+                    onChange={() => setPagoMetodo("webpay")}
+                    className="accent-[#00B4D8]"
+                  />
+                  <CreditCard className="size-5 text-[#0f1115]" />
+                  <div className="flex-1">
+                    <p className="font-medium text-[#0f1115]">Webpay Plus</p>
+                    <p className="text-xs text-[#5b6472]">
+                      Débito, crédito o prepago — Transbank
+                    </p>
+                  </div>
+                </label>
+
                 <label
                   className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
                     pagoMetodo === "mercadopago"
@@ -600,6 +651,8 @@ function CheckoutContent() {
                   <Loader2 className="size-4 mr-2 animate-spin" />
                   Procesando...
                 </>
+              ) : pagoMetodo === "webpay" ? (
+                "Pagar con Webpay"
               ) : pagoMetodo === "mercadopago" ? (
                 "Pagar con MercadoPago"
               ) : (

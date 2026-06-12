@@ -31,27 +31,32 @@ export const pedidosRepo = {
    * (incluye `numero_pedido` generado por la BD).
    */
   async create(input: CrearPedidoInput): Promise<Pedido> {
-    const { data, error } = await getDb()
-      .from("pedidos")
-      .insert({
-        cliente_nombre: input.cliente_nombre,
-        cliente_email: input.cliente_email,
-        cliente_telefono: input.cliente_telefono ?? null,
-        cliente_rut: input.cliente_rut ?? null,
-        direccion_envio: input.direccion_envio ?? null,
-        tipo_entrega: input.tipo_entrega,
-        items: input.items,
-        subtotal: input.subtotal,
-        costo_envio: input.costo_envio,
-        total: input.total,
-        estado: "pendiente",
-        pago_estado: "pendiente",
-        pago_metodo: input.pago_metodo ?? "transferencia",
-        notas: input.notas ?? null,
-        cliente_id: input.cliente_id ?? null,
-      })
-      .select()
-      .single();
+    const fila: Record<string, unknown> = {
+      cliente_nombre: input.cliente_nombre,
+      cliente_email: input.cliente_email,
+      cliente_telefono: input.cliente_telefono ?? null,
+      cliente_rut: input.cliente_rut ?? null,
+      direccion_envio: input.direccion_envio ?? null,
+      tipo_entrega: input.tipo_entrega,
+      items: input.items,
+      subtotal: input.subtotal,
+      costo_envio: input.costo_envio,
+      total: input.total,
+      estado: "pendiente",
+      pago_estado: "pendiente",
+      pago_metodo: input.pago_metodo ?? "transferencia",
+      notas: input.notas ?? null,
+      cliente_id: input.cliente_id ?? null,
+    };
+
+    let { data, error } = await getDb().from("pedidos").insert(fila).select().single();
+
+    // Esquema desfasado (p. ej. local sin la migración de fase 5): una VENTA
+    // no puede caerse por una columna opcional → se reintenta sin ella.
+    if (error && /cliente_id/i.test(error.message || "")) {
+      delete fila.cliente_id;
+      ({ data, error } = await getDb().from("pedidos").insert(fila).select().single());
+    }
 
     if (error || !data) {
       throw new Error(error?.message || "Error al crear el pedido");

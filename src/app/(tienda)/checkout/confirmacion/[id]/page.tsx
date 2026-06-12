@@ -84,7 +84,11 @@ function ConfirmacionContent() {
 
   // Determine the effective payment status
   const isPagoOk = pagoStatus === "ok" || pedido.pago_estado === "pagado";
-  const isPagoError = pagoStatus === "error" || pagoStatus === "error_mp";
+  const isPagoError =
+    pagoStatus === "error" ||
+    pagoStatus === "error_mp" ||
+    pagoStatus === "error_webpay" ||
+    pagoStatus === "cancelado";
   const isPagoPendiente = pagoStatus === "pendiente";
   const isTransferencia = pedido.pago_metodo === "transferencia";
   const isPagoRetiro = pedido.pago_metodo === "pago_retiro";
