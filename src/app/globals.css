@@ -791,3 +791,33 @@ textarea:focus-visible,
   text-transform: uppercase; letter-spacing: .1em;
   color: rgba(255,255,255,.55); margin-bottom: .45rem;
 }
+
+/* ===================================================================
+   HERO DE TALLER — afiche full-bleed con fotografía real del negocio
+   =================================================================== */
+.pl-poster {
+  font-family: var(--font-poster), Impact, "Arial Narrow", sans-serif;
+  text-transform: uppercase;
+  line-height: 0.95;
+  letter-spacing: 0.004em;
+  font-weight: 400;
+}
+/* Trama de medios tonos (textura de imprenta) sobre la foto */
+.pl-halftone::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image: radial-gradient(rgba(255,255,255,.14) 1px, transparent 1.4px);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(115deg, transparent 40%, #000 90%);
+  -webkit-mask-image: linear-gradient(115deg, transparent 40%, #000 90%);
+}
+@keyframes pl-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.pl-marquee {
+  display: flex; width: max-content;
+  animation: pl-marquee 30s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-marquee { animation: none; }
+}

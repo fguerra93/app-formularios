@@ -52,10 +52,10 @@ export function CotizadorInline() {
             <span className="mc-tech text-[11px] uppercase tracking-[0.14em]" style={{ color: 'var(--mc-accent)' }}>
               Orden de cotización
             </span>
-            <h2 className="mc-display text-3xl md:text-4xl text-white mt-3 mb-4">
+            <h2 className="pl-poster text-4xl md:text-5xl text-white mt-3 mb-4">
               Precio al tiro,
               <br />
-              no en 48 horas.
+              <span style={{ color: "var(--mc-accent)" }}>no en 48 horas.</span>
             </h2>
             <p className="text-white/60 max-w-md text-sm md:text-base leading-relaxed">
               Dinos qué necesitas y te respondemos por WhatsApp con precio y plazo.

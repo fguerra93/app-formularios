@@ -178,20 +178,49 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* CTA banner — banda oscura sobria */}
-      <section className="px-4 py-16 md:py-20" style={{ background: "var(--mc-ink)" }}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <span className="mc-eyebrow" style={{ color: "var(--mc-accent)" }}>Poleras personalizadas</span>
-            <h2 className="mc-display text-3xl md:text-4xl text-white mt-3 mb-4">Tu diseño, en tela, con calidad real.</h2>
-            <p className="text-white/60 mb-7 max-w-md">Impresión DTG y DTF de alta durabilidad. Sin mínimo de unidades, colores vibrantes y envío gratis sobre $50.000.</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/contacto" className="mc-btn mc-btn-accent">Enviar mi diseño</Link>
-              <a href="https://wa.me/56966126645" target="_blank" rel="noopener noreferrer" className="mc-btn bg-transparent text-white border border-white/25 hover:border-white">Cotizar por WhatsApp</a>
-            </div>
-          </div>
-          <div className="rounded-2xl overflow-hidden border border-white/10">
-            <img src="https://printup.cl/cdn/shop/files/POLERAS.jpg" alt="Poleras personalizadas PrintUp" className="w-full aspect-[4/3] object-cover" />
+      {/* Pliego fotográfico — poleras a pantalla completa */}
+      <section className="relative overflow-hidden" style={{ background: "#0a0b0d" }}>
+        <img
+          src="https://printup.cl/cdn/shop/files/POLERAS.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 size-full object-cover object-center"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(98deg, rgba(10,11,13,.95) 0%, rgba(10,11,13,.78) 48%, rgba(10,11,13,.3) 100%)",
+          }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 md:py-28">
+          <p className="mc-tech text-[12px] uppercase tracking-[0.16em] mb-4" style={{ color: "var(--mc-accent)" }}>
+            Poleras personalizadas · DTG y DTF
+          </p>
+          <h2 className="pl-poster text-white text-5xl md:text-7xl max-w-3xl">
+            Tu diseño,
+            <br />
+            en tela de verdad.
+          </h2>
+          <p className="mt-5 max-w-md text-white/65 leading-relaxed">
+            Alta durabilidad, colores vibrantes y sin mínimo de unidades.
+            Envío gratis sobre $50.000.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/contacto"
+              className="inline-flex items-center justify-center gap-2 bg-white text-[#0f1115] font-bold text-[15px] px-7 py-3.5 hover:bg-[#e8eaee] transition-colors"
+            >
+              Enviar mi diseño
+            </Link>
+            <a
+              href="https://wa.me/56966126645"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-[15px] px-7 py-3.5 hover:border-white hover:bg-white/5 transition-colors"
+            >
+              Cotizar por WhatsApp
+            </a>
           </div>
         </div>
       </section>

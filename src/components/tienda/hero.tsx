@@ -5,35 +5,68 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 /**
- * Hero "pliego de taller": titular fuerte, foto real del trabajo con cota
- * de imprenta debajo y datos duros en voz técnica monoespaciada.
- * Sin video, sin círculos, sin glassmorphism, sin chips con iconitos.
+ * Hero "afiche de taller": fotografía REAL del trabajo a pantalla completa
+ * bajo tinta, eslogan verdadero de la casa en tipografía de serigrafía
+ * (Anton), trama de medios tonos y marquesina de servicios. Cero stock
+ * genérico, cero tarjetas flotantes: el negocio en la cara.
  */
+
+const SERVICIOS = [
+  "Pendones y roller",
+  "DTF textil",
+  "Poleras personalizadas",
+  "Gran formato",
+  "Vinilo adhesivo",
+  "Señalética",
+  "Tazones y botellas",
+  "Tote bags",
+];
+
 export function Hero() {
   return (
-    <section className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-        {/* Texto */}
+    <section className="relative overflow-hidden pl-halftone" style={{ background: "#0a0b0d" }}>
+      {/* Fotografía real del trabajo (impresión DTF saliendo del taller) */}
+      <img
+        src="https://cdn.shopify.com/s/files/1/0865/0077/0149/files/DTFTEXTIL2.jpg?v=1768931472&width=2000"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 size-full object-cover object-[70%_center]"
+      />
+      {/* Tinta: la foto respira a la derecha, el texto manda a la izquierda */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(102deg, rgba(10,11,13,.97) 0%, rgba(10,11,13,.88) 42%, rgba(10,11,13,.45) 72%, rgba(10,11,13,.25) 100%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pt-20 pb-16 md:pt-28 md:pb-24 min-h-[78vh] flex flex-col justify-center">
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <span className="mc-eyebrow">Imprenta en Doñihue · Región de O&apos;Higgins</span>
-
-          <h1 className="mc-display text-4xl md:text-5xl lg:text-6xl mt-4 mb-5">
-            Tu impresión,
-            <br />
-            <span style={{ color: "var(--mc-accent-ink)" }}>lista cuando la necesitas.</span>
-          </h1>
-
-          <p className="mc-sub text-base md:text-lg max-w-lg mb-8">
-            Pendones, lienzos, DTF textil, poleras y artículos publicitarios.
-            Impresión profesional con despacho a todo Chile.
+          <p className="mc-tech text-[12px] uppercase tracking-[0.16em] mb-5" style={{ color: "var(--mc-accent)" }}>
+            Imprenta en Doñihue · Región de O&apos;Higgins
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 mb-10">
-            <Link href="/productos" className="mc-btn mc-btn-primary">
+          <h1 className="pl-poster text-white text-[17vw] sm:text-[13vw] lg:text-[7.2rem] xl:text-[8rem] max-w-5xl">
+            Tu impresión,
+            <br />
+            <span style={{ color: "var(--mc-accent)" }}>nuestra huella.</span>
+          </h1>
+
+          <p className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-white/70">
+            Pendones, DTF textil, poleras y gran formato impresos acá, en el taller.
+            Cotiza al tiro y tu trabajo sale en 24–48 horas.
+          </p>
+
+          <div className="mt-9 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/productos"
+              className="inline-flex items-center justify-center gap-2 bg-white text-[#0f1115] font-bold text-[15px] px-7 py-3.5 hover:bg-[#e8eaee] transition-colors"
+            >
               Ver catálogo
               <ArrowRight className="size-4" />
             </Link>
@@ -41,45 +74,36 @@ export function Hero() {
               href="https://wa.me/56966126645?text=Hola%2C%20quiero%20cotizar%20un%20producto"
               target="_blank"
               rel="noopener noreferrer"
-              className="mc-btn mc-btn-ghost"
+              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold text-[15px] px-7 py-3.5 hover:border-white hover:bg-white/5 transition-colors"
             >
               Cotizar por WhatsApp
             </a>
           </div>
 
-          {/* Datos duros del taller, en voz técnica */}
-          <p className="mc-tech text-[12px] uppercase tracking-[0.08em]" style={{ color: "var(--mc-ink-2)" }}>
-            +500 clientes · +2.000 trabajos · sale en 24–48 h
+          <p className="mc-tech mt-10 text-[12px] uppercase tracking-[0.1em] text-white/45">
+            +500 clientes · +2.000 trabajos entregados · retiro gratis en el taller
           </p>
         </motion.div>
-
-        {/* Imagen con cota de taller */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-        >
-          <div className="mc-card mc-cropmarks overflow-hidden">
-            <img
-              src="https://cdn.shopify.com/s/files/1/0865/0077/0149/files/DTFTEXTIL2.jpg?v=1768931472"
-              alt="Impresión DTF textil profesional"
-              className="w-full aspect-[4/3] object-cover"
-            />
-          </div>
-          <div className="mc-cota mt-4">
-            <span>DTF textil · 1440 dpi · full color</span>
-          </div>
-          <div className="flex items-baseline justify-between mt-3">
-            <span className="mc-tech text-[11px] uppercase tracking-[0.1em]" style={{ color: "var(--mc-ink-3)" }}>
-              Gran formato desde
-            </span>
-            <span className="mc-tech text-xl font-bold" style={{ color: "var(--mc-ink)" }}>
-              $7.500<span className="text-sm font-medium" style={{ color: "var(--mc-ink-2)" }}>/m²</span>
-            </span>
-          </div>
-        </motion.div>
       </div>
-      <hr className="mc-rule max-w-7xl mx-auto" />
+
+      {/* Marquesina de servicios — voz de taller, no carrusel de plantilla */}
+      <div className="relative z-10 border-t border-white/12 overflow-hidden py-3.5" style={{ background: "rgba(10,11,13,.72)" }}>
+        <div className="pl-marquee">
+          {[0, 1].map((copia) => (
+            <div key={copia} className="flex shrink-0" aria-hidden={copia === 1}>
+              {SERVICIOS.map((s) => (
+                <span key={`${copia}-${s}`} className="mc-tech flex items-center text-[12px] uppercase tracking-[0.14em] text-white/55 px-6">
+                  <span className="mr-6" style={{ color: "var(--mc-accent)" }}>✕</span>
+                  {s}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Registro CMYK: la firma del oficio cierra el pliego */}
+      <div className="mc-cmyk relative z-10" aria-hidden="true"><i /><i /><i /><i /></div>
     </section>
   );
 }

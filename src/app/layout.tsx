@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Anton } from "next/font/google";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/components/cart/cart-provider";
 import { WishlistProvider } from "@/components/tienda/wishlist-provider";
@@ -13,6 +13,13 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+});
+
+// Voz de afiche de imprenta para titulares (condensada, tipo serigrafía).
+const anton = Anton({
+  variable: "--font-poster",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
@@ -50,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${plusJakarta.variable} h-full antialiased`}>
+    <html lang="es" className={`${plusJakarta.variable} ${anton.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[var(--font-sans)]">
         <SandboxBanner />
         <AuthProvider>
