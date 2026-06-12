@@ -31,12 +31,12 @@ export default function SucursalesPage() {
 
         {/* Location Card */}
         <section className="mb-12">
-          <div className="bg-white rounded-2xl border border-[#E2E8F0] overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[#e8eaee] overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2">
               {/* Info */}
               <div className="p-6 md:p-8 space-y-5">
                 <div>
-                  <h2 className="text-xl font-bold text-[#1E293B] mb-3">Taller PrintUp - Donihue</h2>
+                  <h2 className="text-xl font-bold text-[#0f1115] mb-3">Taller PrintUp - Donihue</h2>
                   <ScheduleBadgeInline />
                 </div>
 
@@ -46,9 +46,9 @@ export default function SucursalesPage() {
                       <MapPin className="size-5 text-[#00B4D8]" />
                     </div>
                     <div>
-                      <p className="font-medium text-[#1E293B] text-sm">Direccion</p>
-                      <p className="text-sm text-[#64748B]">Errazuriz 09 / Francisco Lira 082</p>
-                      <p className="text-sm text-[#64748B]">Donihue, Region de O&apos;Higgins</p>
+                      <p className="font-medium text-[#0f1115] text-sm">Direccion</p>
+                      <p className="text-sm text-[#5b6472]">Errazuriz 09 / Francisco Lira 082</p>
+                      <p className="text-sm text-[#5b6472]">Donihue, Region de O&apos;Higgins</p>
                     </div>
                   </div>
 
@@ -57,10 +57,10 @@ export default function SucursalesPage() {
                       <Clock className="size-5 text-[#8b5cf6]" />
                     </div>
                     <div>
-                      <p className="font-medium text-[#1E293B] text-sm">Horario</p>
-                      <p className="text-sm text-[#64748B]">Lunes a Viernes: 9:00 - 18:00</p>
-                      <p className="text-sm text-[#64748B]">Sabado: 10:00 - 14:00</p>
-                      <p className="text-sm text-[#64748B]">Domingo: Cerrado</p>
+                      <p className="font-medium text-[#0f1115] text-sm">Horario</p>
+                      <p className="text-sm text-[#5b6472]">Lunes a Viernes: 9:00 - 18:00</p>
+                      <p className="text-sm text-[#5b6472]">Sabado: 10:00 - 14:00</p>
+                      <p className="text-sm text-[#5b6472]">Domingo: Cerrado</p>
                     </div>
                   </div>
 
@@ -69,7 +69,7 @@ export default function SucursalesPage() {
                       <Phone className="size-5 text-[#10b981]" />
                     </div>
                     <div>
-                      <p className="font-medium text-[#1E293B] text-sm">Telefono / WhatsApp</p>
+                      <p className="font-medium text-[#0f1115] text-sm">Telefono / WhatsApp</p>
                       <a href="tel:+56966126645" className="text-sm text-[#00B4D8] hover:underline">+56 9 66126645</a>
                     </div>
                   </div>
@@ -79,7 +79,7 @@ export default function SucursalesPage() {
                       <Mail className="size-5 text-[#FF9710]" />
                     </div>
                     <div>
-                      <p className="font-medium text-[#1E293B] text-sm">Email</p>
+                      <p className="font-medium text-[#0f1115] text-sm">Email</p>
                       <a href="mailto:contacto@printup.cl" className="text-sm text-[#00B4D8] hover:underline">contacto@printup.cl</a>
                     </div>
                   </div>
@@ -99,7 +99,7 @@ export default function SucursalesPage() {
                     href="https://maps.google.com/?q=Errazuriz+09,+Donihue,+Chile"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[#E2E8F0] text-[#1E293B] font-semibold text-sm hover:bg-[#F0F7FF] transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[#e8eaee] text-[#0f1115] font-semibold text-sm hover:bg-[#fafafb] transition-colors"
                   >
                     <Navigation className="w-4 h-4" />
                     Como llegar
@@ -110,7 +110,7 @@ export default function SucursalesPage() {
               {/* Photo + Map */}
               <div className="flex flex-col">
                 {/* Workshop photo */}
-                <div className="h-[200px] bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center">
+                <div className="h-[200px] bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center">
                   <div className="text-center text-white/80">
                     <MapPin className="size-12 mx-auto mb-2 opacity-40" />
                     <p className="text-sm font-medium">Taller PrintUp</p>
@@ -137,14 +137,14 @@ export default function SucursalesPage() {
 
         {/* Como llegar - Directions */}
         <section className="mb-12">
-          <div className="bg-gradient-to-r from-[#F0F7FF] to-white rounded-2xl border border-[#E2E8F0] p-6">
+          <div className="bg-gradient-to-r from-[#fafafb] to-white rounded-2xl border border-[#e8eaee] p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-lg bg-[#14b8a6]/10 flex items-center justify-center">
                 <Navigation className="size-5 text-[#14b8a6]" />
               </div>
-              <h3 className="font-bold text-[#1E293B] text-lg">Como llegar</h3>
+              <h3 className="font-bold text-[#0f1115] text-lg">Como llegar</h3>
             </div>
-            <div className="space-y-3 text-sm text-[#64748B]">
+            <div className="space-y-3 text-sm text-[#5b6472]">
               <div className="flex items-start gap-2">
                 <span className="w-6 h-6 rounded-full bg-[#14b8a6] text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
                 <p>Desde Rancagua, tomar la Ruta H-30 hacia Donihue (15 min aprox).</p>
@@ -168,10 +168,10 @@ export default function SucursalesPage() {
         {/* Servicios disponibles en taller */}
         <section className="mb-12">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-2">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#0f1115] mb-2">
               Servicios en Nuestro Taller
             </h2>
-            <p className="text-[#64748B]">Todo lo que puedes hacer cuando nos visitas</p>
+            <p className="text-[#5b6472]">Todo lo que puedes hacer cuando nos visitas</p>
             <div className="w-16 h-1 bg-gradient-to-r from-[#14b8a6] to-[#00B4D8] mx-auto mt-4 rounded-full" />
           </div>
 
@@ -179,7 +179,7 @@ export default function SucursalesPage() {
             {serviciosTaller.map((s) => (
               <div
                 key={s.title}
-                className="group bg-white rounded-xl border border-[#E2E8F0] p-5 flex items-start gap-4 hover-glow transition-all"
+                className="group bg-white rounded-xl border border-[#e8eaee] p-5 flex items-start gap-4 hover-glow transition-all"
               >
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
@@ -191,8 +191,8 @@ export default function SucursalesPage() {
                   <s.icon className="size-6" style={{ color: s.color }} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E293B] text-sm mb-1">{s.title}</h3>
-                  <p className="text-xs text-[#64748B]">{s.desc}</p>
+                  <h3 className="font-bold text-[#0f1115] text-sm mb-1">{s.title}</h3>
+                  <p className="text-xs text-[#5b6472]">{s.desc}</p>
                 </div>
               </div>
             ))}

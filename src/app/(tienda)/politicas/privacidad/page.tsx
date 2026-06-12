@@ -20,17 +20,17 @@ export default function PrivacidadPage() {
 
       {/* Header */}
       <section className="text-center mb-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center">
           <Shield className="size-8 text-white" />
         </div>
         <h1
-          className="text-3xl md:text-4xl font-extrabold text-[#1E293B] mb-3"
+          className="text-3xl md:text-4xl font-extrabold text-[#0f1115] mb-3"
           style={{ letterSpacing: "-0.02em" }}
         >
           Politica de{" "}
           <span className="text-[#00B4D8]">Privacidad</span>
         </h1>
-        <p className="text-[#64748B] max-w-xl mx-auto">
+        <p className="text-[#5b6472] max-w-xl mx-auto">
           En PrintUp valoramos tu privacidad. Esta politica describe como
           recopilamos, usamos y protegemos tu informacion personal.
         </p>
@@ -38,8 +38,8 @@ export default function PrivacidadPage() {
 
       {/* Responsable */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
-          <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-3">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
+          <h2 className="text-xl font-extrabold text-[#0f1115] mb-3">
             Responsable del Tratamiento de Datos
           </h2>
           <div className="text-[#475569] space-y-1">
@@ -68,13 +68,13 @@ export default function PrivacidadPage() {
 
       {/* Datos recopilados */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Database className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Datos que Recopilamos
               </h2>
               <p className="text-[#475569] mb-3">
@@ -118,13 +118,13 @@ export default function PrivacidadPage() {
 
       {/* Uso de datos */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Eye className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Uso de la Informacion
               </h2>
               <p className="text-[#475569] mb-3">
@@ -164,7 +164,7 @@ export default function PrivacidadPage() {
 
       {/* No compartimos datos */}
       <section className="mb-8">
-        <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00B4D8] rounded-2xl p-6 md:p-8 text-white">
+        <div className="bg-gradient-to-r from-[#0f1115] to-[#00B4D8] rounded-2xl p-6 md:p-8 text-white">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
               <Shield className="size-5 text-white" />
@@ -187,13 +187,13 @@ export default function PrivacidadPage() {
 
       {/* Cookies */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Cookie className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Cookies
               </h2>
               <p className="text-[#475569] mb-3">
@@ -218,7 +218,7 @@ export default function PrivacidadPage() {
                   </span>
                 </li>
               </ul>
-              <p className="text-sm text-[#64748B] mt-3">
+              <p className="text-sm text-[#5b6472] mt-3">
                 Puedes desactivar las cookies en la configuracion de tu
                 navegador, aunque esto puede afectar la funcionalidad del sitio.
               </p>
@@ -229,13 +229,13 @@ export default function PrivacidadPage() {
 
       {/* Derechos */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <UserCheck className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Tus Derechos
               </h2>
               <p className="text-[#475569] mb-3">
@@ -271,13 +271,13 @@ export default function PrivacidadPage() {
 
       {/* Contacto */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Mail className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Ejercer tus Derechos
               </h2>
               <p className="text-[#475569]">
@@ -298,7 +298,7 @@ export default function PrivacidadPage() {
       </section>
 
       {/* Nota final */}
-      <div className="text-center text-sm text-[#64748B]">
+      <div className="text-center text-sm text-[#5b6472]">
         <p>
           Ultima actualizacion: Mayo 2026
         </p>

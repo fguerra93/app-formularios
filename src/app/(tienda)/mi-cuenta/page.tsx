@@ -87,7 +87,7 @@ export default function MiPerfilPage() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="size-6 text-[#1B2A6B] animate-spin" />
+        <Loader2 className="size-6 text-[#0f1115] animate-spin" />
       </div>
     );
   }
@@ -95,14 +95,14 @@ export default function MiPerfilPage() {
   return (
     <div className="space-y-6">
       {/* Personal info */}
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+      <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-[#F0F7FF] flex items-center justify-center">
-            <User className="size-5 text-[#1B2A6B]" />
+          <div className="w-10 h-10 rounded-full bg-[#fafafb] flex items-center justify-center">
+            <User className="size-5 text-[#0f1115]" />
           </div>
           <div>
-            <h2 className="font-bold text-[#1E293B]">Datos personales</h2>
-            <p className="text-xs text-[#64748B]">Actualiza tu informacion de contacto</p>
+            <h2 className="font-bold text-[#0f1115]">Datos personales</h2>
+            <p className="text-xs text-[#5b6472]">Actualiza tu informacion de contacto</p>
           </div>
         </div>
 
@@ -151,14 +151,14 @@ export default function MiPerfilPage() {
       </div>
 
       {/* Address */}
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+      <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full bg-[#F0F7FF] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-[#fafafb] flex items-center justify-center">
             <MapPin className="size-5 text-[#00B4D8]" />
           </div>
           <div>
-            <h2 className="font-bold text-[#1E293B]">Direccion por defecto</h2>
-            <p className="text-xs text-[#64748B]">Se usara como direccion predeterminada en tus pedidos</p>
+            <h2 className="font-bold text-[#0f1115]">Direccion por defecto</h2>
+            <p className="text-xs text-[#5b6472]">Se usara como direccion predeterminada en tus pedidos</p>
           </div>
         </div>
 
@@ -220,7 +220,7 @@ export default function MiPerfilPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#1B2A6B] hover:bg-[#152259] text-white px-8 py-5 font-semibold"
+          className="bg-[#0f1115] hover:bg-[#000000] text-white px-8 py-5 font-semibold"
         >
           {saving ? (
             <>

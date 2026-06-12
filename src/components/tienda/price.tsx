@@ -17,12 +17,15 @@ export function Price({ precio, precioOferta, size = "md" }: PriceProps) {
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <span className={`font-bold text-[#1B2A6B] ${sizeClasses[size]}`}>
+    <div className="flex items-baseline gap-2">
+      <span className={`mc-price font-extrabold ${sizeClasses[size]}`} style={{ color: "var(--mc-ink)" }}>
         {formatCLP(displayPrice)}
       </span>
       {hasOffer && (
-        <span className={`text-[#64748B] line-through ${size === "lg" ? "text-base" : "text-sm"}`}>
+        <span
+          className={`mc-price line-through ${size === "lg" ? "text-base" : "text-sm"}`}
+          style={{ color: "var(--mc-ink-3)" }}
+        >
           {formatCLP(precio)}
         </span>
       )}

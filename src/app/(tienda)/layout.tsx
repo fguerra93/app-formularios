@@ -64,7 +64,7 @@ export default function TiendaLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
       <Navbar />
-      <main className="flex-1 bg-[#F0F7FF]">{children}</main>
+      <main className="flex-1 bg-white">{children}</main>
       <Footer />
       <WhatsAppButton />
       <RecentPurchasePopup />

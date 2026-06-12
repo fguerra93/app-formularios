@@ -308,7 +308,7 @@ export default function PersonalizarPage() {
       text: "Tu texto aqui",
       fontFamily: fuentes[0]?.familia || "Arial",
       fontSize: 24,
-      fontColor: "#1E293B",
+      fontColor: "#0f1115",
       bold: false,
       italic: false,
       textAlign: "center",
@@ -349,7 +349,7 @@ export default function PersonalizarPage() {
       visible: true,
       shapeType,
       fillColor: "#00B4D8",
-      strokeColor: "#1B2A6B",
+      strokeColor: "#0f1115",
       strokeWidth: 2,
     };
     updateElements((prev) => [...prev, el]);
@@ -564,7 +564,7 @@ export default function PersonalizarPage() {
   if (!producto) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-[#1E293B] mb-4">Producto no encontrado</h1>
+        <h1 className="text-2xl font-bold text-[#0f1115] mb-4">Producto no encontrado</h1>
         <Button
           nativeButton={false}
           render={<Link href="/productos" />}
@@ -580,10 +580,10 @@ export default function PersonalizarPage() {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
         <Palette className="size-16 mx-auto mb-4 text-[#CBD5E1]" />
-        <h1 className="text-2xl font-bold text-[#1E293B] mb-2">
+        <h1 className="text-2xl font-bold text-[#0f1115] mb-2">
           Este producto no tiene opciones de personalizacion configuradas
         </h1>
-        <p className="text-[#64748B] mb-6">
+        <p className="text-[#5b6472] mb-6">
           Contactanos si deseas personalizar este producto.
         </p>
         <Button
@@ -599,19 +599,19 @@ export default function PersonalizarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F0F7FF] flex flex-col">
+    <div className="min-h-screen bg-[#fafafb] flex flex-col">
       {/* Top bar */}
-      <div className="bg-white border-b border-[#E2E8F0] px-4 py-3 flex items-center justify-between gap-3">
+      <div className="bg-white border-b border-[#e8eaee] px-4 py-3 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link
             href={`/productos/${categoriaSlug}/${slug}`}
-            className="flex items-center gap-1.5 text-sm text-[#64748B] hover:text-[#1E293B]"
+            className="flex items-center gap-1.5 text-sm text-[#5b6472] hover:text-[#0f1115]"
           >
             <ArrowLeft className="size-4" />
             <span className="hidden sm:inline">Volver</span>
           </Link>
-          <div className="h-5 w-px bg-[#E2E8F0]" />
-          <h1 className="text-sm font-semibold text-[#1E293B] truncate">
+          <div className="h-5 w-px bg-[#e8eaee]" />
+          <h1 className="text-sm font-semibold text-[#0f1115] truncate">
             Personalizar: {producto.nombre}
           </h1>
         </div>
@@ -621,7 +621,7 @@ export default function PersonalizarPage() {
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100"
             onClick={() => { setShowMobileTools(!showMobileTools); setShowMobileProps(false); }}
           >
-            <Menu className="size-5 text-[#64748B]" />
+            <Menu className="size-5 text-[#5b6472]" />
           </button>
           <Button
             variant="outline"
@@ -646,7 +646,7 @@ export default function PersonalizarPage() {
             size="sm"
             onClick={handleAddToCart}
             disabled={saving}
-            className="gap-1.5 text-xs bg-[#1B2A6B] hover:bg-[#152259] text-white"
+            className="gap-1.5 text-xs bg-[#0f1115] hover:bg-[#000000] text-white"
           >
             <ShoppingCart className="size-3.5" />
             <span className="hidden sm:inline">Agregar al Carrito</span>
@@ -664,13 +664,13 @@ export default function PersonalizarPage() {
           onClick={() => setShowMobileTools(false)}
         >
           <div
-            className={`w-64 h-full bg-white border-r border-[#E2E8F0] overflow-y-auto flex-shrink-0 ${
+            className={`w-64 h-full bg-white border-r border-[#e8eaee] overflow-y-auto flex-shrink-0 ${
               showMobileTools ? "fixed left-0 top-0 z-50 lg:relative" : ""
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Tool tabs */}
-            <div className="flex border-b border-[#E2E8F0]">
+            <div className="flex border-b border-[#e8eaee]">
               {(
                 [
                   { key: "text", icon: Type, label: "Texto" },
@@ -685,8 +685,8 @@ export default function PersonalizarPage() {
                   onClick={() => setActiveTool(key)}
                   className={`flex-1 p-2.5 flex flex-col items-center gap-0.5 text-[10px] font-medium transition-colors ${
                     activeTool === key
-                      ? "text-[#1B2A6B] border-b-2 border-[#1B2A6B] bg-[#F0F7FF]"
-                      : "text-[#64748B] hover:text-[#1E293B]"
+                      ? "text-[#0f1115] border-b-2 border-[#0f1115] bg-[#fafafb]"
+                      : "text-[#5b6472] hover:text-[#0f1115]"
                   }`}
                   title={label}
                 >
@@ -702,12 +702,12 @@ export default function PersonalizarPage() {
                 <div className="space-y-3">
                   <Button
                     onClick={addTextElement}
-                    className="w-full gap-2 bg-[#1B2A6B] hover:bg-[#152259] text-white"
+                    className="w-full gap-2 bg-[#0f1115] hover:bg-[#000000] text-white"
                   >
                     <Type className="size-4" />
                     Agregar Texto
                   </Button>
-                  <p className="text-xs text-[#64748B]">
+                  <p className="text-xs text-[#5b6472]">
                     Haz clic para agregar un texto editable a tu diseno.
                   </p>
                 </div>
@@ -716,10 +716,10 @@ export default function PersonalizarPage() {
               {/* Image upload */}
               {activeTool === "image" && (
                 <div className="space-y-3">
-                  <label className="flex flex-col items-center gap-3 p-6 border-2 border-dashed border-[#E2E8F0] rounded-xl cursor-pointer hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors">
+                  <label className="flex flex-col items-center gap-3 p-6 border-2 border-dashed border-[#e8eaee] rounded-xl cursor-pointer hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors">
                     <Upload className="size-8 text-[#00B4D8]" />
-                    <span className="text-sm font-medium text-[#1E293B]">Subir Imagen</span>
-                    <span className="text-xs text-[#64748B]">PNG, JPG, SVG</span>
+                    <span className="text-sm font-medium text-[#0f1115]">Subir Imagen</span>
+                    <span className="text-xs text-[#5b6472]">PNG, JPG, SVG</span>
                     <input
                       type="file"
                       accept="image/png,image/jpeg,image/svg+xml,image/webp"
@@ -736,7 +736,7 @@ export default function PersonalizarPage() {
                   <select
                     value={clipartFilter}
                     onChange={(e) => setClipartFilter(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-[#E2E8F0] text-sm"
+                    className="w-full px-3 py-1.5 rounded-lg border border-[#e8eaee] text-sm"
                   >
                     <option value="">Todas las categorias</option>
                     {clipartCategories.map((c) => (
@@ -744,7 +744,7 @@ export default function PersonalizarPage() {
                     ))}
                   </select>
                   {filteredClipart.length === 0 ? (
-                    <p className="text-xs text-[#64748B] text-center py-4">
+                    <p className="text-xs text-[#5b6472] text-center py-4">
                       No hay clipart disponible
                     </p>
                   ) : (
@@ -753,7 +753,7 @@ export default function PersonalizarPage() {
                         <button
                           key={item.id}
                           onClick={() => addImageElement(item.url)}
-                          className="aspect-square p-2 border border-[#E2E8F0] rounded-lg hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors"
+                          className="aspect-square p-2 border border-[#e8eaee] rounded-lg hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors"
                           title={item.nombre}
                         >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -772,7 +772,7 @@ export default function PersonalizarPage() {
               {/* Shapes */}
               {activeTool === "shapes" && (
                 <div className="space-y-3">
-                  <p className="text-sm font-medium text-[#1E293B]">Formas</p>
+                  <p className="text-sm font-medium text-[#0f1115]">Formas</p>
                   <div className="grid grid-cols-2 gap-2">
                     {(
                       [
@@ -785,10 +785,10 @@ export default function PersonalizarPage() {
                       <button
                         key={type}
                         onClick={() => addShapeElement(type)}
-                        className="flex flex-col items-center gap-1.5 p-3 border border-[#E2E8F0] rounded-lg hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors"
+                        className="flex flex-col items-center gap-1.5 p-3 border border-[#e8eaee] rounded-lg hover:border-[#00B4D8] hover:bg-[#F0FDFF] transition-colors"
                       >
-                        <Icon className="size-6 text-[#1B2A6B]" />
-                        <span className="text-xs text-[#64748B]">{label}</span>
+                        <Icon className="size-6 text-[#0f1115]" />
+                        <span className="text-xs text-[#5b6472]">{label}</span>
                       </button>
                     ))}
                   </div>
@@ -798,9 +798,9 @@ export default function PersonalizarPage() {
               {/* Layers */}
               {activeTool === "layers" && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-[#1E293B]">Capas</p>
+                  <p className="text-sm font-medium text-[#0f1115]">Capas</p>
                   {currentElements.length === 0 ? (
-                    <p className="text-xs text-[#64748B] text-center py-4">
+                    <p className="text-xs text-[#5b6472] text-center py-4">
                       Sin elementos. Agrega texto, imagenes o formas.
                     </p>
                   ) : (
@@ -811,8 +811,8 @@ export default function PersonalizarPage() {
                           onClick={() => setSelectedId(el.id)}
                           className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer text-xs transition-colors ${
                             selectedId === el.id
-                              ? "bg-[#1B2A6B] text-white"
-                              : "bg-white border border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#1E293B]"
+                              ? "bg-[#0f1115] text-white"
+                              : "bg-white border border-[#e8eaee] hover:bg-[#F8FAFC] text-[#0f1115]"
                           }`}
                         >
                           {el.type === "text" && <Type className="size-3.5 flex-shrink-0" />}
@@ -866,7 +866,7 @@ export default function PersonalizarPage() {
         {/* Center: Canvas */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Area tabs + zoom */}
-          <div className="flex items-center justify-between px-4 py-2 bg-white/80 border-b border-[#E2E8F0]">
+          <div className="flex items-center justify-between px-4 py-2 bg-white/80 border-b border-[#e8eaee]">
             <div className="flex items-center gap-1">
               {areas.map((area, idx) => (
                 <button
@@ -877,8 +877,8 @@ export default function PersonalizarPage() {
                   }}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     idx === activeAreaIdx
-                      ? "bg-[#1B2A6B] text-white"
-                      : "text-[#64748B] hover:bg-[#F1F5F9]"
+                      ? "bg-[#0f1115] text-white"
+                      : "text-[#5b6472] hover:bg-[#F1F5F9]"
                   }`}
                 >
                   {area.nombre}
@@ -890,14 +890,14 @@ export default function PersonalizarPage() {
                 onClick={() => setZoom((z) => Math.max(0.5, z - 0.1))}
                 className="p-1.5 rounded hover:bg-gray-100"
               >
-                <ZoomOut className="size-4 text-[#64748B]" />
+                <ZoomOut className="size-4 text-[#5b6472]" />
               </button>
-              <span className="text-xs text-[#64748B] w-12 text-center">{Math.round(zoom * 100)}%</span>
+              <span className="text-xs text-[#5b6472] w-12 text-center">{Math.round(zoom * 100)}%</span>
               <button
                 onClick={() => setZoom((z) => Math.min(2, z + 0.1))}
                 className="p-1.5 rounded hover:bg-gray-100"
               >
-                <ZoomIn className="size-4 text-[#64748B]" />
+                <ZoomIn className="size-4 text-[#5b6472]" />
               </button>
             </div>
           </div>
@@ -947,7 +947,7 @@ export default function PersonalizarPage() {
                     <div
                       key={el.id}
                       className={`absolute cursor-move ${
-                        isSelected ? "outline outline-2 outline-[#1B2A6B] outline-offset-1" : ""
+                        isSelected ? "outline outline-2 outline-[#0f1115] outline-offset-1" : ""
                       }`}
                       style={{
                         left: `${el.x}%`,
@@ -967,7 +967,7 @@ export default function PersonalizarPage() {
                           style={{
                             fontFamily: el.fontFamily || "Arial",
                             fontSize: `${(el.fontSize || 24) * zoom * 0.6}px`,
-                            color: el.fontColor || "#1E293B",
+                            color: el.fontColor || "#0f1115",
                             fontWeight: el.bold ? "bold" : "normal",
                             fontStyle: el.italic ? "italic" : "normal",
                             textAlign: el.textAlign || "center",
@@ -1001,7 +1001,7 @@ export default function PersonalizarPage() {
                         <ShapeSVG
                           type={el.shapeType}
                           fill={el.fillColor || "#00B4D8"}
-                          stroke={el.strokeColor || "#1B2A6B"}
+                          stroke={el.strokeColor || "#0f1115"}
                           strokeWidth={el.strokeWidth || 2}
                         />
                       )}
@@ -1010,19 +1010,19 @@ export default function PersonalizarPage() {
                       {isSelected && (
                         <>
                           <div
-                            className="absolute -top-1 -left-1 w-2.5 h-2.5 bg-[#1B2A6B] border border-white cursor-nw-resize"
+                            className="absolute -top-1 -left-1 w-2.5 h-2.5 bg-[#0f1115] border border-white cursor-nw-resize"
                             onMouseDown={(e) => handleResizeMouseDown(e, el.id)}
                           />
                           <div
-                            className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#1B2A6B] border border-white cursor-ne-resize"
+                            className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#0f1115] border border-white cursor-ne-resize"
                             onMouseDown={(e) => handleResizeMouseDown(e, el.id)}
                           />
                           <div
-                            className="absolute -bottom-1 -left-1 w-2.5 h-2.5 bg-[#1B2A6B] border border-white cursor-sw-resize"
+                            className="absolute -bottom-1 -left-1 w-2.5 h-2.5 bg-[#0f1115] border border-white cursor-sw-resize"
                             onMouseDown={(e) => handleResizeMouseDown(e, el.id)}
                           />
                           <div
-                            className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-[#1B2A6B] border border-white cursor-se-resize"
+                            className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-[#0f1115] border border-white cursor-se-resize"
                             onMouseDown={(e) => handleResizeMouseDown(e, el.id)}
                           />
                         </>
@@ -1039,7 +1039,7 @@ export default function PersonalizarPage() {
         <div
           className={`${
             selectedElement ? "block" : "hidden lg:block"
-          } w-72 bg-white border-l border-[#E2E8F0] overflow-y-auto flex-shrink-0 ${
+          } w-72 bg-white border-l border-[#e8eaee] overflow-y-auto flex-shrink-0 ${
             showMobileProps || selectedElement ? "fixed right-0 top-0 z-40 h-full lg:relative" : "hidden lg:block"
           }`}
         >
@@ -1047,21 +1047,21 @@ export default function PersonalizarPage() {
             {selectedElement ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#1E293B]">Propiedades</h3>
+                  <h3 className="text-sm font-bold text-[#0f1115]">Propiedades</h3>
                   <button
                     className="lg:hidden p-1 rounded hover:bg-gray-100"
                     onClick={() => setSelectedId(null)}
                   >
-                    <X className="size-4 text-[#64748B]" />
+                    <X className="size-4 text-[#5b6472]" />
                   </button>
                 </div>
 
                 {/* Position */}
                 <div>
-                  <p className="text-xs font-semibold text-[#64748B] mb-2">Posicion</p>
+                  <p className="text-xs font-semibold text-[#5b6472] mb-2">Posicion</p>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-[#64748B]">X (%)</label>
+                      <label className="text-[10px] text-[#5b6472]">X (%)</label>
                       <Input
                         type="number"
                         min={0}
@@ -1073,7 +1073,7 @@ export default function PersonalizarPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-[#64748B]">Y (%)</label>
+                      <label className="text-[10px] text-[#5b6472]">Y (%)</label>
                       <Input
                         type="number"
                         min={0}
@@ -1089,10 +1089,10 @@ export default function PersonalizarPage() {
 
                 {/* Size */}
                 <div>
-                  <p className="text-xs font-semibold text-[#64748B] mb-2">Tamano</p>
+                  <p className="text-xs font-semibold text-[#5b6472] mb-2">Tamano</p>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-[#64748B]">Ancho (%)</label>
+                      <label className="text-[10px] text-[#5b6472]">Ancho (%)</label>
                       <Input
                         type="number"
                         min={1}
@@ -1104,7 +1104,7 @@ export default function PersonalizarPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-[#64748B]">Alto (%)</label>
+                      <label className="text-[10px] text-[#5b6472]">Alto (%)</label>
                       <Input
                         type="number"
                         min={1}
@@ -1121,18 +1121,18 @@ export default function PersonalizarPage() {
                 {/* Rotation */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs font-semibold text-[#64748B]">Rotacion</p>
-                    <span className="text-[10px] text-[#64748B]">{selectedElement.rotation}deg</span>
+                    <p className="text-xs font-semibold text-[#5b6472]">Rotacion</p>
+                    <span className="text-[10px] text-[#5b6472]">{selectedElement.rotation}deg</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <RotateCw className="size-3.5 text-[#64748B]" />
+                    <RotateCw className="size-3.5 text-[#5b6472]" />
                     <input
                       type="range"
                       min={0}
                       max={360}
                       value={selectedElement.rotation}
                       onChange={(e) => updateElement(selectedElement.id, { rotation: Number(e.target.value) })}
-                      className="flex-1 h-1.5 accent-[#1B2A6B]"
+                      className="flex-1 h-1.5 accent-[#0f1115]"
                     />
                   </div>
                 </div>
@@ -1140,8 +1140,8 @@ export default function PersonalizarPage() {
                 {/* Opacity */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-xs font-semibold text-[#64748B]">Opacidad</p>
-                    <span className="text-[10px] text-[#64748B]">{Math.round(selectedElement.opacity * 100)}%</span>
+                    <p className="text-xs font-semibold text-[#5b6472]">Opacidad</p>
+                    <span className="text-[10px] text-[#5b6472]">{Math.round(selectedElement.opacity * 100)}%</span>
                   </div>
                   <input
                     type="range"
@@ -1151,29 +1151,29 @@ export default function PersonalizarPage() {
                     onChange={(e) =>
                       updateElement(selectedElement.id, { opacity: Number(e.target.value) / 100 })
                     }
-                    className="w-full h-1.5 accent-[#1B2A6B]"
+                    className="w-full h-1.5 accent-[#0f1115]"
                   />
                 </div>
 
                 {/* Text properties */}
                 {selectedElement.type === "text" && (
                   <>
-                    <div className="border-t border-[#E2E8F0] pt-4">
-                      <p className="text-xs font-semibold text-[#64748B] mb-2">Texto</p>
+                    <div className="border-t border-[#e8eaee] pt-4">
+                      <p className="text-xs font-semibold text-[#5b6472] mb-2">Texto</p>
                       <textarea
                         value={selectedElement.text || ""}
                         onChange={(e) => updateElement(selectedElement.id, { text: e.target.value })}
                         rows={2}
-                        className="w-full px-2 py-1.5 text-sm border border-[#E2E8F0] rounded-lg resize-none"
+                        className="w-full px-2 py-1.5 text-sm border border-[#e8eaee] rounded-lg resize-none"
                       />
                     </div>
 
                     <div>
-                      <label className="text-[10px] text-[#64748B] block mb-1">Fuente</label>
+                      <label className="text-[10px] text-[#5b6472] block mb-1">Fuente</label>
                       <select
                         value={selectedElement.fontFamily || "Arial"}
                         onChange={(e) => updateElement(selectedElement.id, { fontFamily: e.target.value })}
-                        className="w-full px-2 py-1.5 text-sm border border-[#E2E8F0] rounded-lg"
+                        className="w-full px-2 py-1.5 text-sm border border-[#e8eaee] rounded-lg"
                         style={{ fontFamily: selectedElement.fontFamily }}
                       >
                         <option value="Arial">Arial</option>
@@ -1187,7 +1187,7 @@ export default function PersonalizarPage() {
 
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[10px] text-[#64748B] block mb-1">Tamano</label>
+                        <label className="text-[10px] text-[#5b6472] block mb-1">Tamano</label>
                         <Input
                           type="number"
                           min={8}
@@ -1200,18 +1200,18 @@ export default function PersonalizarPage() {
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] text-[#64748B] block mb-1">Color</label>
+                        <label className="text-[10px] text-[#5b6472] block mb-1">Color</label>
                         <div className="flex items-center gap-1">
                           <input
                             type="color"
-                            value={selectedElement.fontColor || "#1E293B"}
+                            value={selectedElement.fontColor || "#0f1115"}
                             onChange={(e) =>
                               updateElement(selectedElement.id, { fontColor: e.target.value })
                             }
-                            className="w-8 h-8 rounded border border-[#E2E8F0] cursor-pointer"
+                            className="w-8 h-8 rounded border border-[#e8eaee] cursor-pointer"
                           />
                           <Input
-                            value={selectedElement.fontColor || "#1E293B"}
+                            value={selectedElement.fontColor || "#0f1115"}
                             onChange={(e) =>
                               updateElement(selectedElement.id, { fontColor: e.target.value })
                             }
@@ -1229,8 +1229,8 @@ export default function PersonalizarPage() {
                         }
                         className={`p-2 rounded-lg border transition-colors ${
                           selectedElement.bold
-                            ? "bg-[#1B2A6B] text-white border-[#1B2A6B]"
-                            : "border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9]"
+                            ? "bg-[#0f1115] text-white border-[#0f1115]"
+                            : "border-[#e8eaee] text-[#5b6472] hover:bg-[#F1F5F9]"
                         }`}
                       >
                         <Bold className="size-4" />
@@ -1241,13 +1241,13 @@ export default function PersonalizarPage() {
                         }
                         className={`p-2 rounded-lg border transition-colors ${
                           selectedElement.italic
-                            ? "bg-[#1B2A6B] text-white border-[#1B2A6B]"
-                            : "border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9]"
+                            ? "bg-[#0f1115] text-white border-[#0f1115]"
+                            : "border-[#e8eaee] text-[#5b6472] hover:bg-[#F1F5F9]"
                         }`}
                       >
                         <Italic className="size-4" />
                       </button>
-                      <div className="h-6 w-px bg-[#E2E8F0] mx-1" />
+                      <div className="h-6 w-px bg-[#e8eaee] mx-1" />
                       {(["left", "center", "right"] as const).map((align) => {
                         const AlignIcon =
                           align === "left" ? AlignLeft : align === "center" ? AlignCenter : AlignRight;
@@ -1257,8 +1257,8 @@ export default function PersonalizarPage() {
                             onClick={() => updateElement(selectedElement.id, { textAlign: align })}
                             className={`p-2 rounded-lg border transition-colors ${
                               selectedElement.textAlign === align
-                                ? "bg-[#1B2A6B] text-white border-[#1B2A6B]"
-                                : "border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9]"
+                                ? "bg-[#0f1115] text-white border-[#0f1115]"
+                                : "border-[#e8eaee] text-[#5b6472] hover:bg-[#F1F5F9]"
                             }`}
                           >
                             <AlignIcon className="size-4" />
@@ -1271,9 +1271,9 @@ export default function PersonalizarPage() {
 
                 {/* Image properties */}
                 {selectedElement.type === "image" && (
-                  <div className="border-t border-[#E2E8F0] pt-4">
-                    <p className="text-xs font-semibold text-[#64748B] mb-2">Imagen</p>
-                    <label className="flex items-center gap-2 px-3 py-2 border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-[#F8FAFC] text-sm text-[#1E293B]">
+                  <div className="border-t border-[#e8eaee] pt-4">
+                    <p className="text-xs font-semibold text-[#5b6472] mb-2">Imagen</p>
+                    <label className="flex items-center gap-2 px-3 py-2 border border-[#e8eaee] rounded-lg cursor-pointer hover:bg-[#F8FAFC] text-sm text-[#0f1115]">
                       <Upload className="size-4" />
                       Reemplazar imagen
                       <input
@@ -1297,10 +1297,10 @@ export default function PersonalizarPage() {
 
                 {/* Shape properties */}
                 {selectedElement.type === "shape" && (
-                  <div className="border-t border-[#E2E8F0] pt-4 space-y-3">
-                    <p className="text-xs font-semibold text-[#64748B]">Forma</p>
+                  <div className="border-t border-[#e8eaee] pt-4 space-y-3">
+                    <p className="text-xs font-semibold text-[#5b6472]">Forma</p>
                     <div>
-                      <label className="text-[10px] text-[#64748B] block mb-1">Color de relleno</label>
+                      <label className="text-[10px] text-[#5b6472] block mb-1">Color de relleno</label>
                       <div className="flex items-center gap-1">
                         <input
                           type="color"
@@ -1308,7 +1308,7 @@ export default function PersonalizarPage() {
                           onChange={(e) =>
                             updateElement(selectedElement.id, { fillColor: e.target.value })
                           }
-                          className="w-8 h-8 rounded border border-[#E2E8F0] cursor-pointer"
+                          className="w-8 h-8 rounded border border-[#e8eaee] cursor-pointer"
                         />
                         <Input
                           value={selectedElement.fillColor || "#00B4D8"}
@@ -1320,18 +1320,18 @@ export default function PersonalizarPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-[10px] text-[#64748B] block mb-1">Color de borde</label>
+                      <label className="text-[10px] text-[#5b6472] block mb-1">Color de borde</label>
                       <div className="flex items-center gap-1">
                         <input
                           type="color"
-                          value={selectedElement.strokeColor || "#1B2A6B"}
+                          value={selectedElement.strokeColor || "#0f1115"}
                           onChange={(e) =>
                             updateElement(selectedElement.id, { strokeColor: e.target.value })
                           }
-                          className="w-8 h-8 rounded border border-[#E2E8F0] cursor-pointer"
+                          className="w-8 h-8 rounded border border-[#e8eaee] cursor-pointer"
                         />
                         <Input
-                          value={selectedElement.strokeColor || "#1B2A6B"}
+                          value={selectedElement.strokeColor || "#0f1115"}
                           onChange={(e) =>
                             updateElement(selectedElement.id, { strokeColor: e.target.value })
                           }
@@ -1340,7 +1340,7 @@ export default function PersonalizarPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-[10px] text-[#64748B] block mb-1">Grosor de borde</label>
+                      <label className="text-[10px] text-[#5b6472] block mb-1">Grosor de borde</label>
                       <Input
                         type="number"
                         min={0}
@@ -1356,7 +1356,7 @@ export default function PersonalizarPage() {
                 )}
 
                 {/* Actions */}
-                <div className="border-t border-[#E2E8F0] pt-4 flex gap-2">
+                <div className="border-t border-[#e8eaee] pt-4 flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -1380,7 +1380,7 @@ export default function PersonalizarPage() {
             ) : (
               <div className="text-center py-12">
                 <Palette className="size-10 mx-auto mb-3 text-[#CBD5E1]" />
-                <p className="text-sm text-[#64748B]">
+                <p className="text-sm text-[#5b6472]">
                   Selecciona un elemento para ver sus propiedades
                 </p>
               </div>
@@ -1400,18 +1400,18 @@ export default function PersonalizarPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-[#1E293B]">Vista Previa</h2>
+              <h2 className="text-lg font-bold text-[#0f1115]">Vista Previa</h2>
               <button onClick={() => setShowPreview(false)} className="p-1 rounded hover:bg-gray-100">
-                <X className="size-5 text-[#64748B]" />
+                <X className="size-5 text-[#5b6472]" />
               </button>
             </div>
 
             <div className="space-y-4">
               {areas.map((area, idx) => (
                 <div key={area.id}>
-                  <p className="text-sm font-medium text-[#1E293B] mb-2">{area.nombre}</p>
+                  <p className="text-sm font-medium text-[#0f1115] mb-2">{area.nombre}</p>
                   <div
-                    className="relative bg-[#F8FAFC] rounded-lg overflow-hidden border border-[#E2E8F0]"
+                    className="relative bg-[#F8FAFC] rounded-lg overflow-hidden border border-[#e8eaee]"
                     style={{ aspectRatio: "3 / 4" }}
                   >
                     {area.mockup_url && (
@@ -1452,7 +1452,7 @@ export default function PersonalizarPage() {
                                 style={{
                                   fontFamily: el.fontFamily || "Arial",
                                   fontSize: `${(el.fontSize || 24) * 0.5}px`,
-                                  color: el.fontColor || "#1E293B",
+                                  color: el.fontColor || "#0f1115",
                                   fontWeight: el.bold ? "bold" : "normal",
                                   fontStyle: el.italic ? "italic" : "normal",
                                   textAlign: el.textAlign || "center",
@@ -1481,7 +1481,7 @@ export default function PersonalizarPage() {
                               <ShapeSVG
                                 type={el.shapeType}
                                 fill={el.fillColor || "#00B4D8"}
-                                stroke={el.strokeColor || "#1B2A6B"}
+                                stroke={el.strokeColor || "#0f1115"}
                                 strokeWidth={el.strokeWidth || 2}
                               />
                             )}
@@ -1500,7 +1500,7 @@ export default function PersonalizarPage() {
                   handleAddToCart();
                 }}
                 disabled={saving}
-                className="flex-1 gap-2 bg-[#1B2A6B] hover:bg-[#152259] text-white"
+                className="flex-1 gap-2 bg-[#0f1115] hover:bg-[#000000] text-white"
               >
                 <ShoppingCart className="size-4" />
                 Agregar al Carrito

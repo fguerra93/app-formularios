@@ -4,16 +4,16 @@ import { type ReactNode } from 'react'
 
 // ========== Color themes for modules ==========
 const themes = {
-  hero: { from: '#1B2A6B', to: '#00B4D8', accent: '#00B4D8' },
+  hero: { from: '#0f1115', to: '#00B4D8', accent: '#00B4D8' },
   productos: { from: '#3730a3', to: '#818cf8', accent: '#818cf8' },
   categorias: { from: '#0369a1', to: '#60a5fa', accent: '#60a5fa' },
-  contacto: { from: '#be185d', to: '#e91e8c', accent: '#e91e8c' },
+  contacto: { from: '#be185d', to: '#0f1115', accent: '#0f1115' },
   nosotros: { from: '#5b21b6', to: '#8b5cf6', accent: '#8b5cf6' },
   cotizador: { from: '#047857', to: '#10b981', accent: '#10b981' },
   servicios: { from: '#b45309', to: '#f59e0b', accent: '#f59e0b' },
-  stats: { from: '#1B2A6B', to: '#7c3aed', accent: '#7c3aed' },
+  stats: { from: '#0f1115', to: '#7c3aed', accent: '#7c3aed' },
   testimonios: { from: '#9d174d', to: '#ec4899', accent: '#ec4899' },
-  faq: { from: '#334155', to: '#64748b', accent: '#64748b' },
+  faq: { from: '#334155', to: '#5b6472', accent: '#5b6472' },
   sucursales: { from: '#0f766e', to: '#14b8a6', accent: '#14b8a6' },
   portafolio: { from: '#7e22ce', to: '#a855f7', accent: '#a855f7' },
   newsletter: { from: '#3730a3', to: '#6366f1', accent: '#6366f1' },
@@ -160,7 +160,7 @@ export function AccentLine({
   className?: string
   colors?: [string, string, string]
 }) {
-  const [c1, c2, c3] = colors || ['#1B2A6B', '#00B4D8', '#FF9710']
+  const [c1, c2, c3] = colors || ['#0f1115', '#00B4D8', '#FF9710']
   return (
     <div
       className={`accent-line w-full rounded-full ${className}`}

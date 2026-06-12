@@ -38,10 +38,10 @@ export default function FavoritosPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Breadcrumb items={[{ label: "Favoritos" }]} />
 
-      <h1 className="text-2xl font-bold text-[#1E293B] mb-6">
+      <h1 className="text-2xl font-bold text-[#0f1115] mb-6">
         Mis Favoritos
         {items.length > 0 && (
-          <span className="text-base font-normal text-[#64748B] ml-2">
+          <span className="text-base font-normal text-[#5b6472] ml-2">
             ({items.length})
           </span>
         )}
@@ -55,16 +55,16 @@ export default function FavoritosPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="text-center py-20">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F0F7FF] flex items-center justify-center">
-            <Heart className="size-10 text-[#E91E8C]/40" />
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#fafafb] flex items-center justify-center">
+            <Heart className="size-10 text-[#0f1115]/40" />
           </div>
-          <h2 className="text-xl font-bold text-[#1E293B] mb-2">
+          <h2 className="text-xl font-bold text-[#0f1115] mb-2">
             No tienes favoritos aun
           </h2>
-          <p className="text-sm text-[#64748B] mb-6 max-w-md mx-auto">
+          <p className="text-sm text-[#5b6472] mb-6 max-w-md mx-auto">
             Explora nuestro catalogo y marca con un corazon los productos que mas te gusten para encontrarlos facilmente.
           </p>
-          <Button nativeButton={false} render={<Link href="/productos" />} className="bg-[#1B2A6B] text-white hover:bg-[#152259]">
+          <Button nativeButton={false} render={<Link href="/productos" />} className="bg-[#0f1115] text-white hover:bg-[#000000]">
             Explorar productos
           </Button>
         </div>

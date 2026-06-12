@@ -16,7 +16,7 @@ export function QuantitySelector({
   max = 99,
 }: QuantitySelectorProps) {
   return (
-    <div className="flex items-center border border-[#E2E8F0] rounded-lg overflow-hidden">
+    <div className="flex items-center border border-[#e8eaee] rounded-lg overflow-hidden">
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
@@ -25,7 +25,7 @@ export function QuantitySelector({
       >
         <Minus className="size-4" />
       </button>
-      <span className="w-12 h-10 flex items-center justify-center text-sm font-semibold border-x border-[#E2E8F0]">
+      <span className="w-12 h-10 flex items-center justify-center text-sm font-semibold border-x border-[#e8eaee]">
         {value}
       </span>
       <button

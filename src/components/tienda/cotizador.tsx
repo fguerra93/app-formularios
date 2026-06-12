@@ -40,7 +40,7 @@ export function CotizadorInline() {
   }
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #1B2A6B 0%, #0f1d5e 50%, #00355a 100%)' }}>
+    <section className="relative py-16 md:py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f1115 0%, #0f1d5e 50%, #0f1115 100%)' }}>
       <FloatingCircles theme="hero" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4">
@@ -111,7 +111,7 @@ export function CotizadorInline() {
 
           <button
             onClick={handleCotizar}
-            className="w-full md:w-auto mx-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#1B2A6B] rounded-xl font-semibold text-sm hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+            className="w-full md:w-auto mx-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#0f1115] rounded-xl font-semibold text-sm hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
           >
             <Send className="w-4 h-4" />
             Obtener Cotizacion por WhatsApp

@@ -27,7 +27,7 @@ export function ScrollToTop() {
     <button
       onClick={handleClick}
       aria-label="Volver al inicio"
-      className={`fixed bottom-24 right-4 z-30 p-3 rounded-full shadow-lg bg-[#1B2A6B] text-white transition-opacity duration-300 focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2 ${
+      className={`fixed bottom-24 right-4 z-30 p-3 rounded-full shadow-lg bg-[#0f1115] text-white transition-opacity duration-300 focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:ring-offset-2 ${
         visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >

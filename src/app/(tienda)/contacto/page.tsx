@@ -174,8 +174,8 @@ function ContactoForm() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Contact info */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 hover-glow transition-all">
-            <h2 className="font-bold text-[#1E293B] mb-3">Informacion de Contacto</h2>
+          <div className="bg-white rounded-xl border border-[#e8eaee] p-6 hover-glow transition-all">
+            <h2 className="font-bold text-[#0f1115] mb-3">Informacion de Contacto</h2>
             <ScheduleBadgeInline />
             <ul className="space-y-4 mt-4">
               <li className="flex items-start gap-3">
@@ -183,7 +183,7 @@ function ContactoForm() {
                   <Mail className="size-5 text-[#00B4D8]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#1E293B]">Email</p>
+                  <p className="text-sm font-medium text-[#0f1115]">Email</p>
                   <a href="mailto:contacto@printup.cl" className="text-sm text-[#00B4D8] hover:underline">
                     contacto@printup.cl
                   </a>
@@ -194,7 +194,7 @@ function ContactoForm() {
                   <Phone className="size-5 text-[#25D366]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#1E293B]">WhatsApp 24/7</p>
+                  <p className="text-sm font-medium text-[#0f1115]">WhatsApp 24/7</p>
                   <a href="https://wa.me/56966126645" target="_blank" rel="noopener noreferrer" className="text-sm text-[#00B4D8] hover:underline">
                     +56 9 66126645
                   </a>
@@ -205,8 +205,8 @@ function ContactoForm() {
                   <Clock className="size-5 text-[#8b5cf6]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#1E293B]">Horario</p>
-                  <p className="text-sm text-[#64748B]">Lun-Vie 9:00 - 18:00 / Sab 10:00 - 14:00</p>
+                  <p className="text-sm font-medium text-[#0f1115]">Horario</p>
+                  <p className="text-sm text-[#5b6472]">Lun-Vie 9:00 - 18:00 / Sab 10:00 - 14:00</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -214,9 +214,9 @@ function ContactoForm() {
                   <MapPin className="size-5 text-[#FF9710]" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[#1E293B]">Direccion</p>
-                  <p className="text-sm text-[#64748B]">Errazuriz 09 / Francisco Lira 082</p>
-                  <p className="text-sm text-[#64748B]">Donihue, Region de O&apos;Higgins</p>
+                  <p className="text-sm font-medium text-[#0f1115]">Direccion</p>
+                  <p className="text-sm text-[#5b6472]">Errazuriz 09 / Francisco Lira 082</p>
+                  <p className="text-sm text-[#5b6472]">Donihue, Region de O&apos;Higgins</p>
                 </div>
               </li>
             </ul>
@@ -235,17 +235,17 @@ function ContactoForm() {
 
         {/* Upload form */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 md:p-8">
+          <div className="bg-white rounded-xl border border-[#e8eaee] p-6 md:p-8">
             {!success ? (
               <form onSubmit={handleSubmit} noValidate>
-                <h2 className="text-xl font-bold text-[#1B2A6B] mb-1">Sube tu Archivo</h2>
-                <p className="text-sm text-[#64748B] mb-6">
+                <h2 className="text-xl font-bold text-[#0f1115] mb-1">Sube tu Archivo</h2>
+                <p className="text-sm text-[#5b6472] mb-6">
                   Adjunta tu diseno y te confirmaremos recepcion a tu correo.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label htmlFor="nombre" className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                    <label htmlFor="nombre" className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                       Nombre <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -255,13 +255,13 @@ function ContactoForm() {
                       autoComplete="name"
                       onChange={() => setErrors((e) => ({ ...e, nombre: "" }))}
                       className={`w-full px-4 py-2.5 rounded-lg border text-sm bg-[#F7F8FC] outline-none transition-colors ${
-                        errors.nombre ? "border-red-500" : "border-[#E2E8F0]"
+                        errors.nombre ? "border-red-500" : "border-[#e8eaee]"
                       } focus:border-[#00B4D8]`}
                     />
                     {errors.nombre && <p className="text-xs text-red-500 mt-1">{errors.nombre}</p>}
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                    <label htmlFor="email" className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -271,7 +271,7 @@ function ContactoForm() {
                       autoComplete="email"
                       onChange={() => setErrors((e) => ({ ...e, email: "" }))}
                       className={`w-full px-4 py-2.5 rounded-lg border text-sm bg-[#F7F8FC] outline-none transition-colors ${
-                        errors.email ? "border-red-500" : "border-[#E2E8F0]"
+                        errors.email ? "border-red-500" : "border-[#e8eaee]"
                       } focus:border-[#00B4D8]`}
                     />
                     {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
@@ -280,7 +280,7 @@ function ContactoForm() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label htmlFor="telefono" className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                    <label htmlFor="telefono" className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                       Telefono (opcional)
                     </label>
                     <input
@@ -288,16 +288,16 @@ function ContactoForm() {
                       type="tel"
                       placeholder="+56 9 1234 5678"
                       autoComplete="tel"
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8F0] text-sm bg-[#F7F8FC] outline-none focus:border-[#00B4D8] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-[#e8eaee] text-sm bg-[#F7F8FC] outline-none focus:border-[#00B4D8] transition-colors"
                     />
                   </div>
                   <div>
-                    <label htmlFor="material" className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                    <label htmlFor="material" className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                       Tipo de material
                     </label>
                     <select
                       id="material"
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8F0] text-sm bg-[#F7F8FC] outline-none focus:border-[#00B4D8] transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-[#e8eaee] text-sm bg-[#F7F8FC] outline-none focus:border-[#00B4D8] transition-colors"
                     >
                       <option value="">Selecciona una opcion</option>
                       <option value="vinilo">Vinilo adhesivo</option>
@@ -311,20 +311,20 @@ function ContactoForm() {
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="mensaje" className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                  <label htmlFor="mensaje" className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                     Mensaje o instrucciones
                   </label>
                   <textarea
                     id="mensaje"
                     placeholder="Ej: Necesito 2 copias en tamano 1m x 0.5m, acabado mate..."
                     rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8F0] text-sm bg-[#F7F8FC] outline-none resize-y focus:border-[#00B4D8] transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#e8eaee] text-sm bg-[#F7F8FC] outline-none resize-y focus:border-[#00B4D8] transition-colors"
                   />
                 </div>
 
                 {/* File Upload */}
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                  <label className="block text-sm font-semibold text-[#0f1115] mb-1.5">
                     Archivos <span className="text-red-500">*</span>
                   </label>
                   <div
@@ -338,18 +338,18 @@ function ContactoForm() {
                         ? "border-green-400 bg-green-50/50"
                         : dragOver
                           ? "border-[#00B4D8] bg-[#00B4D8]/5"
-                          : "border-[#E2E8F0] bg-[#F7F8FC] hover:border-[#00B4D8]"
+                          : "border-[#e8eaee] bg-[#F7F8FC] hover:border-[#00B4D8]"
                     }`}
                   >
-                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#1B2A6B] flex items-center justify-center">
+                    <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#0f1115] flex items-center justify-center">
                       <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" width={18} height={18}>
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
                         <line x1="12" y1="3" x2="12" y2="15" />
                       </svg>
                     </div>
-                    <p className="text-sm font-medium text-[#1E293B]">Arrastra o selecciona tus archivos</p>
-                    <p className="text-xs text-[#64748B] mt-1">PDF, JPG, PNG, AI, PSD — max. 50 MB, max. 5 archivos</p>
+                    <p className="text-sm font-medium text-[#0f1115]">Arrastra o selecciona tus archivos</p>
+                    <p className="text-xs text-[#5b6472] mt-1">PDF, JPG, PNG, AI, PSD — max. 50 MB, max. 5 archivos</p>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -363,21 +363,21 @@ function ContactoForm() {
                   {files.length > 0 && (
                     <ul className="mt-3 space-y-2">
                       {files.map((f) => (
-                        <li key={f.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#F7F8FC] border border-[#E2E8F0] text-sm">
-                          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#00B4D8] to-[#1B2A6B] flex items-center justify-center shrink-0">
+                        <li key={f.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#F7F8FC] border border-[#e8eaee] text-sm">
+                          <div className="w-8 h-8 rounded bg-gradient-to-br from-[#00B4D8] to-[#0f1115] flex items-center justify-center shrink-0">
                             <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" width={14} height={14}>
                               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                               <polyline points="14 2 14 8 20 8" />
                             </svg>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-[#1E293B] truncate">{f.file.name}</p>
-                            <p className="text-xs text-[#64748B]">{fmtSize(f.file.size)}</p>
+                            <p className="font-medium text-[#0f1115] truncate">{f.file.name}</p>
+                            <p className="text-xs text-[#5b6472]">{fmtSize(f.file.size)}</p>
                           </div>
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); removeFile(f.id); }}
-                            className="text-[#64748B] hover:text-red-500 p-1"
+                            className="text-[#5b6472] hover:text-red-500 p-1"
                           >
                             <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -393,7 +393,7 @@ function ContactoForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 rounded-lg bg-[#1B2A6B] text-white font-bold text-sm hover:bg-[#152259] disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-lg bg-[#0f1115] text-white font-bold text-sm hover:bg-[#000000] disabled:opacity-60 transition-all flex items-center justify-center gap-2"
                 >
                   {loading && (
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -408,8 +408,8 @@ function ContactoForm() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold text-[#1B2A6B] mb-2">Archivo recibido!</h2>
-                <p className="text-[#64748B]">
+                <h2 className="text-xl font-bold text-[#0f1115] mb-2">Archivo recibido!</h2>
+                <p className="text-[#5b6472]">
                   Te confirmaremos recepcion a tu correo.<br />
                   Si tienes dudas, escribenos por WhatsApp.
                 </p>
@@ -420,7 +420,7 @@ function ContactoForm() {
       </div>
 
       {/* Google Maps */}
-      <div className="mt-8 rounded-xl overflow-hidden border border-[#E2E8F0]">
+      <div className="mt-8 rounded-xl overflow-hidden border border-[#e8eaee]">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3319.5!2d-70.9456!3d-34.1083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sErrazuriz%2009%2C%20Donihue!5e0!3m2!1ses!2scl!4v1700000000000"
           width="100%"
@@ -435,7 +435,7 @@ function ContactoForm() {
 
       {/* FAQ */}
       <div className="mt-12 max-w-3xl mx-auto">
-        <h2 className="text-xl font-bold text-[#1E293B] text-center mb-6">Preguntas Frecuentes</h2>
+        <h2 className="text-xl font-bold text-[#0f1115] text-center mb-6">Preguntas Frecuentes</h2>
         <FaqAccordion limit={3} />
       </div>
     </div>

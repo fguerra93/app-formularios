@@ -51,12 +51,12 @@ export function Testimonials() {
   const next = () => setCurrent((c) => (c + 1) % testimonials.length)
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-br from-[#F0F7FF] to-white">
+    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-br from-[#fafafb] to-white">
       <FloatingCircles theme="testimonios" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#1B2A6B]">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#0f1115]">
             Lo que dicen nuestros clientes
           </h2>
           <div className="w-16 h-1 bg-gradient-to-r from-[#ec4899] to-[#f59e0b] mx-auto mt-4 rounded-full" />
@@ -87,7 +87,7 @@ export function Testimonials() {
             </div>
 
             {/* Text */}
-            <p className="text-[#1E293B] text-base md:text-lg leading-relaxed mb-6 italic">
+            <p className="text-[#0f1115] text-base md:text-lg leading-relaxed mb-6 italic">
               &ldquo;{testimonials[current].text}&rdquo;
             </p>
 
@@ -95,15 +95,15 @@ export function Testimonials() {
             <div className="flex items-center justify-center gap-3">
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                style={{ background: 'linear-gradient(135deg, #1B2A6B, #00B4D8)' }}
+                style={{ background: 'linear-gradient(135deg, #0f1115, #00B4D8)' }}
               >
                 {testimonials[current].name.charAt(0)}
               </div>
               <div className="text-left">
-                <div className="font-semibold text-[#1B2A6B] text-sm">
+                <div className="font-semibold text-[#0f1115] text-sm">
                   {testimonials[current].name}
                 </div>
-                <div className="text-xs text-[#64748B]">
+                <div className="text-xs text-[#5b6472]">
                   {testimonials[current].company}
                 </div>
               </div>
@@ -114,9 +114,9 @@ export function Testimonials() {
           <div className="flex items-center justify-center gap-4 mt-6">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#F0F7FF] transition-colors"
+              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#fafafb] transition-colors"
             >
-              <ChevronLeft className="w-5 h-5 text-[#1B2A6B]" />
+              <ChevronLeft className="w-5 h-5 text-[#0f1115]" />
             </button>
 
             <div className="flex gap-2">
@@ -127,7 +127,7 @@ export function Testimonials() {
                   className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                     i === current
                       ? 'bg-[#00B4D8] w-6'
-                      : 'bg-[#1B2A6B]/20 hover:bg-[#1B2A6B]/40'
+                      : 'bg-[#0f1115]/20 hover:bg-[#0f1115]/40'
                   }`}
                 />
               ))}
@@ -135,9 +135,9 @@ export function Testimonials() {
 
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#F0F7FF] transition-colors"
+              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#fafafb] transition-colors"
             >
-              <ChevronRight className="w-5 h-5 text-[#1B2A6B]" />
+              <ChevronRight className="w-5 h-5 text-[#0f1115]" />
             </button>
           </div>
         </div>

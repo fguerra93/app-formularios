@@ -96,8 +96,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square rounded-xl bg-white border border-[#E2E8F0] overflow-hidden flex items-center justify-center">
-        <div className="text-center text-[#64748B]">
+      <div className="aspect-square rounded-xl bg-white border border-[#e8eaee] overflow-hidden flex items-center justify-center">
+        <div className="text-center text-[#5b6472]">
           <ZoomIn className="size-12 mx-auto mb-2 opacity-20" />
           <p className="text-sm">Sin imagen</p>
         </div>
@@ -109,7 +109,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
     <div className="space-y-4">
       {/* Main image with zoom trigger */}
       <div
-        className="aspect-square rounded-xl bg-white border border-[#E2E8F0] overflow-hidden flex items-center justify-center relative group cursor-zoom-in"
+        className="aspect-square rounded-xl bg-white border border-[#e8eaee] overflow-hidden flex items-center justify-center relative group cursor-zoom-in"
         onClick={() => setLightboxOpen(true)}
       >
         {mainImage?.url ? (
@@ -125,7 +125,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         {/* Zoom overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-full p-3 shadow-lg">
-            <ZoomIn className="size-6 text-[#1B2A6B]" />
+            <ZoomIn className="size-6 text-[#0f1115]" />
           </div>
         </div>
       </div>
@@ -140,7 +140,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               className={`aspect-square rounded-lg bg-white border overflow-hidden transition-all ${
                 selectedIndex === i
                   ? "border-[#00B4D8] ring-2 ring-[#00B4D8]/30"
-                  : "border-[#E2E8F0] hover:border-[#00B4D8]"
+                  : "border-[#e8eaee] hover:border-[#00B4D8]"
               }`}
             >
               {img.url ? (

@@ -11,7 +11,7 @@ export function SpecTable({ specs, title }: SpecTableProps) {
   return (
     <div>
       {title && (
-        <h3 className="font-bold text-[#1E293B] text-sm mb-3">{title}</h3>
+        <h3 className="font-bold text-[#0f1115] text-sm mb-3">{title}</h3>
       )}
       <div className="spec-table-wrapper">
         <table className="spec-table">
@@ -47,7 +47,7 @@ export function SpecTableMultiCol({ headers, rows, title }: SpecTableMultiColPro
   return (
     <div>
       {title && (
-        <h3 className="font-bold text-[#1E293B] text-sm mb-3">{title}</h3>
+        <h3 className="font-bold text-[#0f1115] text-sm mb-3">{title}</h3>
       )}
       <div className="spec-table-wrapper">
         <table className="spec-table">

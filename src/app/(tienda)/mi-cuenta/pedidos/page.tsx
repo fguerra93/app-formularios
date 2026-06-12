@@ -86,7 +86,7 @@ export default function MisPedidosPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="size-6 text-[#1B2A6B] animate-spin" />
+        <Loader2 className="size-6 text-[#0f1115] animate-spin" />
       </div>
     );
   }
@@ -94,17 +94,17 @@ export default function MisPedidosPage() {
   if (pedidos.length === 0) {
     return (
       <div className="text-center py-16">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F0F7FF] flex items-center justify-center">
-          <ShoppingBag className="size-10 text-[#1B2A6B]/40" />
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#fafafb] flex items-center justify-center">
+          <ShoppingBag className="size-10 text-[#0f1115]/40" />
         </div>
-        <h2 className="text-xl font-bold text-[#1E293B] mb-2">No tienes pedidos aun</h2>
-        <p className="text-sm text-[#64748B] mb-6 max-w-md mx-auto">
+        <h2 className="text-xl font-bold text-[#0f1115] mb-2">No tienes pedidos aun</h2>
+        <p className="text-sm text-[#5b6472] mb-6 max-w-md mx-auto">
           Cuando realices tu primera compra, podras ver el historial aqui.
         </p>
         <Button
           nativeButton={false}
           render={<Link href="/productos" />}
-          className="bg-[#1B2A6B] text-white hover:bg-[#152259]"
+          className="bg-[#0f1115] text-white hover:bg-[#000000]"
         >
           Explorar productos
         </Button>
@@ -114,9 +114,9 @@ export default function MisPedidosPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-[#1E293B]">
+      <h2 className="text-lg font-bold text-[#0f1115]">
         Mis Pedidos
-        <span className="text-sm font-normal text-[#64748B] ml-2">({pedidos.length})</span>
+        <span className="text-sm font-normal text-[#5b6472] ml-2">({pedidos.length})</span>
       </h2>
 
       {pedidos.map((pedido) => {
@@ -128,19 +128,19 @@ export default function MisPedidosPage() {
         return (
           <div
             key={pedido.id}
-            className="bg-white rounded-xl border border-[#E2E8F0] p-5 space-y-4"
+            className="bg-white rounded-xl border border-[#e8eaee] p-5 space-y-4"
           >
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
-                  <Package className="size-5 text-[#1B2A6B]" />
+                <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
+                  <Package className="size-5 text-[#0f1115]" />
                 </div>
                 <div>
-                  <p className="font-bold text-[#1E293B]">
+                  <p className="font-bold text-[#0f1115]">
                     Pedido #{pedido.numero_pedido}
                   </p>
-                  <p className="text-xs text-[#64748B]">{formatDate(pedido.created_at)}</p>
+                  <p className="text-xs text-[#5b6472]">{formatDate(pedido.created_at)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -158,18 +158,18 @@ export default function MisPedidosPage() {
             </div>
 
             {/* Items summary */}
-            <div className="text-sm text-[#64748B]">
+            <div className="text-sm text-[#5b6472]">
               <p>
                 {itemsSummary.join(", ")}
                 {remaining > 0 && (
-                  <span className="text-[#1B2A6B] font-medium"> y {remaining} mas</span>
+                  <span className="text-[#0f1115] font-medium"> y {remaining} mas</span>
                 )}
               </p>
             </div>
 
             {/* Footer */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[#E2E8F0]">
-              <p className="text-lg font-extrabold text-[#1B2A6B]">{formatCLP(pedido.total)}</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-[#e8eaee]">
+              <p className="text-lg font-extrabold text-[#0f1115]">{formatCLP(pedido.total)}</p>
               <div className="flex items-center gap-2 flex-wrap">
                 <Button
                   onClick={() => handleRepetirPedido(pedido)}

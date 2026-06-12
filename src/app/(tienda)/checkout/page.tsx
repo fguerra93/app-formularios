@@ -206,7 +206,7 @@ function CheckoutContent() {
   if (items.length === 0) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-[#1E293B] mb-4">Tu carrito esta vacio</h1>
+        <h1 className="text-2xl font-bold text-[#0f1115] mb-4">Tu carrito esta vacio</h1>
         <Button nativeButton={false} render={<Link href="/productos" />}>
           Ver productos
         </Button>
@@ -223,7 +223,7 @@ function CheckoutContent() {
         ]}
       />
 
-      <h1 className="text-2xl font-extrabold text-[#1E293B] mb-4" style={{ letterSpacing: "-0.02em" }}>
+      <h1 className="text-2xl font-extrabold text-[#0f1115] mb-4" style={{ letterSpacing: "-0.02em" }}>
         Finalizar Compra
       </h1>
 
@@ -247,7 +247,7 @@ function CheckoutContent() {
                 {i > 0 && (
                   <div
                     className={`h-0.5 w-12 sm:w-20 transition-colors ${
-                      i <= currentStep ? "bg-[#00B4D8]" : "bg-[#E2E8F0]"
+                      i <= currentStep ? "bg-[#00B4D8]" : "bg-[#e8eaee]"
                     }`}
                   />
                 )}
@@ -255,15 +255,15 @@ function CheckoutContent() {
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                       i <= currentStep
-                        ? "bg-[#1B2A6B] text-white"
-                        : "bg-[#E2E8F0] text-[#64748B]"
+                        ? "bg-[#0f1115] text-white"
+                        : "bg-[#e8eaee] text-[#5b6472]"
                     }`}
                   >
                     {step.num}
                   </div>
                   <span
                     className={`text-xs font-medium ${
-                      i <= currentStep ? "text-[#1B2A6B]" : "text-[#94A3B8]"
+                      i <= currentStep ? "text-[#0f1115]" : "text-[#8b94a3]"
                     }`}
                   >
                     {step.label}
@@ -277,9 +277,9 @@ function CheckoutContent() {
 
       {/* Login banner for guests */}
       {!user && (
-        <div className="mb-6 p-4 bg-[#F0F7FF] rounded-xl border border-[#E2E8F0] flex items-center gap-3">
-          <User className="size-5 text-[#1B2A6B] shrink-0" />
-          <p className="text-sm text-[#1E293B]">
+        <div className="mb-6 p-4 bg-[#fafafb] rounded-xl border border-[#e8eaee] flex items-center gap-3">
+          <User className="size-5 text-[#0f1115] shrink-0" />
+          <p className="text-sm text-[#0f1115]">
             Tienes cuenta?{" "}
             <Link href="/login" className="font-semibold text-[#00B4D8] hover:underline">
               Inicia sesion
@@ -294,8 +294,8 @@ function CheckoutContent() {
           {/* Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Client data */}
-            <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-              <h2 className="font-bold text-[#1E293B] mb-4">Datos del Cliente</h2>
+            <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
+              <h2 className="font-bold text-[#0f1115] mb-4">Datos del Cliente</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="nombre">Nombre completo *</Label>
@@ -348,8 +348,8 @@ function CheckoutContent() {
 
             {/* Shipping address */}
             {tipoEntrega === "despacho" && (
-              <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-                <h2 className="font-bold text-[#1E293B] mb-4">Direccion de Envio</h2>
+              <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
+                <h2 className="font-bold text-[#0f1115] mb-4">Direccion de Envio</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="calle">Calle *</Label>
@@ -424,14 +424,14 @@ function CheckoutContent() {
               </div>
             )}
             {/* Payment method */}
-            <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-              <h2 className="font-bold text-[#1E293B] mb-4">Metodo de Pago</h2>
+            <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
+              <h2 className="font-bold text-[#0f1115] mb-4">Metodo de Pago</h2>
               <div className="space-y-3">
                 <label
                   className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
                     pagoMetodo === "mercadopago"
-                      ? "border-[#00B4D8] bg-[#F0F7FF]"
-                      : "border-[#E2E8F0] hover:border-[#CBD5E1]"
+                      ? "border-[#00B4D8] bg-[#fafafb]"
+                      : "border-[#e8eaee] hover:border-[#CBD5E1]"
                   }`}
                 >
                   <input
@@ -444,8 +444,8 @@ function CheckoutContent() {
                   />
                   <CreditCard className="size-5 text-[#009EE3]" />
                   <div className="flex-1">
-                    <p className="font-medium text-[#1E293B]">MercadoPago</p>
-                    <p className="text-xs text-[#64748B]">
+                    <p className="font-medium text-[#0f1115]">MercadoPago</p>
+                    <p className="text-xs text-[#5b6472]">
                       Tarjeta de credito/debito, cuenta MercadoPago
                     </p>
                   </div>
@@ -454,8 +454,8 @@ function CheckoutContent() {
                 <label
                   className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
                     pagoMetodo === "transferencia"
-                      ? "border-[#00B4D8] bg-[#F0F7FF]"
-                      : "border-[#E2E8F0] hover:border-[#CBD5E1]"
+                      ? "border-[#00B4D8] bg-[#fafafb]"
+                      : "border-[#e8eaee] hover:border-[#CBD5E1]"
                   }`}
                 >
                   <input
@@ -466,10 +466,10 @@ function CheckoutContent() {
                     onChange={() => setPagoMetodo("transferencia")}
                     className="accent-[#00B4D8]"
                   />
-                  <Banknote className="size-5 text-[#1B2A6B]" />
+                  <Banknote className="size-5 text-[#0f1115]" />
                   <div className="flex-1">
-                    <p className="font-medium text-[#1E293B]">Transferencia Bancaria</p>
-                    <p className="text-xs text-[#64748B]">
+                    <p className="font-medium text-[#0f1115]">Transferencia Bancaria</p>
+                    <p className="text-xs text-[#5b6472]">
                       Transferencia manual y confirmacion por WhatsApp
                     </p>
                   </div>
@@ -479,8 +479,8 @@ function CheckoutContent() {
                   <label
                     className={`flex items-center gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
                       pagoMetodo === "retiro"
-                        ? "border-[#00B4D8] bg-[#F0F7FF]"
-                        : "border-[#E2E8F0] hover:border-[#CBD5E1]"
+                        ? "border-[#00B4D8] bg-[#fafafb]"
+                        : "border-[#e8eaee] hover:border-[#CBD5E1]"
                     }`}
                   >
                     <input
@@ -493,8 +493,8 @@ function CheckoutContent() {
                     />
                     <Store className="size-5 text-[#F97316]" />
                     <div className="flex-1">
-                      <p className="font-medium text-[#1E293B]">Pago al Retirar</p>
-                      <p className="text-xs text-[#64748B]">
+                      <p className="font-medium text-[#0f1115]">Pago al Retirar</p>
+                      <p className="text-xs text-[#5b6472]">
                         Paga en efectivo o tarjeta cuando retires en tienda
                       </p>
                     </div>
@@ -504,7 +504,7 @@ function CheckoutContent() {
             </div>
 
             {/* Newsletter opt-in */}
-            <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
+            <div className="bg-white rounded-xl border border-[#e8eaee] p-6">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -512,7 +512,7 @@ function CheckoutContent() {
                   onChange={(e) => setNewsletterOptIn(e.target.checked)}
                   className="mt-0.5 accent-[#00B4D8]"
                 />
-                <span className="text-sm text-[#1E293B]">
+                <span className="text-sm text-[#0f1115]">
                   Quiero recibir ofertas y novedades por email
                 </span>
               </label>
@@ -520,8 +520,8 @@ function CheckoutContent() {
           </div>
 
           {/* Order summary */}
-          <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 h-fit sticky top-20">
-            <h2 className="font-bold text-[#1E293B] mb-4">Resumen del Pedido</h2>
+          <div className="bg-white rounded-xl border border-[#e8eaee] p-6 h-fit sticky top-20">
+            <h2 className="font-bold text-[#0f1115] mb-4">Resumen del Pedido</h2>
 
             <ul className="space-y-3 mb-4">
               {items.map((item) => {
@@ -533,7 +533,7 @@ function CheckoutContent() {
 
                 return (
                   <li key={key} className="flex gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0 overflow-hidden">
+                    <div className="w-12 h-12 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0 overflow-hidden">
                       {item.imagen ? (
                         <img
                           src={item.imagen}
@@ -545,14 +545,14 @@ function CheckoutContent() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[#1E293B] truncate">
+                      <p className="text-sm font-medium text-[#0f1115] truncate">
                         {item.nombre}
                       </p>
-                      <p className="text-xs text-[#64748B]">
+                      <p className="text-xs text-[#5b6472]">
                         {item.cantidad} x {formatCLP(unitPrice)}
                       </p>
                     </div>
-                    <span className="text-sm font-semibold text-[#1E293B]">
+                    <span className="text-sm font-semibold text-[#0f1115]">
                       {formatCLP(unitPrice * item.cantidad)}
                     </span>
                   </li>
@@ -560,31 +560,31 @@ function CheckoutContent() {
               })}
             </ul>
 
-            <div className="border-t border-[#E2E8F0] pt-4 space-y-2">
+            <div className="border-t border-[#e8eaee] pt-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-[#64748B]">Subtotal</span>
+                <span className="text-[#5b6472]">Subtotal</span>
                 <span>{formatCLP(subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-[#64748B]">Envio</span>
+                <span className="text-[#5b6472]">Envio</span>
                 <span>{costoEnvio > 0 ? formatCLP(costoEnvio) : "Gratis"}</span>
               </div>
-              <div className="border-t border-[#E2E8F0] pt-2 flex justify-between">
+              <div className="border-t border-[#e8eaee] pt-2 flex justify-between">
                 <span className="font-bold">Total</span>
-                <span className="text-xl font-extrabold text-[#1B2A6B]">
+                <span className="text-xl font-extrabold text-[#0f1115]">
                   {formatCLP(total)}
                 </span>
               </div>
               {/* IVA informativo: los precios YA incluyen IVA (19%). */}
-              <div className="flex justify-between text-xs text-[#94A3B8]">
+              <div className="flex justify-between text-xs text-[#8b94a3]">
                 <span>Neto</span>
                 <span>{formatCLP(Math.round(total / 1.19))}</span>
               </div>
-              <div className="flex justify-between text-xs text-[#94A3B8]">
+              <div className="flex justify-between text-xs text-[#8b94a3]">
                 <span>IVA (19%) incluido</span>
                 <span>{formatCLP(total - Math.round(total / 1.19))}</span>
               </div>
-              <p className="pt-1 text-center text-[11px] text-[#94A3B8]">
+              <p className="pt-1 text-center text-[11px] text-[#8b94a3]">
                 Los precios incluyen IVA (19%).
               </p>
             </div>
@@ -592,7 +592,7 @@ function CheckoutContent() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full mt-4 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-6"
+              className="w-full mt-4 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6"
               size="lg"
             >
               {loading ? (

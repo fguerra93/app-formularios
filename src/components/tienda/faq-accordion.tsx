@@ -35,7 +35,7 @@ export function FaqAccordion({ limit }: { limit?: number }) {
       {items.map((faq, i) => (
         <div
           key={i}
-          className="border border-[#E2E8F0] rounded-xl overflow-hidden bg-white hover-glow transition-all"
+          className="border border-[#e8eaee] rounded-xl overflow-hidden bg-white hover-glow transition-all"
         >
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -43,12 +43,12 @@ export function FaqAccordion({ limit }: { limit?: number }) {
           >
             <div className="flex items-center gap-3">
               <HelpCircle className="w-5 h-5 text-[#00B4D8] flex-shrink-0" />
-              <span className="font-medium text-[#1E293B] text-sm md:text-base">
+              <span className="font-medium text-[#0f1115] text-sm md:text-base">
                 {faq.question}
               </span>
             </div>
             <ChevronDown
-              className={`w-5 h-5 text-[#64748B] flex-shrink-0 transition-transform duration-300 ${
+              className={`w-5 h-5 text-[#5b6472] flex-shrink-0 transition-transform duration-300 ${
                 openIndex === i ? 'rotate-180' : ''
               }`}
             />
@@ -59,7 +59,7 @@ export function FaqAccordion({ limit }: { limit?: number }) {
               openIndex === i ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            <div className="px-5 pb-4 pl-13 text-[#64748B] text-sm leading-relaxed">
+            <div className="px-5 pb-4 pl-13 text-[#5b6472] text-sm leading-relaxed">
               {faq.answer}
             </div>
           </div>

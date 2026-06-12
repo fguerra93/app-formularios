@@ -31,7 +31,7 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="size-8 text-[#1B2A6B] animate-spin" />
+          <Loader2 className="size-8 text-[#0f1115] animate-spin" />
         </div>
       </div>
     );
@@ -67,10 +67,10 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-extrabold text-[#1E293B]" style={{ letterSpacing: "-0.02em" }}>
+          <h1 className="text-2xl font-extrabold text-[#0f1115]" style={{ letterSpacing: "-0.02em" }}>
             Hola, {cliente?.nombre || "Usuario"}!
           </h1>
-          <p className="text-sm text-[#64748B] mt-1">{user.email}</p>
+          <p className="text-sm text-[#5b6472] mt-1">{user.email}</p>
         </div>
         <Button
           onClick={handleSignOut}
@@ -85,7 +85,7 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar - desktop */}
         <aside className="hidden lg:block w-64 shrink-0">
-          <nav className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden sticky top-20">
+          <nav className="bg-white rounded-xl border border-[#e8eaee] overflow-hidden sticky top-20">
             {navItems.map((item) => {
               const active = isActive(item);
               return (
@@ -94,11 +94,11 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-l-3 ${
                     active
-                      ? "bg-[#F0F7FF] text-[#1B2A6B] border-l-[#1B2A6B]"
-                      : "text-[#64748B] hover:text-[#1E293B] hover:bg-gray-50 border-l-transparent"
+                      ? "bg-[#fafafb] text-[#0f1115] border-l-[#0f1115]"
+                      : "text-[#5b6472] hover:text-[#0f1115] hover:bg-gray-50 border-l-transparent"
                   }`}
                 >
-                  <item.icon className={`size-4 ${active ? "text-[#1B2A6B]" : "text-[#94A3B8]"}`} />
+                  <item.icon className={`size-4 ${active ? "text-[#0f1115]" : "text-[#8b94a3]"}`} />
                   {item.label}
                 </Link>
               );
@@ -107,7 +107,7 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
         </aside>
 
         {/* Tabs - mobile */}
-        <div className="lg:hidden flex overflow-x-auto gap-1 bg-white rounded-xl border border-[#E2E8F0] p-1">
+        <div className="lg:hidden flex overflow-x-auto gap-1 bg-white rounded-xl border border-[#e8eaee] p-1">
           {navItems.map((item) => {
             const active = isActive(item);
             return (
@@ -116,8 +116,8 @@ export default function MiCuentaLayout({ children }: { children: React.ReactNode
                 href={item.href}
                 className={`flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   active
-                    ? "bg-[#1B2A6B] text-white"
-                    : "text-[#64748B] hover:text-[#1E293B] hover:bg-gray-50"
+                    ? "bg-[#0f1115] text-white"
+                    : "text-[#5b6472] hover:text-[#0f1115] hover:bg-gray-50"
                 }`}
               >
                 <item.icon className="size-3.5" />

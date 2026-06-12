@@ -20,17 +20,17 @@ export default function DevolucionesPage() {
 
       {/* Header */}
       <section className="text-center mb-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center">
           <RotateCcw className="size-8 text-white" />
         </div>
         <h1
-          className="text-3xl md:text-4xl font-extrabold text-[#1E293B] mb-3"
+          className="text-3xl md:text-4xl font-extrabold text-[#0f1115] mb-3"
           style={{ letterSpacing: "-0.02em" }}
         >
           Politica de{" "}
           <span className="text-[#00B4D8]">Devoluciones</span>
         </h1>
-        <p className="text-[#64748B] max-w-xl mx-auto">
+        <p className="text-[#5b6472] max-w-xl mx-auto">
           En PrintUp nos comprometemos con la calidad de nuestros productos. Aqui
           te explicamos nuestras condiciones de devolucion y reembolso.
         </p>
@@ -38,13 +38,13 @@ export default function DevolucionesPage() {
 
       {/* Productos personalizados */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
             <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
               <AlertTriangle className="size-5 text-amber-500" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Productos Personalizados
               </h2>
               <p className="text-[#475569]">
@@ -61,13 +61,13 @@ export default function DevolucionesPage() {
 
       {/* Excepciones - Defectos */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <RotateCcw className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Excepciones por Defectos de Produccion
               </h2>
               <p className="text-[#475569] mb-3">
@@ -101,18 +101,18 @@ export default function DevolucionesPage() {
 
       {/* Plazo para reclamos */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Clock className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Plazo para Reclamos
               </h2>
               <p className="text-[#475569]">
                 Tienes un plazo de{" "}
-                <strong className="text-[#1B2A6B]">
+                <strong className="text-[#0f1115]">
                   7 dias corridos desde la recepcion
                 </strong>{" "}
                 del producto para realizar tu reclamo. Pasado este plazo, no se
@@ -125,23 +125,23 @@ export default function DevolucionesPage() {
 
       {/* Proceso de reclamo */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Camera className="size-5 text-[#00B4D8]" />
             </div>
-            <h2 className="text-xl font-extrabold text-[#1B2A6B]">
+            <h2 className="text-xl font-extrabold text-[#0f1115]">
               Proceso de Reclamo
             </h2>
           </div>
 
           <div className="space-y-4">
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
                 1
               </div>
               <div>
-                <h3 className="font-bold text-[#1E293B] mb-1">
+                <h3 className="font-bold text-[#0f1115] mb-1">
                   Contactanos
                 </h3>
                 <p className="text-sm text-[#475569]">
@@ -166,11 +166,11 @@ export default function DevolucionesPage() {
             </div>
 
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
                 2
               </div>
               <div>
-                <h3 className="font-bold text-[#1E293B] mb-1">
+                <h3 className="font-bold text-[#0f1115] mb-1">
                   Envia evidencia
                 </h3>
                 <p className="text-sm text-[#475569]">
@@ -181,11 +181,11 @@ export default function DevolucionesPage() {
             </div>
 
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
                 3
               </div>
               <div>
-                <h3 className="font-bold text-[#1E293B] mb-1">
+                <h3 className="font-bold text-[#0f1115] mb-1">
                   Evaluacion
                 </h3>
                 <p className="text-sm text-[#475569]">
@@ -196,11 +196,11 @@ export default function DevolucionesPage() {
             </div>
 
             <div className="flex gap-4">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center shrink-0 text-white text-sm font-bold">
                 4
               </div>
               <div>
-                <h3 className="font-bold text-[#1E293B] mb-1">
+                <h3 className="font-bold text-[#0f1115] mb-1">
                   Resolucion
                 </h3>
                 <p className="text-sm text-[#475569]">
@@ -215,18 +215,18 @@ export default function DevolucionesPage() {
 
       {/* Reembolsos */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <CreditCard className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Reembolsos
               </h2>
               <p className="text-[#475569]">
                 Los reembolsos aprobados se procesan en un plazo de{" "}
-                <strong className="text-[#1B2A6B]">
+                <strong className="text-[#0f1115]">
                   5 a 10 dias habiles
                 </strong>{" "}
                 desde la aprobacion del reclamo. El reembolso se realizara a
@@ -238,7 +238,7 @@ export default function DevolucionesPage() {
       </section>
 
       {/* Nota final */}
-      <div className="text-center text-sm text-[#64748B]">
+      <div className="text-center text-sm text-[#5b6472]">
         <p>
           Para cualquier consulta sobre devoluciones, contactanos a{" "}
           <a

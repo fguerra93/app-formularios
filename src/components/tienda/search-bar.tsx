@@ -123,11 +123,11 @@ export function SearchBar() {
   };
 
   const dropdown = results && open && (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[#E2E8F0] z-50 max-h-96 overflow-y-auto">
+    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-[#e8eaee] z-50 max-h-96 overflow-y-auto">
       {/* Products */}
       {results.productos.length > 0 && (
         <div>
-          <p className="px-4 pt-3 pb-1 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
+          <p className="px-4 pt-3 pb-1 text-xs font-semibold text-[#5b6472] uppercase tracking-wider">
             Productos
           </p>
           {results.productos.map((prod) => {
@@ -140,9 +140,9 @@ export function SearchBar() {
               <button
                 key={prod.id}
                 onClick={() => handleProductClick(prod)}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#F0F7FF] transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#fafafb] transition-colors"
               >
-                <div className="w-8 h-8 rounded bg-[#F0F7FF] overflow-hidden shrink-0">
+                <div className="w-8 h-8 rounded bg-[#fafafb] overflow-hidden shrink-0">
                   {mainImage?.url ? (
                     <img
                       src={mainImage.url}
@@ -150,15 +150,15 @@ export function SearchBar() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-[#E2E8F0]" />
+                    <div className="w-full h-full bg-[#e8eaee]" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-[#1E293B] font-medium truncate">
+                  <p className="text-sm text-[#0f1115] font-medium truncate">
                     {prod.nombre}
                   </p>
                 </div>
-                <span className="text-sm font-bold text-[#1B2A6B] shrink-0">
+                <span className="text-sm font-bold text-[#0f1115] shrink-0">
                   {formatCLP(displayPrice)}
                 </span>
               </button>
@@ -170,16 +170,16 @@ export function SearchBar() {
       {/* Categories */}
       {results.categorias.length > 0 && (
         <div>
-          <p className="px-4 pt-3 pb-1 text-xs font-semibold text-[#64748B] uppercase tracking-wider border-t border-[#E2E8F0]">
+          <p className="px-4 pt-3 pb-1 text-xs font-semibold text-[#5b6472] uppercase tracking-wider border-t border-[#e8eaee]">
             Categorias
           </p>
           {results.categorias.map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleCategoryClick(cat)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#F0F7FF] transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-[#fafafb] transition-colors"
             >
-              <span className="text-sm text-[#1E293B]">{cat.nombre}</span>
+              <span className="text-sm text-[#0f1115]">{cat.nombre}</span>
             </button>
           ))}
         </div>
@@ -189,7 +189,7 @@ export function SearchBar() {
       {(results.productos.length > 0 || results.categorias.length > 0) && (
         <button
           onClick={handleViewAll}
-          className="w-full px-4 py-3 text-sm font-medium text-[#00B4D8] hover:bg-[#F0F7FF] transition-colors border-t border-[#E2E8F0] text-center"
+          className="w-full px-4 py-3 text-sm font-medium text-[#00B4D8] hover:bg-[#fafafb] transition-colors border-t border-[#e8eaee] text-center"
         >
           Ver todos los resultados
         </button>
@@ -197,7 +197,7 @@ export function SearchBar() {
 
       {/* No results */}
       {results.productos.length === 0 && results.categorias.length === 0 && (
-        <div className="px-4 py-6 text-center text-sm text-[#64748B]">
+        <div className="px-4 py-6 text-center text-sm text-[#5b6472]">
           No se encontraron resultados para &quot;{query}&quot;
         </div>
       )}
@@ -209,7 +209,7 @@ export function SearchBar() {
       {/* Desktop search */}
       <div ref={desktopRef} className="relative hidden md:block">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#64748B]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#5b6472]" />
           <input
             ref={inputRef}
             type="text"
@@ -220,7 +220,7 @@ export function SearchBar() {
               if (results) setOpen(true);
             }}
             placeholder="Buscar..."
-            className="w-40 focus:w-64 transition-all duration-300 pl-10 pr-3 py-2 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] placeholder:text-[#64748B] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent"
+            className="w-40 focus:w-64 transition-all duration-300 pl-10 pr-3 py-2 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] placeholder:text-[#5b6472] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent"
           />
           {loading && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -237,15 +237,15 @@ export function SearchBar() {
         className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
         aria-label="Buscar"
       >
-        <Search className="size-5 text-[#1E293B]" />
+        <Search className="size-5 text-[#0f1115]" />
       </button>
 
       {/* Mobile search overlay */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 bg-white md:hidden">
-          <div className="flex items-center gap-2 p-4 border-b border-[#E2E8F0]">
+          <div className="flex items-center gap-2 p-4 border-b border-[#e8eaee]">
             <div className="relative flex-1" ref={mobileContainerRef}>
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#64748B]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#5b6472]" />
               <input
                 ref={mobileInputRef}
                 type="text"
@@ -253,7 +253,7 @@ export function SearchBar() {
                 onChange={(e) => handleChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Buscar productos..."
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] placeholder:text-[#64748B] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] placeholder:text-[#5b6472] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent"
               />
               {dropdown}
             </div>
@@ -266,7 +266,7 @@ export function SearchBar() {
               className="p-2 rounded-lg hover:bg-gray-100"
               aria-label="Cerrar busqueda"
             >
-              <X className="size-5 text-[#1E293B]" />
+              <X className="size-5 text-[#0f1115]" />
             </button>
           </div>
         </div>

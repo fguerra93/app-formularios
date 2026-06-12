@@ -1,20 +1,9 @@
 import type { Producto } from "@/lib/types";
 
 export function ProductBadges({ producto }: { producto: Producto }) {
-  const badges: { label: string; className: string }[] = [];
+  const badges: { label: string; variant: string }[] = [];
 
-  // Nuevo: created_at is within the last 30 days
-  const createdAt = new Date(producto.created_at);
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  if (createdAt >= thirtyDaysAgo) {
-    badges.push({
-      label: "Nuevo",
-      className: "bg-[#FFD100] text-[#1E293B]",
-    });
-  }
-
-  // Discount percentage
+  // Oferta (lo más vendedor primero): porcentaje de descuento, en tinta sólida
   if (
     producto.precio_oferta !== null &&
     producto.precio_oferta < producto.precio
@@ -22,34 +11,25 @@ export function ProductBadges({ producto }: { producto: Producto }) {
     const pct = Math.round(
       ((producto.precio - producto.precio_oferta) / producto.precio) * 100
     );
-    badges.push({
-      label: `-${pct}%`,
-      className: "bg-[#E91E8C] text-white",
-    });
+    badges.push({ label: `-${pct}%`, variant: "mc-badge-solid" });
   }
 
-  // Free shipping
-  if (producto.precio >= 50000) {
-    badges.push({
-      label: "Envio Gratis",
-      className: "bg-[#00B4D8] text-white",
-    });
+  // Nuevo: created_at dentro de los últimos 30 días — outline discreto
+  const createdAt = new Date(producto.created_at);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  if (createdAt >= thirtyDaysAgo) {
+    badges.push({ label: "Nuevo", variant: "mc-badge-outline" });
   }
 
-  // Low stock
+  // Stock bajo — señal ámbar sobria
   if (producto.stock > 0 && producto.stock <= 5) {
-    badges.push({
-      label: `Quedan ${producto.stock}`,
-      className: "bg-[#F97316] text-white",
-    });
+    badges.push({ label: `Quedan ${producto.stock}`, variant: "mc-badge-warn" });
   }
 
-  // Out of stock
+  // Agotado — gris apagado
   if (producto.stock === 0) {
-    badges.push({
-      label: "Agotado",
-      className: "bg-gray-500 text-white",
-    });
+    badges.push({ label: "Agotado", variant: "mc-badge-muted" });
   }
 
   if (badges.length === 0) return null;
@@ -57,10 +37,7 @@ export function ProductBadges({ producto }: { producto: Producto }) {
   return (
     <div className="flex flex-col gap-1.5">
       {badges.map((badge) => (
-        <span
-          key={badge.label}
-          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase leading-tight w-fit ${badge.className}`}
-        >
+        <span key={badge.label} className={`mc-badge ${badge.variant}`}>
           {badge.label}
         </span>
       ))}

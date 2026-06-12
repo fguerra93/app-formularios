@@ -73,7 +73,7 @@ export default function MisReviewsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="size-6 text-[#1B2A6B] animate-spin" />
+        <Loader2 className="size-6 text-[#0f1115] animate-spin" />
       </div>
     );
   }
@@ -81,17 +81,17 @@ export default function MisReviewsPage() {
   if (reviews.length === 0) {
     return (
       <div className="text-center py-16">
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#F0F7FF] flex items-center justify-center">
+        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#fafafb] flex items-center justify-center">
           <MessageSquare className="size-10 text-[#00B4D8]/40" />
         </div>
-        <h2 className="text-xl font-bold text-[#1E293B] mb-2">No tienes reviews aun</h2>
-        <p className="text-sm text-[#64748B] mb-6 max-w-md mx-auto">
+        <h2 className="text-xl font-bold text-[#0f1115] mb-2">No tienes reviews aun</h2>
+        <p className="text-sm text-[#5b6472] mb-6 max-w-md mx-auto">
           Despues de recibir tus pedidos, podras dejar reviews sobre los productos que compraste.
         </p>
         <Button
           nativeButton={false}
           render={<Link href="/productos" />}
-          className="bg-[#1B2A6B] text-white hover:bg-[#152259]"
+          className="bg-[#0f1115] text-white hover:bg-[#000000]"
         >
           Explorar productos
         </Button>
@@ -101,9 +101,9 @@ export default function MisReviewsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-bold text-[#1E293B]">
+      <h2 className="text-lg font-bold text-[#0f1115]">
         Mis Reviews
-        <span className="text-sm font-normal text-[#64748B] ml-2">({reviews.length})</span>
+        <span className="text-sm font-normal text-[#5b6472] ml-2">({reviews.length})</span>
       </h2>
 
       {reviews.map((review) => {
@@ -113,11 +113,11 @@ export default function MisReviewsPage() {
         return (
           <div
             key={review.id}
-            className="bg-white rounded-xl border border-[#E2E8F0] p-5"
+            className="bg-white rounded-xl border border-[#e8eaee] p-5"
           >
             <div className="flex gap-4">
               {/* Product image */}
-              <div className="w-16 h-16 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="w-16 h-16 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0 overflow-hidden">
                 {productImage?.url ? (
                   <img
                     src={productImage.url}
@@ -136,16 +136,16 @@ export default function MisReviewsPage() {
                     {review.productos ? (
                       <Link
                         href={`/productos/${review.productos.slug}`}
-                        className="font-semibold text-sm text-[#1E293B] hover:text-[#1B2A6B] transition-colors"
+                        className="font-semibold text-sm text-[#0f1115] hover:text-[#0f1115] transition-colors"
                       >
                         {review.productos.nombre}
                       </Link>
                     ) : (
-                      <span className="font-semibold text-sm text-[#1E293B]">
+                      <span className="font-semibold text-sm text-[#0f1115]">
                         Producto eliminado
                       </span>
                     )}
-                    <p className="text-xs text-[#64748B] mt-0.5">{formatDate(review.created_at)}</p>
+                    <p className="text-xs text-[#5b6472] mt-0.5">{formatDate(review.created_at)}</p>
                   </div>
                   <span
                     className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border shrink-0 ${status.bg} ${status.color}`}
@@ -162,7 +162,7 @@ export default function MisReviewsPage() {
                       className={`size-4 ${
                         i < review.rating
                           ? "fill-[#FFD100] text-[#FFD100]"
-                          : "fill-none text-[#E2E8F0]"
+                          : "fill-none text-[#e8eaee]"
                       }`}
                     />
                   ))}
@@ -170,12 +170,12 @@ export default function MisReviewsPage() {
 
                 {/* Title & comment */}
                 {review.titulo && (
-                  <p className="font-semibold text-sm text-[#1E293B] mt-2">
+                  <p className="font-semibold text-sm text-[#0f1115] mt-2">
                     {review.titulo}
                   </p>
                 )}
                 {review.comentario && (
-                  <p className="text-sm text-[#64748B] mt-1 line-clamp-3">
+                  <p className="text-sm text-[#5b6472] mt-1 line-clamp-3">
                     {review.comentario}
                   </p>
                 )}

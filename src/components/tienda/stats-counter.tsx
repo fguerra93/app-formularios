@@ -52,7 +52,7 @@ export function StatsCounter() {
   }, [])
 
   return (
-    <section ref={ref} className="relative py-16 md:py-24 overflow-hidden" style={{ background: '#1B2A6B' }}>
+    <section ref={ref} className="relative py-16 md:py-24 overflow-hidden" style={{ background: '#0f1115' }}>
       <FloatingCircles theme="stats" />
       <PulsingDots color="rgba(255,255,255,0.3)" />
 

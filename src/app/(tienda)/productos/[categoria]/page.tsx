@@ -71,17 +71,17 @@ function CategoriaContent() {
       />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-[#1E293B]" style={{ letterSpacing: "-0.02em" }}>
+        <h1 className="text-3xl font-extrabold text-[#0f1115]" style={{ letterSpacing: "-0.02em" }}>
           {catName}
         </h1>
         {categoria?.descripcion && (
-          <p className="text-[#64748B] mt-2">{categoria.descripcion}</p>
+          <p className="text-[#5b6472] mt-2">{categoria.descripcion}</p>
         )}
       </div>
 
       {/* Sort */}
       <div className="flex items-center justify-between mb-6">
-        <p className="text-sm text-[#64748B]">
+        <p className="text-sm text-[#5b6472]">
           {total} producto{total !== 1 ? "s" : ""}
         </p>
         <select
@@ -92,7 +92,7 @@ function CategoriaContent() {
             p.set("page", "1");
             router.push(`/productos/${categoriaSlug}?${p}`);
           }}
-          className="px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+          className="px-3 py-2 rounded-lg border border-[#e8eaee] text-sm bg-white"
         >
           <option value="created_at:desc">Mas recientes</option>
           <option value="precio:asc">Precio: menor a mayor</option>
@@ -109,7 +109,7 @@ function CategoriaContent() {
         </div>
       ) : productos.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-[#64748B] mb-4">No hay productos en esta categoria</p>
+          <p className="text-[#5b6472] mb-4">No hay productos en esta categoria</p>
           <Button nativeButton={false} render={<Link href="/productos" />} variant="outline">
             Ver todos los productos
           </Button>
@@ -136,7 +136,7 @@ function CategoriaContent() {
           >
             Anterior
           </Button>
-          <span className="text-sm text-[#64748B] px-3">
+          <span className="text-sm text-[#5b6472] px-3">
             Pagina {page} de {totalPages}
           </span>
           <Button

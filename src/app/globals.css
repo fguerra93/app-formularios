@@ -588,6 +588,101 @@
   background: #fff;
 }
 
+/* ===================================================================
+   MINIMAL CLARO v2 — segunda vuelta: foco accesible, cifras tabulares,
+   formularios, badges sobrios, secciones, tabs y micro-detalles premium.
+   =================================================================== */
+:root {
+  --mc-accent-soft: #e6f7fb;  /* fondo cyan muy suave (badges/inputs) */
+  --mc-warn: #b45309;         /* ámbar legible (stock bajo) */
+  --mc-warn-soft: #fff7ed;
+  --mc-danger: #e11d48;       /* rojo sobrio (oferta / quitar) */
+  --mc-focus: 0 0 0 2px #fff, 0 0 0 4px var(--mc-accent);
+}
+
+/* Selección de texto con tinte de marca */
+::selection { background: #cdeff6; color: var(--mc-ink); }
+
+/* Foco visible solo con teclado — coherente en toda la UI, sin layout shift */
+.mc-btn:focus-visible,
+.mc-link:focus-visible,
+.mc-input:focus-visible,
+.mc-tab:focus-visible,
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--mc-focus);
+}
+
+/* Pulsación de botón: tacto sutil */
+.mc-btn:active { transform: translateY(1px); }
+
+/* Cifras tabulares para precios — dejan de "bailar", se ven de tienda real */
+.mc-price {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -.01em;
+}
+
+/* Campos de formulario coherentes (checkout, login, búsqueda, newsletter) */
+.mc-label {
+  display: block; font-size: .8rem; font-weight: 600;
+  color: var(--mc-ink-2); margin-bottom: .4rem;
+}
+.mc-input, .mc-select, .mc-textarea {
+  width: 100%; background: #fff; color: var(--mc-ink);
+  border: 1px solid var(--mc-line-2); border-radius: 11px;
+  padding: .65rem .85rem; font-size: .925rem;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.mc-input::placeholder, .mc-textarea::placeholder { color: var(--mc-ink-3); }
+.mc-input:focus, .mc-select:focus, .mc-textarea:focus {
+  outline: none; border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px var(--mc-accent-soft);
+}
+.mc-checkbox { accent-color: var(--mc-ink); width: 1rem; height: 1rem; }
+
+/* Badges sobrios — set restringido, alto contraste, sin arcoíris */
+.mc-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .66rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; line-height: 1; width: fit-content;
+  padding: .3rem .5rem; border-radius: 7px; border: 1px solid transparent;
+}
+.mc-badge-solid   { background: var(--mc-ink); color: #fff; }
+.mc-badge-outline { background: #fff; color: var(--mc-ink); border-color: var(--mc-line-2); }
+.mc-badge-accent  { background: var(--mc-accent-soft); color: var(--mc-accent-ink); }
+.mc-badge-warn    { background: var(--mc-warn-soft); color: var(--mc-warn); }
+.mc-badge-muted   { background: #f1f3f6; color: var(--mc-ink-2); }
+
+/* Secciones con ritmo alternado */
+.mc-section { background: #fff; }
+.mc-section-alt { background: var(--mc-surface); }
+
+/* Tarjeta plana (sin lift) para bloques estáticos: filtros, resúmenes */
+.mc-panel {
+  background: #fff; border: 1px solid var(--mc-line); border-radius: 16px;
+  box-shadow: var(--mc-shadow-soft);
+}
+
+/* Pestaña/segmento (tabs de categorías, orden, filtros activos) */
+.mc-tab {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-size: .85rem; font-weight: 600; color: var(--mc-ink-2);
+  padding: .5rem .9rem; border-radius: 999px; border: 1px solid var(--mc-line);
+  background: #fff; transition: background .18s ease, color .18s ease, border-color .18s ease;
+  cursor: pointer;
+}
+.mc-tab:hover { border-color: var(--mc-line-2); color: var(--mc-ink); }
+.mc-tab[data-active="true"] { background: var(--mc-ink); color: #fff; border-color: var(--mc-ink); }
+
+/* Titulares sin líneas viudas */
+.text-balance { text-wrap: balance; }
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-float,
@@ -606,6 +701,8 @@
   .accent-line {
     animation: none;
   }
+  .mc-card-hover:hover { transform: none; }
+  .mc-btn:active { transform: none; }
   .header-shrink.scrolled .top-bar {
     max-height: 40px;
     padding-top: 0.5rem;

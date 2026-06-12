@@ -54,18 +54,18 @@ export default function RecuperarPasswordPage() {
         ]}
       />
 
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 md:p-8">
+      <div className="bg-white rounded-xl border border-[#e8eaee] p-6 md:p-8">
         <div className="text-center mb-6">
-          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#1B2A6B] flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#0f1115] flex items-center justify-center">
             <KeyRound className="size-6 text-white" />
           </div>
           <h1
-            className="text-2xl font-extrabold text-[#1E293B]"
+            className="text-2xl font-extrabold text-[#0f1115]"
             style={{ letterSpacing: "-0.02em" }}
           >
             Recuperar Contrasena
           </h1>
-          <p className="text-sm text-[#64748B] mt-1">
+          <p className="text-sm text-[#5b6472] mt-1">
             Te enviaremos un enlace para restablecer tu contrasena
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function RecuperarPasswordPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full mt-6 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-5"
+              className="w-full mt-6 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-5"
               size="lg"
             >
               {loading && (
@@ -110,22 +110,22 @@ export default function RecuperarPasswordPage() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
               <Mail className="size-7 text-green-600" />
             </div>
-            <h2 className="text-lg font-bold text-[#1E293B] mb-2">
+            <h2 className="text-lg font-bold text-[#0f1115] mb-2">
               Revisa tu email
             </h2>
-            <p className="text-sm text-[#64748B] mb-1">
+            <p className="text-sm text-[#5b6472] mb-1">
               Hemos enviado un enlace de recuperacion a:
             </p>
-            <p className="text-sm font-semibold text-[#1B2A6B] mb-4">
+            <p className="text-sm font-semibold text-[#0f1115] mb-4">
               {email}
             </p>
-            <p className="text-xs text-[#64748B]">
+            <p className="text-xs text-[#5b6472]">
               Si no ves el correo, revisa tu carpeta de spam.
             </p>
           </div>
         )}
 
-        <div className="mt-6 pt-4 border-t border-[#E2E8F0]">
+        <div className="mt-6 pt-4 border-t border-[#e8eaee]">
           <Link
             href="/login"
             className="flex items-center justify-center gap-2 text-sm text-[#00B4D8] font-semibold hover:underline"

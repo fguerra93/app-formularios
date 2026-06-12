@@ -121,16 +121,22 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
             <ShoppingCart className="size-4" aria-hidden="true" />
             {producto.stock === 0 ? "Agotado" : "Agregar"}
           </button>
-          <a
-            href={`https://wa.me/56966126645?text=${encodeURIComponent(`Hola PrintUp! Me interesa: ${producto.nombre} - ${formatCLP(displayPrice)}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(
+                `https://wa.me/56966126645?text=${encodeURIComponent(`Hola PrintUp! Me interesa: ${producto.nombre} - ${formatCLP(displayPrice)}`)}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            }}
             aria-label={`Cotizar ${producto.nombre} por WhatsApp`}
             className="mc-btn mc-btn-ghost w-11 px-0 shrink-0"
           >
             <MessageCircle className="size-4 text-[#25D366]" />
-          </a>
+          </button>
         </div>
       </div>
     </Link>

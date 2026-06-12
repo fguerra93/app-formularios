@@ -70,7 +70,7 @@ export default function NosotrosPage() {
         {/* Timeline */}
         <section className="mb-16 relative">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-2">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#0f1115] mb-2">
               Nuestra Historia
             </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-[#8b5cf6] to-[#00B4D8] mx-auto mt-4 rounded-full" />
@@ -89,12 +89,12 @@ export default function NosotrosPage() {
 
                     {/* Card */}
                     <div className={`ml-12 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? '' : 'md:ml-auto'}`}>
-                      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 hover-glow transition-all">
+                      <div className="bg-white rounded-xl border border-[#e8eaee] p-6 hover-glow transition-all">
                         <span className="inline-block px-3 py-1 rounded-full bg-[#00B4D8]/10 text-[#00B4D8] text-xs font-bold mb-3">
                           {item.year}
                         </span>
-                        <h3 className="font-bold text-[#1E293B] text-lg mb-2">{item.title}</h3>
-                        <p className="text-sm text-[#64748B] leading-relaxed">{item.desc}</p>
+                        <h3 className="font-bold text-[#0f1115] text-lg mb-2">{item.title}</h3>
+                        <p className="text-sm text-[#5b6472] leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -107,7 +107,7 @@ export default function NosotrosPage() {
         {/* Servicios */}
         <section className="mb-16">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-2">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#0f1115] mb-2">
               Nuestros Servicios
             </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-[#FF9710] to-[#00B4D8] mx-auto mt-4 rounded-full" />
@@ -117,7 +117,7 @@ export default function NosotrosPage() {
             {servicios.map((s) => (
               <div
                 key={s.titulo}
-                className="group bg-white rounded-xl border border-[#E2E8F0] p-6 flex gap-4 hover-glow transition-all"
+                className="group bg-white rounded-xl border border-[#e8eaee] p-6 flex gap-4 hover-glow transition-all"
               >
                 <div
                   className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
@@ -129,8 +129,8 @@ export default function NosotrosPage() {
                   <s.icon className="size-7" style={{ color: s.color }} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#1E293B] mb-1">{s.titulo}</h3>
-                  <p className="text-sm text-[#64748B] leading-relaxed">{s.descripcion}</p>
+                  <h3 className="font-bold text-[#0f1115] mb-1">{s.titulo}</h3>
+                  <p className="text-sm text-[#5b6472] leading-relaxed">{s.descripcion}</p>
                 </div>
               </div>
             ))}
@@ -145,15 +145,15 @@ export default function NosotrosPage() {
               { icon: Award, title: "Calidad Garantizada", desc: "Usamos la mejor tecnologia y materiales para que cada proyecto quede perfecto.", color: "#FF9710" },
               { icon: Heart, title: "Compromiso", desc: "Tu satisfaccion es nuestra prioridad. Cumplimos plazos y superamos expectativas.", color: "#10b981" },
             ].map((v) => (
-              <div key={v.title} className="text-center p-6 rounded-xl bg-white border border-[#E2E8F0] hover-glow transition-all">
+              <div key={v.title} className="text-center p-6 rounded-xl bg-white border border-[#e8eaee] hover-glow transition-all">
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
                   style={{ background: `${v.color}15`, boxShadow: `0 0 20px ${v.color}15` }}
                 >
                   <v.icon className="size-7" style={{ color: v.color }} />
                 </div>
-                <h3 className="font-bold text-[#1E293B] mb-2">{v.title}</h3>
-                <p className="text-sm text-[#64748B] leading-relaxed">{v.desc}</p>
+                <h3 className="font-bold text-[#0f1115] mb-2">{v.title}</h3>
+                <p className="text-sm text-[#5b6472] leading-relaxed">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -162,14 +162,14 @@ export default function NosotrosPage() {
         {/* Visitanos */}
         <section className="mb-16">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-2">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-[#0f1115] mb-2">
               Visitanos
             </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-[#14b8a6] to-[#00B4D8] mx-auto mt-4 rounded-full" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-5">
+            <div className="bg-white rounded-xl border border-[#e8eaee] p-6 space-y-5">
               {/* Schedule badge */}
               <div className="flex justify-start">
                 <ScheduleBadgeInline />
@@ -180,8 +180,8 @@ export default function NosotrosPage() {
                   <MapPin className="size-5 text-[#00B4D8]" />
                 </div>
                 <div>
-                  <p className="font-medium text-[#1E293B]">Direccion</p>
-                  <p className="text-sm text-[#64748B]">
+                  <p className="font-medium text-[#0f1115]">Direccion</p>
+                  <p className="text-sm text-[#5b6472]">
                     Errazuriz 09, Donihue, Region de O&apos;Higgins
                   </p>
                 </div>
@@ -191,9 +191,9 @@ export default function NosotrosPage() {
                   <Clock className="size-5 text-[#8b5cf6]" />
                 </div>
                 <div>
-                  <p className="font-medium text-[#1E293B]">Horario</p>
-                  <p className="text-sm text-[#64748B]">Lunes a Viernes: 9:00 - 18:00</p>
-                  <p className="text-sm text-[#64748B]">Sabado: 10:00 - 14:00</p>
+                  <p className="font-medium text-[#0f1115]">Horario</p>
+                  <p className="text-sm text-[#5b6472]">Lunes a Viernes: 9:00 - 18:00</p>
+                  <p className="text-sm text-[#5b6472]">Sabado: 10:00 - 14:00</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -201,7 +201,7 @@ export default function NosotrosPage() {
                   <Phone className="size-5 text-[#10b981]" />
                 </div>
                 <div>
-                  <p className="font-medium text-[#1E293B]">Telefono / WhatsApp</p>
+                  <p className="font-medium text-[#0f1115]">Telefono / WhatsApp</p>
                   <a href="tel:+56966126645" className="text-sm text-[#00B4D8] hover:underline">+56 9 66126645</a>
                 </div>
               </div>
@@ -210,7 +210,7 @@ export default function NosotrosPage() {
                   <Mail className="size-5 text-[#FF9710]" />
                 </div>
                 <div>
-                  <p className="font-medium text-[#1E293B]">Email</p>
+                  <p className="font-medium text-[#0f1115]">Email</p>
                   <a href="mailto:contacto@printup.cl" className="text-sm text-[#00B4D8] hover:underline">contacto@printup.cl</a>
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default function NosotrosPage() {
             </div>
 
             {/* Google Maps embed */}
-            <div className="rounded-xl overflow-hidden border border-[#E2E8F0] min-h-[350px]">
+            <div className="rounded-xl overflow-hidden border border-[#e8eaee] min-h-[350px]">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3319.5!2d-70.9456!3d-34.1083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sErrazuriz%2009%2C%20Donihue!5e0!3m2!1ses!2scl!4v1700000000000"
                 width="100%"

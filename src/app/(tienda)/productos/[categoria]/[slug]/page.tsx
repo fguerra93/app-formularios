@@ -217,7 +217,7 @@ export default function ProductoPage() {
   if (!producto) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-[#1E293B] mb-4">Producto no encontrado</h1>
+        <h1 className="text-2xl font-bold text-[#0f1115] mb-4">Producto no encontrado</h1>
         <Button nativeButton={false} render={<Link href="/productos" />}>
           Ver todos los productos
         </Button>
@@ -450,20 +450,20 @@ export default function ProductoPage() {
             )}
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-extrabold text-[#1E293B] mb-3" style={{ letterSpacing: "-0.02em" }}>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-[#0f1115] mb-3" style={{ letterSpacing: "-0.02em" }}>
             {producto.nombre}
           </h1>
 
           {/* Short description */}
           {producto.descripcion_corta && (
-            <p className="text-[#64748B] mb-4 leading-relaxed">{producto.descripcion_corta}</p>
+            <p className="text-[#5b6472] mb-4 leading-relaxed">{producto.descripcion_corta}</p>
           )}
 
           {/* Reviews summary inline */}
           {reviews.length > 0 && (
             <div className="flex items-center gap-2 mb-4">
               <StarRatingDisplay rating={Math.round(avgRating)} />
-              <span className="text-xs text-[#64748B]">({reviews.length} opinion{reviews.length !== 1 ? "es" : ""})</span>
+              <span className="text-xs text-[#5b6472]">({reviews.length} opinion{reviews.length !== 1 ? "es" : ""})</span>
             </div>
           )}
 
@@ -472,25 +472,25 @@ export default function ProductoPage() {
             <div ref={ctaRef} className="mb-6 space-y-4">
               {/* Price display - "desde" style */}
               <div>
-                <p className="text-xs text-[#64748B] uppercase tracking-wider mb-1">Precio base</p>
+                <p className="text-xs text-[#5b6472] uppercase tracking-wider mb-1">Precio base</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-sm text-[#64748B]">desde</span>
-                  <span className="text-[36px] font-extrabold text-[#1B2A6B] leading-none">
+                  <span className="text-sm text-[#5b6472]">desde</span>
+                  <span className="text-[36px] font-extrabold text-[#0f1115] leading-none">
                     {formatCLP(producto.precio_m2)}
                   </span>
-                  <span className="text-sm text-[#64748B] font-medium">/ m²</span>
+                  <span className="text-sm text-[#5b6472] font-medium">/ m²</span>
                 </div>
-                <p className="text-xs text-[#64748B] mt-1">
+                <p className="text-xs text-[#5b6472] mt-1">
                   Precio base del producto. El total final depende de tus medidas y terminaciones.
                 </p>
               </div>
 
               {/* Tiempo de produccion */}
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0]">
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-[#fafafb] border border-[#e8eaee]">
                 <Clock className="size-4 text-[#8b5cf6] mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-[#1E293B]">Tiempo de produccion</p>
-                  <p className="text-xs text-[#64748B]">Te confirmamos el plazo al cotizar. El plazo exacto se confirma cuando recibimos pago y archivo.</p>
+                  <p className="text-sm font-semibold text-[#0f1115]">Tiempo de produccion</p>
+                  <p className="text-xs text-[#5b6472]">Te confirmamos el plazo al cotizar. El plazo exacto se confirma cuando recibimos pago y archivo.</p>
                 </div>
               </div>
 
@@ -500,50 +500,50 @@ export default function ProductoPage() {
                   href={`https://wa.me/56966126645?text=${encodeURIComponent(`Hola PrintUp! Quiero cotizar: ${producto.nombre}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:border-[#25D366] hover:bg-[#25D366]/5 transition-all group"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-[#e8eaee] hover:border-[#25D366] hover:bg-[#25D366]/5 transition-all group"
                 >
                   <div className="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
                     <MessageCircle className="size-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[#1E293B] group-hover:text-[#25D366]">WhatsApp +56 9 66126645</p>
-                    <p className="text-xs text-[#64748B]">Lun-Vie 09:00-18:00 · Sab 10:00-14:00</p>
+                    <p className="text-sm font-semibold text-[#0f1115] group-hover:text-[#25D366]">WhatsApp +56 9 66126645</p>
+                    <p className="text-xs text-[#5b6472]">Lun-Vie 09:00-18:00 · Sab 10:00-14:00</p>
                   </div>
                 </a>
                 <a
                   href="mailto:contacto@printup.cl"
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] hover:border-[#00B4D8] hover:bg-[#00B4D8]/5 transition-all group"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-[#e8eaee] hover:border-[#00B4D8] hover:bg-[#00B4D8]/5 transition-all group"
                 >
                   <div className="w-10 h-10 rounded-full bg-[#00B4D8] flex items-center justify-center shrink-0">
                     <Send className="size-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[#1E293B] group-hover:text-[#00B4D8]">contacto@printup.cl</p>
-                    <p className="text-xs text-[#64748B]">Te respondemos en menos de 2 horas</p>
+                    <p className="text-sm font-semibold text-[#0f1115] group-hover:text-[#00B4D8]">contacto@printup.cl</p>
+                    <p className="text-xs text-[#5b6472]">Te respondemos en menos de 2 horas</p>
                   </div>
                 </a>
               </div>
 
               {/* Stats badges */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="text-center p-3 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0]">
-                  <p className="text-lg font-extrabold text-[#1B2A6B]">+500</p>
-                  <p className="text-[10px] text-[#64748B] leading-tight">clientes confian</p>
+                <div className="text-center p-3 rounded-lg bg-[#fafafb] border border-[#e8eaee]">
+                  <p className="text-lg font-extrabold text-[#0f1115]">+500</p>
+                  <p className="text-[10px] text-[#5b6472] leading-tight">clientes confian</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0]">
-                  <p className="text-lg font-extrabold text-[#1B2A6B]">+2.000</p>
-                  <p className="text-[10px] text-[#64748B] leading-tight">trabajos entregados</p>
+                <div className="text-center p-3 rounded-lg bg-[#fafafb] border border-[#e8eaee]">
+                  <p className="text-lg font-extrabold text-[#0f1115]">+2.000</p>
+                  <p className="text-[10px] text-[#5b6472] leading-tight">trabajos entregados</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0]">
-                  <p className="text-lg font-extrabold text-[#1B2A6B]">24h</p>
-                  <p className="text-[10px] text-[#64748B] leading-tight">respuesta garantizada</p>
+                <div className="text-center p-3 rounded-lg bg-[#fafafb] border border-[#e8eaee]">
+                  <p className="text-lg font-extrabold text-[#0f1115]">24h</p>
+                  <p className="text-[10px] text-[#5b6472] leading-tight">respuesta garantizada</p>
                 </div>
               </div>
 
               {/* CTA: scroll to calculator */}
               <button
                 onClick={() => document.getElementById("calculadora-m2")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="w-full py-3.5 rounded-xl bg-[#1B2A6B] text-white font-bold text-sm hover:bg-[#152259] transition-colors flex items-center justify-center gap-2 mb-3"
+                className="w-full py-3.5 rounded-xl bg-[#0f1115] text-white font-bold text-sm hover:bg-[#000000] transition-colors flex items-center justify-center gap-2 mb-3"
               >
                 <Layers className="size-4" />
                 Cotizar con medidas exactas
@@ -563,11 +563,11 @@ export default function ProductoPage() {
             <div ref={ctaRef}>
               {/* Price display */}
               <div className="flex items-baseline gap-3 mb-6">
-                <span className="text-[40px] font-extrabold text-[#1B2A6B] leading-none">
+                <span className="text-[40px] font-extrabold text-[#0f1115] leading-none">
                   {formatCLP(totalPrice)}
                 </span>
                 {hasOffer && (
-                  <span className="text-lg text-[#64748B] line-through">
+                  <span className="text-lg text-[#5b6472] line-through">
                     {formatCLP(producto.precio)}
                   </span>
                 )}
@@ -575,12 +575,12 @@ export default function ProductoPage() {
 
               {/* Quantity Pricing Table */}
               {preciosCantidad.length > 0 && (
-                <div className="mb-6 rounded-xl border border-[#E2E8F0] overflow-hidden">
-                  <div className="bg-[#1B2A6B] px-4 py-2">
+                <div className="mb-6 rounded-xl border border-[#e8eaee] overflow-hidden">
+                  <div className="bg-[#0f1115] px-4 py-2">
                     <p className="text-sm font-bold text-white">Precios por cantidad</p>
                   </div>
                   <div className="bg-white">
-                    <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-[#64748B] uppercase tracking-wider px-4 py-2 border-b border-[#E2E8F0]">
+                    <div className="grid grid-cols-3 gap-1 text-xs font-semibold text-[#5b6472] uppercase tracking-wider px-4 py-2 border-b border-[#e8eaee]">
                       <span>Cantidad</span>
                       <span>Precio Unit.</span>
                       <span>Ahorro</span>
@@ -598,8 +598,8 @@ export default function ProductoPage() {
                           key={i}
                           className={`grid grid-cols-3 gap-1 py-2.5 px-4 text-sm transition-colors ${
                             isActive
-                              ? "bg-[#1B2A6B] text-white font-semibold"
-                              : i % 2 === 0 ? "bg-white text-[#1E293B]" : "bg-[#F8F8F8] text-[#1E293B]"
+                              ? "bg-[#0f1115] text-white font-semibold"
+                              : i % 2 === 0 ? "bg-white text-[#0f1115]" : "bg-[#fafafb] text-[#0f1115]"
                           }`}
                         >
                           <span>
@@ -628,7 +628,7 @@ export default function ProductoPage() {
                 <div className="space-y-4 mb-6">
                   {producto.variantes.map((variante) => (
                     <div key={variante.nombre}>
-                      <label className="text-sm font-semibold text-[#1E293B] mb-2 block">
+                      <label className="text-sm font-semibold text-[#0f1115] mb-2 block">
                         {variante.nombre}
                       </label>
                       <div className="flex flex-wrap gap-2">
@@ -643,8 +643,8 @@ export default function ProductoPage() {
                             }
                             className={`px-4 py-2.5 rounded-lg text-sm font-medium border-2 transition-all ${
                               selectedVariants[variante.nombre] === opt.valor
-                                ? "border-[#1B2A6B] bg-[#1B2A6B] text-white shadow-md"
-                                : "border-[#E2E8F0] text-[#1E293B] hover:border-[#00B4D8] hover:shadow-sm"
+                                ? "border-[#0f1115] bg-[#0f1115] text-white shadow-md"
+                                : "border-[#e8eaee] text-[#0f1115] hover:border-[#00B4D8] hover:shadow-sm"
                             }`}
                           >
                             {opt.valor}
@@ -676,7 +676,7 @@ export default function ProductoPage() {
                 <Button
                   onClick={handleAddToCart}
                   disabled={producto.stock === 0}
-                  className="flex-1 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-6"
+                  className="flex-1 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6"
                   size="lg"
                 >
                   <ShoppingCart className="size-5 mr-2" />
@@ -713,30 +713,30 @@ export default function ProductoPage() {
 
           {/* Trust / Benefit Badges - ChileImprime style */}
           <div className="grid grid-cols-3 gap-2 mb-5">
-            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-9 h-9 rounded-full bg-[#00B4D8]/10 flex items-center justify-center">
                 <Truck className="size-4 text-[#00B4D8]" />
               </div>
-              <span className="text-[10px] font-semibold text-[#1E293B] leading-tight">Despacho Rapido</span>
+              <span className="text-[10px] font-semibold text-[#0f1115] leading-tight">Despacho Rapido</span>
             </div>
-            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-9 h-9 rounded-full bg-[#10b981]/10 flex items-center justify-center">
                 <Shield className="size-4 text-[#10b981]" />
               </div>
-              <span className="text-[10px] font-semibold text-[#1E293B] leading-tight">Calidad Garantizada</span>
+              <span className="text-[10px] font-semibold text-[#0f1115] leading-tight">Calidad Garantizada</span>
             </div>
-            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-9 h-9 rounded-full bg-[#8b5cf6]/10 flex items-center justify-center">
                 <Headphones className="size-4 text-[#8b5cf6]" />
               </div>
-              <span className="text-[10px] font-semibold text-[#1E293B] leading-tight">Soporte WhatsApp</span>
+              <span className="text-[10px] font-semibold text-[#0f1115] leading-tight">Soporte WhatsApp</span>
             </div>
           </div>
 
           {/* Que incluye - ChileImprime "Incluye" section */}
           {producto.incluye && producto.incluye.length > 0 && (
-            <div className="mb-5 rounded-xl border border-[#E2E8F0] overflow-hidden">
-              <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00355a] px-4 py-2.5 flex items-center gap-2">
+            <div className="mb-5 rounded-xl border border-[#e8eaee] overflow-hidden">
+              <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-4 py-2.5 flex items-center gap-2">
                 <Package className="size-4 text-[#00B4D8]" />
                 <span className="text-sm font-bold text-white">Que incluye</span>
               </div>
@@ -747,7 +747,7 @@ export default function ProductoPage() {
                       <div className="w-6 h-6 rounded-full bg-[#10b981]/10 flex items-center justify-center shrink-0">
                         <Check className="size-3.5 text-[#10b981]" />
                       </div>
-                      <span className="text-sm text-[#1E293B] font-medium">{item}</span>
+                      <span className="text-sm text-[#0f1115] font-medium">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -776,7 +776,7 @@ export default function ProductoPage() {
           )}
 
           {/* Stock info + SKU + Category */}
-          <div className="flex items-center gap-4 text-sm text-[#64748B] mb-4 flex-wrap">
+          <div className="flex items-center gap-4 text-sm text-[#5b6472] mb-4 flex-wrap">
             {producto.stock > 0 ? (
               <span className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-green-500 status-dot-open" />
@@ -789,7 +789,7 @@ export default function ProductoPage() {
               </span>
             )}
             {producto.sku && (
-              <span>SKU: <strong className="text-[#1E293B]">{producto.sku}</strong></span>
+              <span>SKU: <strong className="text-[#0f1115]">{producto.sku}</strong></span>
             )}
           </div>
 
@@ -798,7 +798,7 @@ export default function ProductoPage() {
             <div className="mb-6 p-4 bg-orange-50 rounded-xl border border-orange-200">
               <div className="flex items-center gap-2 mb-2">
                 <Bell className="size-4 text-orange-500" />
-                <span className="text-sm font-semibold text-[#1E293B]">
+                <span className="text-sm font-semibold text-[#0f1115]">
                   Avisame cuando vuelva
                 </span>
               </div>
@@ -808,7 +808,7 @@ export default function ProductoPage() {
                   value={stockNotifEmail}
                   onChange={(e) => setStockNotifEmail(e.target.value)}
                   placeholder="tu@email.com"
-                  className="flex-1 px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                  className="flex-1 px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                 />
                 <Button
                   onClick={handleStockNotif}
@@ -828,7 +828,7 @@ export default function ProductoPage() {
           )}
 
           {/* Compact info - full tabs are in the section below */}
-          <div className="border-t border-[#E2E8F0] pt-6" id="product-info-tabs">
+          <div className="border-t border-[#e8eaee] pt-6" id="product-info-tabs">
             <div className="flex gap-1 mb-0 overflow-x-auto">
               {(["descripcion", "especificaciones", "envio", "preguntas"] as const).map((tab) => (
                 <button
@@ -836,43 +836,43 @@ export default function ProductoPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2.5 text-sm font-semibold transition-all whitespace-nowrap rounded-t-xl ${
                     activeTab === tab
-                      ? "bg-[#E91E8C] text-white shadow-md"
-                      : "bg-[#F0F7FF] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#1E293B]"
+                      ? "bg-[#0f1115] text-white shadow-md"
+                      : "bg-[#fafafb] text-[#5b6472] hover:bg-[#e8eaee] hover:text-[#0f1115]"
                   }`}
                 >
                   {tab === "descripcion" ? "Descripcion" : tab === "especificaciones" ? "Detalles" : tab === "envio" ? "Envio" : `Preguntas${preguntas.length > 0 ? ` (${preguntas.length})` : ""}`}
                 </button>
               ))}
             </div>
-            <div className="bg-white rounded-b-xl rounded-tr-xl border border-[#E2E8F0] p-6">
+            <div className="bg-white rounded-b-xl rounded-tr-xl border border-[#e8eaee] p-6">
             {activeTab === "descripcion" && (
-              <div className="text-sm text-[#1E293B] leading-relaxed space-y-6">
+              <div className="text-sm text-[#0f1115] leading-relaxed space-y-6">
                 {/* Main description HTML */}
                 {producto.descripcion ? (
                   <div
-                    className="prose prose-sm max-w-none prose-headings:text-[#1E293B] prose-headings:font-bold prose-p:text-[#1E293B] prose-strong:text-[#1B2A6B] prose-li:text-[#1E293B] prose-a:text-[#00B4D8] prose-img:rounded-xl"
+                    className="prose prose-sm max-w-none prose-headings:text-[#0f1115] prose-headings:font-bold prose-p:text-[#0f1115] prose-strong:text-[#0f1115] prose-li:text-[#0f1115] prose-a:text-[#00B4D8] prose-img:rounded-xl"
                     dangerouslySetInnerHTML={{ __html: producto.descripcion }}
                   />
                 ) : (
-                  <p className="text-[#64748B]">Sin descripcion disponible.</p>
+                  <p className="text-[#5b6472]">Sin descripcion disponible.</p>
                 )}
 
                 {/* Caracteristicas principales - ChileImprime style */}
                 {producto.caracteristicas && producto.caracteristicas.length > 0 && (
                   <div className="mt-2">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                        <Sparkles className="size-4 text-[#1B2A6B]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                        <Sparkles className="size-4 text-[#0f1115]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Caracteristicas principales</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Caracteristicas principales</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {producto.caracteristicas.map((car, i) => (
-                        <div key={i} className="flex items-start gap-3 p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
+                        <div key={i} className="flex items-start gap-3 p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
                           <div className="w-6 h-6 rounded-full bg-[#00B4D8]/15 flex items-center justify-center shrink-0 mt-0.5">
                             <Check className="size-3.5 text-[#00B4D8]" />
                           </div>
-                          <span className="text-sm text-[#1E293B] leading-snug">{car}</span>
+                          <span className="text-sm text-[#0f1115] leading-snug">{car}</span>
                         </div>
                       ))}
                     </div>
@@ -886,13 +886,13 @@ export default function ProductoPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                         <Target className="size-4 text-[#10b981]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Usos y aplicaciones</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Usos y aplicaciones</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {producto.usos.map((uso, i) => (
                         <div key={i} className="flex items-center gap-2.5 py-2 px-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] shrink-0" />
-                          <span className="text-sm text-[#1E293B]">{uso}</span>
+                          <span className="text-sm text-[#0f1115]">{uso}</span>
                         </div>
                       ))}
                     </div>
@@ -901,28 +901,28 @@ export default function ProductoPage() {
 
                 {/* Machine info for m² products */}
                 {producto.precio_m2 && producto.precio_m2 > 0 && (
-                  <div className="p-5 bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#E2E8F0]">
+                  <div className="p-5 bg-gradient-to-br from-[#fafafb] to-white rounded-xl border border-[#e8eaee]">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-8 h-8 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center">
                         <Layers className="size-4 text-[#8b5cf6]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Informacion de impresion</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Informacion de impresion</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                        <p className="text-xs text-[#64748B] mb-1">Precio por m²</p>
-                        <p className="text-lg font-bold text-[#1B2A6B]">{formatCLP(producto.precio_m2)}</p>
+                      <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                        <p className="text-xs text-[#5b6472] mb-1">Precio por m²</p>
+                        <p className="text-lg font-bold text-[#0f1115]">{formatCLP(producto.precio_m2)}</p>
                       </div>
                       {producto.ancho_max_cm && (
-                        <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                          <p className="text-xs text-[#64748B] mb-1">Ancho maximo</p>
-                          <p className="text-lg font-bold text-[#1B2A6B]">{producto.ancho_max_cm} cm</p>
+                        <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                          <p className="text-xs text-[#5b6472] mb-1">Ancho maximo</p>
+                          <p className="text-lg font-bold text-[#0f1115]">{producto.ancho_max_cm} cm</p>
                         </div>
                       )}
                       {producto.area_min_cm2 && (
-                        <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                          <p className="text-xs text-[#64748B] mb-1">Area minima</p>
-                          <p className="text-lg font-bold text-[#1B2A6B]">{producto.area_min_cm2} cm²</p>
+                        <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                          <p className="text-xs text-[#5b6472] mb-1">Area minima</p>
+                          <p className="text-lg font-bold text-[#0f1115]">{producto.area_min_cm2} cm²</p>
                         </div>
                       )}
                     </div>
@@ -936,13 +936,13 @@ export default function ProductoPage() {
                       <div className="w-8 h-8 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                         <Package className="size-4 text-[#10b981]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Que incluye tu pedido</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Que incluye tu pedido</h3>
                     </div>
                     <ul className="space-y-2">
                       {producto.incluye.map((item, i) => (
                         <li key={i} className="flex items-center gap-3">
                           <Check className="size-4 text-[#10b981] shrink-0" />
-                          <span className="text-sm text-[#1E293B]">{item}</span>
+                          <span className="text-sm text-[#0f1115]">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -951,12 +951,12 @@ export default function ProductoPage() {
 
                 {/* Como funciona - for m² products */}
                 {producto.precio_m2 && producto.precio_m2 > 0 && (
-                  <div className="p-5 bg-white rounded-xl border border-[#E2E8F0]">
+                  <div className="p-5 bg-white rounded-xl border border-[#e8eaee]">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                        <Wrench className="size-4 text-[#1B2A6B]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                        <Wrench className="size-4 text-[#0f1115]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Como funciona?</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Como funciona?</h3>
                     </div>
                     <div className="space-y-4">
                       {[
@@ -965,10 +965,10 @@ export default function ProductoPage() {
                         { step: "3", title: "Imprimimos y avisamos", desc: "Cuando este listo te avisamos para retiro en Donihue o despacho coordinado." },
                       ].map((s) => (
                         <div key={s.step} className="flex items-start gap-3">
-                          <div className="w-7 h-7 rounded-full bg-[#1B2A6B] text-white flex items-center justify-center text-xs font-bold shrink-0">{s.step}</div>
+                          <div className="w-7 h-7 rounded-full bg-[#0f1115] text-white flex items-center justify-center text-xs font-bold shrink-0">{s.step}</div>
                           <div>
-                            <p className="font-semibold text-sm text-[#1E293B]">{s.title}</p>
-                            <p className="text-sm text-[#64748B]">{s.desc}</p>
+                            <p className="font-semibold text-sm text-[#0f1115]">{s.title}</p>
+                            <p className="text-sm text-[#5b6472]">{s.desc}</p>
                           </div>
                         </div>
                       ))}
@@ -976,7 +976,7 @@ export default function ProductoPage() {
                     <div className="flex gap-3 mt-5">
                       <button
                         onClick={() => ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                        className="px-5 py-2.5 rounded-xl bg-[#1B2A6B] text-white text-sm font-bold hover:bg-[#152259] transition-colors"
+                        className="px-5 py-2.5 rounded-xl bg-[#0f1115] text-white text-sm font-bold hover:bg-[#000000] transition-colors"
                       >
                         Ir al cotizador
                       </button>
@@ -984,7 +984,7 @@ export default function ProductoPage() {
                         href="https://wa.me/56966126645?text=Hola%20PrintUp,%20quiero%20saber%20los%20requisitos%20del%20archivo"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-5 py-2.5 rounded-xl border border-[#E2E8F0] text-[#1E293B] text-sm font-medium hover:bg-[#F0F7FF] transition-colors"
+                        className="px-5 py-2.5 rounded-xl border border-[#e8eaee] text-[#0f1115] text-sm font-medium hover:bg-[#fafafb] transition-colors"
                       >
                         Consultar requisitos del archivo
                       </a>
@@ -993,12 +993,12 @@ export default function ProductoPage() {
                 )}
 
                 {/* Por que elegir PrintUp - always show */}
-                <div className="p-5 bg-gradient-to-br from-[#eff6ff] to-[#f0f7ff] rounded-xl border border-[#dbeafe]">
+                <div className="p-5 bg-gradient-to-br from-[#eff6ff] to-[#fafafb] rounded-xl border border-[#dbeafe]">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                      <Award className="size-4 text-[#1B2A6B]" />
+                    <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                      <Award className="size-4 text-[#0f1115]" />
                     </div>
-                    <h3 className="text-base font-bold text-[#1E293B]">Por que elegir PrintUp</h3>
+                    <h3 className="text-base font-bold text-[#0f1115]">Por que elegir PrintUp</h3>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
@@ -1009,7 +1009,7 @@ export default function ProductoPage() {
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-2.5">
                         <item.icon className="size-4 text-[#00B4D8] mt-0.5 shrink-0" />
-                        <span className="text-sm text-[#64748B] leading-snug">{item.text}</span>
+                        <span className="text-sm text-[#5b6472] leading-snug">{item.text}</span>
                       </div>
                     ))}
                   </div>
@@ -1037,29 +1037,29 @@ export default function ProductoPage() {
 
                 {/* Fallback if no specs */}
                 {!producto.sku && !producto.peso_gramos && producto.tags.length === 0 && !(producto.especificaciones?.length) && (
-                  <p className="text-sm text-[#64748B]">Sin especificaciones disponibles.</p>
+                  <p className="text-sm text-[#5b6472]">Sin especificaciones disponibles.</p>
                 )}
               </div>
             )}
 
             {activeTab === "envio" && (
-              <div className="text-sm text-[#1E293B] space-y-5">
+              <div className="text-sm text-[#0f1115] space-y-5">
                 {/* Tiempos de produccion */}
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-7 h-7 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center">
                       <Clock className="size-3.5 text-[#8b5cf6]" />
                     </div>
-                    <h4 className="font-bold text-[#1E293B]">Tiempos de produccion</h4>
+                    <h4 className="font-bold text-[#0f1115]">Tiempos de produccion</h4>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
-                      <p className="text-xs text-[#64748B] mb-0.5">Productos estandar</p>
-                      <p className="font-semibold text-[#1E293B]">24 a 48 horas habiles</p>
+                    <div className="p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
+                      <p className="text-xs text-[#5b6472] mb-0.5">Productos estandar</p>
+                      <p className="font-semibold text-[#0f1115]">24 a 48 horas habiles</p>
                     </div>
-                    <div className="p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
-                      <p className="text-xs text-[#64748B] mb-0.5">Gran formato / m²</p>
-                      <p className="font-semibold text-[#1E293B]">48 a 72 horas habiles</p>
+                    <div className="p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
+                      <p className="text-xs text-[#5b6472] mb-0.5">Gran formato / m²</p>
+                      <p className="font-semibold text-[#0f1115]">48 a 72 horas habiles</p>
                     </div>
                   </div>
                 </div>
@@ -1070,12 +1070,12 @@ export default function ProductoPage() {
                     <div className="w-7 h-7 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center">
                       <Truck className="size-3.5 text-[#00B4D8]" />
                     </div>
-                    <h4 className="font-bold text-[#1E293B]">Despacho a domicilio</h4>
+                    <h4 className="font-bold text-[#0f1115]">Despacho a domicilio</h4>
                   </div>
                   <div className="space-y-2 ml-9">
-                    <p className="text-[#64748B]"><strong className="text-[#1E293B]">Dias:</strong> Miercoles y Viernes</p>
-                    <p className="text-[#64748B]">Zona 1 (Donihue, Coltauco, Coinco): <strong className="text-[#1E293B]">$3.500</strong></p>
-                    <p className="text-[#64748B]">Zona 2 (Rancagua, Machali, Olivar): <strong className="text-[#1E293B]">$4.500</strong></p>
+                    <p className="text-[#5b6472]"><strong className="text-[#0f1115]">Dias:</strong> Miercoles y Viernes</p>
+                    <p className="text-[#5b6472]">Zona 1 (Donihue, Coltauco, Coinco): <strong className="text-[#0f1115]">$3.500</strong></p>
+                    <p className="text-[#5b6472]">Zona 2 (Rancagua, Machali, Olivar): <strong className="text-[#0f1115]">$4.500</strong></p>
                     <p className="text-[#10b981] font-medium">Envio gratis en pedidos sobre $50.000</p>
                   </div>
                 </div>
@@ -1086,11 +1086,11 @@ export default function ProductoPage() {
                     <div className="w-7 h-7 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                       <Package className="size-3.5 text-[#10b981]" />
                     </div>
-                    <h4 className="font-bold text-[#1E293B]">Retiro en tienda</h4>
+                    <h4 className="font-bold text-[#0f1115]">Retiro en tienda</h4>
                   </div>
                   <div className="ml-9 space-y-1">
-                    <p className="text-[#64748B]">Errazuriz 09 / Francisco Lira 082, Donihue</p>
-                    <p className="text-[#64748B]">Lun-Vie 9:00-18:00 / Sab 10:00-14:00</p>
+                    <p className="text-[#5b6472]">Errazuriz 09 / Francisco Lira 082, Donihue</p>
+                    <p className="text-[#5b6472]">Lun-Vie 9:00-18:00 / Sab 10:00-14:00</p>
                     <p className="text-[#10b981] font-medium">Sin costo</p>
                   </div>
                 </div>
@@ -1135,19 +1135,19 @@ export default function ProductoPage() {
                     {preguntas.length > 0 ? (
                       <div className="space-y-4">
                         {preguntas.map((q) => (
-                          <div key={q.id} className="p-4 bg-white rounded-xl border border-[#E2E8F0]">
+                          <div key={q.id} className="p-4 bg-white rounded-xl border border-[#e8eaee]">
                             <div className="flex items-start gap-2 mb-2">
-                              <MessageCircle className="size-4 text-[#1B2A6B] mt-0.5 shrink-0" />
+                              <MessageCircle className="size-4 text-[#0f1115] mt-0.5 shrink-0" />
                               <div className="flex-1">
-                                <p className="text-sm font-semibold text-[#1E293B]">{q.pregunta}</p>
-                                <p className="text-xs text-[#64748B] mt-1">
+                                <p className="text-sm font-semibold text-[#0f1115]">{q.pregunta}</p>
+                                <p className="text-xs text-[#5b6472] mt-1">
                                   {q.autor_nombre} - {new Date(q.created_at).toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" })}
                                 </p>
                               </div>
                             </div>
                             {q.respuesta && (
-                              <div className="ml-6 mt-2 p-3 bg-[#F0F7FF] rounded-lg">
-                                <p className="text-sm text-[#1E293B]">{q.respuesta}</p>
+                              <div className="ml-6 mt-2 p-3 bg-[#fafafb] rounded-lg">
+                                <p className="text-sm text-[#0f1115]">{q.respuesta}</p>
                                 <p className="text-xs text-[#00B4D8] font-medium mt-1">
                                   PrintUp - {q.respuesta_at && new Date(q.respuesta_at).toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" })}
                                 </p>
@@ -1157,7 +1157,7 @@ export default function ProductoPage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-[#64748B]">
+                      <p className="text-sm text-[#5b6472]">
                         Aun no hay preguntas. Se el primero en preguntar.
                       </p>
                     )}
@@ -1174,11 +1174,11 @@ export default function ProductoPage() {
                     ) : (
                       <form
                         onSubmit={handleSubmitPregunta}
-                        className="p-6 bg-white rounded-xl border border-[#E2E8F0] space-y-4"
+                        className="p-6 bg-white rounded-xl border border-[#e8eaee] space-y-4"
                       >
-                        <h3 className="font-bold text-[#1E293B]">Tu pregunta</h3>
+                        <h3 className="font-bold text-[#0f1115]">Tu pregunta</h3>
                         <div>
-                          <label className="text-sm font-semibold text-[#1E293B] block mb-1">
+                          <label className="text-sm font-semibold text-[#0f1115] block mb-1">
                             Pregunta
                           </label>
                           <textarea
@@ -1186,37 +1186,37 @@ export default function ProductoPage() {
                             onChange={(e) => setPreguntaTexto(e.target.value)}
                             placeholder="Que te gustaria saber sobre este producto?"
                             rows={3}
-                            className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm resize-none"
+                            className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm resize-none"
                           />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="text-sm font-semibold text-[#1E293B] block mb-1">Nombre</label>
+                            <label className="text-sm font-semibold text-[#0f1115] block mb-1">Nombre</label>
                             <input
                               type="text"
                               value={preguntaNombre}
                               onChange={(e) => setPreguntaNombre(e.target.value)}
                               placeholder="Tu nombre"
-                              className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                              className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                             />
                           </div>
                           <div>
-                            <label className="text-sm font-semibold text-[#1E293B] block mb-1">Email</label>
+                            <label className="text-sm font-semibold text-[#0f1115] block mb-1">Email</label>
                             <input
                               type="email"
                               value={preguntaEmail}
                               onChange={(e) => setPreguntaEmail(e.target.value)}
                               placeholder="tu@email.com"
-                              className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                              className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                             />
                           </div>
                         </div>
-                        <p className="text-xs text-[#64748B]">Tu pregunta sera respondida y publicada pronto.</p>
+                        <p className="text-xs text-[#5b6472]">Tu pregunta sera respondida y publicada pronto.</p>
                         <div className="flex gap-3">
                           <Button
                             type="submit"
                             disabled={preguntaSending}
-                            className="gap-2 bg-[#1B2A6B] hover:bg-[#152259] text-white"
+                            className="gap-2 bg-[#0f1115] hover:bg-[#000000] text-white"
                           >
                             <Send className="size-4" />
                             {preguntaSending ? "Enviando..." : "Enviar pregunta"}
@@ -1245,7 +1245,7 @@ export default function ProductoPage() {
                 href={producto.ficha_tecnica_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0] text-sm font-medium text-[#1B2A6B] hover:bg-[#E0EFFF] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#fafafb] border border-[#e8eaee] text-sm font-medium text-[#0f1115] hover:bg-[#E0EFFF] transition-colors"
               >
                 <FileDown className="size-4" />
                 Descargar Ficha Tecnica (PDF)
@@ -1254,8 +1254,8 @@ export default function ProductoPage() {
           )}
 
           {/* Product meta - Category & Tags (WooCommerce style) */}
-          <div className="mt-6 pt-5 border-t border-[#E2E8F0] space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-[#64748B]">
+          <div className="mt-6 pt-5 border-t border-[#e8eaee] space-y-2 text-sm">
+            <div className="flex items-center gap-2 text-[#5b6472]">
               <Folder className="size-3.5 shrink-0" />
               <span>Categoria:</span>
               <Link href={`/productos/${categoriaSlug}`} className="text-[#00B4D8] hover:underline font-medium">
@@ -1263,7 +1263,7 @@ export default function ProductoPage() {
               </Link>
             </div>
             {producto.tags.length > 0 && (
-              <div className="flex items-start gap-2 text-[#64748B]">
+              <div className="flex items-start gap-2 text-[#5b6472]">
                 <Tag className="size-3.5 shrink-0 mt-0.5" />
                 <span>Etiquetas:</span>
                 <div className="flex flex-wrap gap-1.5">
@@ -1271,7 +1271,7 @@ export default function ProductoPage() {
                     <Link
                       key={tag}
                       href={`/productos?search=${encodeURIComponent(tag)}`}
-                      className="px-2 py-0.5 rounded bg-[#F0F7FF] text-[#00B4D8] text-xs font-medium hover:bg-[#E0EFFF] transition-colors"
+                      className="px-2 py-0.5 rounded bg-[#fafafb] text-[#00B4D8] text-xs font-medium hover:bg-[#E0EFFF] transition-colors"
                     >
                       {tag}
                     </Link>
@@ -1303,30 +1303,30 @@ export default function ProductoPage() {
 
           {/* Trust badges - full width 3-col */}
           <div className="grid grid-cols-3 gap-3 mb-8">
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-10 h-10 rounded-full bg-[#00B4D8]/10 flex items-center justify-center">
                 <Truck className="size-5 text-[#00B4D8]" />
               </div>
-              <span className="text-xs font-semibold text-[#1E293B]">Despacho Rapido</span>
+              <span className="text-xs font-semibold text-[#0f1115]">Despacho Rapido</span>
             </div>
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-10 h-10 rounded-full bg-[#10b981]/10 flex items-center justify-center">
                 <Shield className="size-5 text-[#10b981]" />
               </div>
-              <span className="text-xs font-semibold text-[#1E293B]">Calidad Garantizada</span>
+              <span className="text-xs font-semibold text-[#0f1115]">Calidad Garantizada</span>
             </div>
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F0F7FF] border border-[#E2E8F0] text-center">
+            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
               <div className="w-10 h-10 rounded-full bg-[#8b5cf6]/10 flex items-center justify-center">
                 <Headphones className="size-5 text-[#8b5cf6]" />
               </div>
-              <span className="text-xs font-semibold text-[#1E293B]">Soporte WhatsApp</span>
+              <span className="text-xs font-semibold text-[#0f1115]">Soporte WhatsApp</span>
             </div>
           </div>
 
           {/* Que incluye - full width */}
           {producto.incluye && producto.incluye.length > 0 && (
-            <div className="mb-8 rounded-xl border border-[#E2E8F0] overflow-hidden">
-              <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00355a] px-5 py-3 flex items-center gap-2">
+            <div className="mb-8 rounded-xl border border-[#e8eaee] overflow-hidden">
+              <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-5 py-3 flex items-center gap-2">
                 <Package className="size-4 text-[#00B4D8]" />
                 <span className="text-sm font-bold text-white">Que incluye</span>
               </div>
@@ -1337,7 +1337,7 @@ export default function ProductoPage() {
                       <div className="w-6 h-6 rounded-full bg-[#10b981]/15 flex items-center justify-center shrink-0">
                         <Check className="size-3.5 text-[#10b981]" />
                       </div>
-                      <span className="text-sm text-[#1E293B] font-medium">{item}</span>
+                      <span className="text-sm text-[#0f1115] font-medium">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -1354,41 +1354,41 @@ export default function ProductoPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-5 py-3 text-sm font-semibold transition-all whitespace-nowrap rounded-t-xl ${
                     activeTab === tab
-                      ? "bg-[#E91E8C] text-white shadow-md"
-                      : "bg-[#F0F7FF] text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#1E293B]"
+                      ? "bg-[#0f1115] text-white shadow-md"
+                      : "bg-[#fafafb] text-[#5b6472] hover:bg-[#e8eaee] hover:text-[#0f1115]"
                   }`}
                 >
                   {tab === "descripcion" ? "Descripcion" : tab === "especificaciones" ? "Detalles" : tab === "envio" ? "Envio" : `Preguntas${preguntas.length > 0 ? ` (${preguntas.length})` : ""}`}
                 </button>
               ))}
             </div>
-            <div className="bg-white rounded-b-xl rounded-tr-xl border border-[#E2E8F0] p-6 md:p-8">
+            <div className="bg-white rounded-b-xl rounded-tr-xl border border-[#e8eaee] p-6 md:p-8">
               {activeTab === "descripcion" && (
-                <div className="text-sm text-[#1E293B] leading-relaxed space-y-6">
+                <div className="text-sm text-[#0f1115] leading-relaxed space-y-6">
                   {producto.descripcion ? (
                     <div
-                      className="prose prose-sm max-w-none prose-headings:text-[#1E293B] prose-headings:font-bold prose-p:text-[#1E293B] prose-strong:text-[#1B2A6B] prose-li:text-[#1E293B] prose-a:text-[#00B4D8] prose-img:rounded-xl"
+                      className="prose prose-sm max-w-none prose-headings:text-[#0f1115] prose-headings:font-bold prose-p:text-[#0f1115] prose-strong:text-[#0f1115] prose-li:text-[#0f1115] prose-a:text-[#00B4D8] prose-img:rounded-xl"
                       dangerouslySetInnerHTML={{ __html: producto.descripcion }}
                     />
                   ) : (
-                    <p className="text-[#64748B]">Sin descripcion disponible.</p>
+                    <p className="text-[#5b6472]">Sin descripcion disponible.</p>
                   )}
 
                   {producto.caracteristicas && producto.caracteristicas.length > 0 && (
                     <div>
                       <div className="flex items-center gap-2 mb-4">
-                        <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                          <Sparkles className="size-4 text-[#1B2A6B]" />
+                        <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                          <Sparkles className="size-4 text-[#0f1115]" />
                         </div>
-                        <h3 className="text-base font-bold text-[#1E293B]">Caracteristicas principales</h3>
+                        <h3 className="text-base font-bold text-[#0f1115]">Caracteristicas principales</h3>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {producto.caracteristicas.map((car, i) => (
-                          <div key={i} className="flex items-start gap-3 p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
+                          <div key={i} className="flex items-start gap-3 p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
                             <div className="w-6 h-6 rounded-full bg-[#00B4D8]/15 flex items-center justify-center shrink-0 mt-0.5">
                               <Check className="size-3.5 text-[#00B4D8]" />
                             </div>
-                            <span className="text-sm text-[#1E293B] leading-snug">{car}</span>
+                            <span className="text-sm text-[#0f1115] leading-snug">{car}</span>
                           </div>
                         ))}
                       </div>
@@ -1401,41 +1401,41 @@ export default function ProductoPage() {
                         <div className="w-8 h-8 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                           <Target className="size-4 text-[#10b981]" />
                         </div>
-                        <h3 className="text-base font-bold text-[#1E293B]">Usos y aplicaciones</h3>
+                        <h3 className="text-base font-bold text-[#0f1115]">Usos y aplicaciones</h3>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                         {producto.usos.map((uso, i) => (
                           <div key={i} className="flex items-center gap-2.5 py-2 px-3">
                             <div className="w-1.5 h-1.5 rounded-full bg-[#10b981] shrink-0" />
-                            <span className="text-sm text-[#1E293B]">{uso}</span>
+                            <span className="text-sm text-[#0f1115]">{uso}</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  <div className="p-5 bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#E2E8F0]">
+                  <div className="p-5 bg-gradient-to-br from-[#fafafb] to-white rounded-xl border border-[#e8eaee]">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-8 h-8 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center">
                         <Layers className="size-4 text-[#8b5cf6]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Informacion de impresion</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Informacion de impresion</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                        <p className="text-xs text-[#64748B] mb-1">Precio por m²</p>
-                        <p className="text-lg font-bold text-[#1B2A6B]">{formatCLP(producto.precio_m2!)}</p>
+                      <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                        <p className="text-xs text-[#5b6472] mb-1">Precio por m²</p>
+                        <p className="text-lg font-bold text-[#0f1115]">{formatCLP(producto.precio_m2!)}</p>
                       </div>
                       {producto.ancho_max_cm && (
-                        <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                          <p className="text-xs text-[#64748B] mb-1">Ancho maximo</p>
-                          <p className="text-lg font-bold text-[#1B2A6B]">{producto.ancho_max_cm} cm</p>
+                        <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                          <p className="text-xs text-[#5b6472] mb-1">Ancho maximo</p>
+                          <p className="text-lg font-bold text-[#0f1115]">{producto.ancho_max_cm} cm</p>
                         </div>
                       )}
                       {producto.area_min_cm2 && (
-                        <div className="text-center p-3 bg-white rounded-lg border border-[#E2E8F0]">
-                          <p className="text-xs text-[#64748B] mb-1">Area minima</p>
-                          <p className="text-lg font-bold text-[#1B2A6B]">{producto.area_min_cm2} cm²</p>
+                        <div className="text-center p-3 bg-white rounded-lg border border-[#e8eaee]">
+                          <p className="text-xs text-[#5b6472] mb-1">Area minima</p>
+                          <p className="text-lg font-bold text-[#0f1115]">{producto.area_min_cm2} cm²</p>
                         </div>
                       )}
                     </div>
@@ -1447,25 +1447,25 @@ export default function ProductoPage() {
                         <div className="w-8 h-8 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                           <Package className="size-4 text-[#10b981]" />
                         </div>
-                        <h3 className="text-base font-bold text-[#1E293B]">Que incluye tu pedido</h3>
+                        <h3 className="text-base font-bold text-[#0f1115]">Que incluye tu pedido</h3>
                       </div>
                       <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {producto.incluye.map((item, i) => (
                           <li key={i} className="flex items-center gap-3">
                             <Check className="size-4 text-[#10b981] shrink-0" />
-                            <span className="text-sm text-[#1E293B]">{item}</span>
+                            <span className="text-sm text-[#0f1115]">{item}</span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  <div className="p-5 bg-white rounded-xl border border-[#E2E8F0]">
+                  <div className="p-5 bg-white rounded-xl border border-[#e8eaee]">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                        <Wrench className="size-4 text-[#1B2A6B]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                        <Wrench className="size-4 text-[#0f1115]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Como funciona?</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Como funciona?</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {[
@@ -1473,11 +1473,11 @@ export default function ProductoPage() {
                         { step: "2", title: "Te confirmamos por WhatsApp o email", desc: "En menos de 2 horas habiles. Revisamos tu archivo, confirmamos el plazo real y la forma de pago." },
                         { step: "3", title: "Imprimimos y avisamos", desc: "Cuando este listo te avisamos para retiro en Donihue o despacho coordinado." },
                       ].map((s) => (
-                        <div key={s.step} className="flex items-start gap-3 p-4 bg-[#F0F7FF] rounded-lg">
-                          <div className="w-8 h-8 rounded-full bg-[#1B2A6B] text-white flex items-center justify-center text-sm font-bold shrink-0">{s.step}</div>
+                        <div key={s.step} className="flex items-start gap-3 p-4 bg-[#fafafb] rounded-lg">
+                          <div className="w-8 h-8 rounded-full bg-[#0f1115] text-white flex items-center justify-center text-sm font-bold shrink-0">{s.step}</div>
                           <div>
-                            <p className="font-semibold text-sm text-[#1E293B]">{s.title}</p>
-                            <p className="text-sm text-[#64748B]">{s.desc}</p>
+                            <p className="font-semibold text-sm text-[#0f1115]">{s.title}</p>
+                            <p className="text-sm text-[#5b6472]">{s.desc}</p>
                           </div>
                         </div>
                       ))}
@@ -1485,7 +1485,7 @@ export default function ProductoPage() {
                     <div className="flex gap-3 mt-5">
                       <button
                         onClick={() => document.getElementById("calculadora-m2")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                        className="px-5 py-2.5 rounded-xl bg-[#1B2A6B] text-white text-sm font-bold hover:bg-[#152259] transition-colors"
+                        className="px-5 py-2.5 rounded-xl bg-[#0f1115] text-white text-sm font-bold hover:bg-[#000000] transition-colors"
                       >
                         Ir al cotizador
                       </button>
@@ -1493,19 +1493,19 @@ export default function ProductoPage() {
                         href="https://wa.me/56966126645?text=Hola%20PrintUp,%20quiero%20saber%20los%20requisitos%20del%20archivo"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-5 py-2.5 rounded-xl border border-[#E2E8F0] text-[#1E293B] text-sm font-medium hover:bg-[#F0F7FF] transition-colors"
+                        className="px-5 py-2.5 rounded-xl border border-[#e8eaee] text-[#0f1115] text-sm font-medium hover:bg-[#fafafb] transition-colors"
                       >
                         Consultar requisitos del archivo
                       </a>
                     </div>
                   </div>
 
-                  <div className="p-5 bg-gradient-to-br from-[#eff6ff] to-[#f0f7ff] rounded-xl border border-[#dbeafe]">
+                  <div className="p-5 bg-gradient-to-br from-[#eff6ff] to-[#fafafb] rounded-xl border border-[#dbeafe]">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-[#1B2A6B]/10 flex items-center justify-center">
-                        <Award className="size-4 text-[#1B2A6B]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
+                        <Award className="size-4 text-[#0f1115]" />
                       </div>
-                      <h3 className="text-base font-bold text-[#1E293B]">Por que elegir PrintUp</h3>
+                      <h3 className="text-base font-bold text-[#0f1115]">Por que elegir PrintUp</h3>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {[
@@ -1516,7 +1516,7 @@ export default function ProductoPage() {
                       ].map((item, i) => (
                         <div key={i} className="flex items-start gap-2.5">
                           <item.icon className="size-4 text-[#00B4D8] mt-0.5 shrink-0" />
-                          <span className="text-sm text-[#64748B] leading-snug">{item.text}</span>
+                          <span className="text-sm text-[#5b6472] leading-snug">{item.text}</span>
                         </div>
                       ))}
                     </div>
@@ -1541,28 +1541,28 @@ export default function ProductoPage() {
                     title="Especificaciones Tecnicas"
                   />
                   {!producto.sku && !producto.peso_gramos && producto.tags.length === 0 && !(producto.especificaciones?.length) && (
-                    <p className="text-sm text-[#64748B]">Sin especificaciones disponibles.</p>
+                    <p className="text-sm text-[#5b6472]">Sin especificaciones disponibles.</p>
                   )}
                 </div>
               )}
 
               {activeTab === "envio" && (
-                <div className="text-sm text-[#1E293B] space-y-5">
+                <div className="text-sm text-[#0f1115] space-y-5">
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <div className="w-7 h-7 rounded-lg bg-[#8b5cf6]/10 flex items-center justify-center">
                         <Clock className="size-3.5 text-[#8b5cf6]" />
                       </div>
-                      <h4 className="font-bold text-[#1E293B]">Tiempos de produccion</h4>
+                      <h4 className="font-bold text-[#0f1115]">Tiempos de produccion</h4>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
-                        <p className="text-xs text-[#64748B] mb-0.5">Productos estandar</p>
-                        <p className="font-semibold text-[#1E293B]">24 a 48 horas habiles</p>
+                      <div className="p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
+                        <p className="text-xs text-[#5b6472] mb-0.5">Productos estandar</p>
+                        <p className="font-semibold text-[#0f1115]">24 a 48 horas habiles</p>
                       </div>
-                      <div className="p-3 bg-[#F0F7FF] rounded-lg border border-[#E2E8F0]">
-                        <p className="text-xs text-[#64748B] mb-0.5">Gran formato / m²</p>
-                        <p className="font-semibold text-[#1E293B]">48 a 72 horas habiles</p>
+                      <div className="p-3 bg-[#fafafb] rounded-lg border border-[#e8eaee]">
+                        <p className="text-xs text-[#5b6472] mb-0.5">Gran formato / m²</p>
+                        <p className="font-semibold text-[#0f1115]">48 a 72 horas habiles</p>
                       </div>
                     </div>
                   </div>
@@ -1571,12 +1571,12 @@ export default function ProductoPage() {
                       <div className="w-7 h-7 rounded-lg bg-[#00B4D8]/10 flex items-center justify-center">
                         <Truck className="size-3.5 text-[#00B4D8]" />
                       </div>
-                      <h4 className="font-bold text-[#1E293B]">Despacho a domicilio</h4>
+                      <h4 className="font-bold text-[#0f1115]">Despacho a domicilio</h4>
                     </div>
                     <div className="space-y-2 ml-9">
-                      <p className="text-[#64748B]"><strong className="text-[#1E293B]">Dias:</strong> Miercoles y Viernes</p>
-                      <p className="text-[#64748B]">Zona 1 (Donihue, Coltauco, Coinco): <strong className="text-[#1E293B]">$3.500</strong></p>
-                      <p className="text-[#64748B]">Zona 2 (Rancagua, Machali, Olivar): <strong className="text-[#1E293B]">$4.500</strong></p>
+                      <p className="text-[#5b6472]"><strong className="text-[#0f1115]">Dias:</strong> Miercoles y Viernes</p>
+                      <p className="text-[#5b6472]">Zona 1 (Donihue, Coltauco, Coinco): <strong className="text-[#0f1115]">$3.500</strong></p>
+                      <p className="text-[#5b6472]">Zona 2 (Rancagua, Machali, Olivar): <strong className="text-[#0f1115]">$4.500</strong></p>
                       <p className="text-[#10b981] font-medium">Envio gratis en pedidos sobre $50.000</p>
                     </div>
                   </div>
@@ -1585,11 +1585,11 @@ export default function ProductoPage() {
                       <div className="w-7 h-7 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
                         <Package className="size-3.5 text-[#10b981]" />
                       </div>
-                      <h4 className="font-bold text-[#1E293B]">Retiro en tienda</h4>
+                      <h4 className="font-bold text-[#0f1115]">Retiro en tienda</h4>
                     </div>
                     <div className="ml-9 space-y-1">
-                      <p className="text-[#64748B]">Errazuriz 09 / Francisco Lira 082, Donihue</p>
-                      <p className="text-[#64748B]">Lun-Vie 9:00-18:00 / Sab 10:00-14:00</p>
+                      <p className="text-[#5b6472]">Errazuriz 09 / Francisco Lira 082, Donihue</p>
+                      <p className="text-[#5b6472]">Lun-Vie 9:00-18:00 / Sab 10:00-14:00</p>
                       <p className="text-[#10b981] font-medium">Sin costo</p>
                     </div>
                   </div>
@@ -1620,19 +1620,19 @@ export default function ProductoPage() {
                       {preguntas.length > 0 ? (
                         <div className="space-y-4">
                           {preguntas.map((q) => (
-                            <div key={q.id} className="p-4 bg-white rounded-xl border border-[#E2E8F0]">
+                            <div key={q.id} className="p-4 bg-white rounded-xl border border-[#e8eaee]">
                               <div className="flex items-start gap-2 mb-2">
-                                <MessageCircle className="size-4 text-[#1B2A6B] mt-0.5 shrink-0" />
+                                <MessageCircle className="size-4 text-[#0f1115] mt-0.5 shrink-0" />
                                 <div className="flex-1">
-                                  <p className="text-sm font-semibold text-[#1E293B]">{q.pregunta}</p>
-                                  <p className="text-xs text-[#64748B] mt-1">
+                                  <p className="text-sm font-semibold text-[#0f1115]">{q.pregunta}</p>
+                                  <p className="text-xs text-[#5b6472] mt-1">
                                     {q.autor_nombre} - {new Date(q.created_at).toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" })}
                                   </p>
                                 </div>
                               </div>
                               {q.respuesta && (
-                                <div className="ml-6 mt-2 p-3 bg-[#F0F7FF] rounded-lg">
-                                  <p className="text-sm text-[#1E293B]">{q.respuesta}</p>
+                                <div className="ml-6 mt-2 p-3 bg-[#fafafb] rounded-lg">
+                                  <p className="text-sm text-[#0f1115]">{q.respuesta}</p>
                                   <p className="text-xs text-[#00B4D8] font-medium mt-1">
                                     PrintUp - {q.respuesta_at && new Date(q.respuesta_at).toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" })}
                                   </p>
@@ -1642,7 +1642,7 @@ export default function ProductoPage() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-[#64748B]">Aun no hay preguntas. Se el primero en preguntar.</p>
+                        <p className="text-sm text-[#5b6472]">Aun no hay preguntas. Se el primero en preguntar.</p>
                       )}
 
                       {!showPreguntaForm ? (
@@ -1651,25 +1651,25 @@ export default function ProductoPage() {
                           Hacer una pregunta
                         </Button>
                       ) : (
-                        <form onSubmit={handleSubmitPregunta} className="p-6 bg-white rounded-xl border border-[#E2E8F0] space-y-4">
-                          <h3 className="font-bold text-[#1E293B]">Tu pregunta</h3>
+                        <form onSubmit={handleSubmitPregunta} className="p-6 bg-white rounded-xl border border-[#e8eaee] space-y-4">
+                          <h3 className="font-bold text-[#0f1115]">Tu pregunta</h3>
                           <div>
-                            <label className="text-sm font-semibold text-[#1E293B] block mb-1">Pregunta</label>
-                            <textarea value={preguntaTexto} onChange={(e) => setPreguntaTexto(e.target.value)} placeholder="Que te gustaria saber sobre este producto?" rows={3} className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm resize-none" />
+                            <label className="text-sm font-semibold text-[#0f1115] block mb-1">Pregunta</label>
+                            <textarea value={preguntaTexto} onChange={(e) => setPreguntaTexto(e.target.value)} placeholder="Que te gustaria saber sobre este producto?" rows={3} className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm resize-none" />
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                              <label className="text-sm font-semibold text-[#1E293B] block mb-1">Nombre</label>
-                              <input type="text" value={preguntaNombre} onChange={(e) => setPreguntaNombre(e.target.value)} placeholder="Tu nombre" className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm" />
+                              <label className="text-sm font-semibold text-[#0f1115] block mb-1">Nombre</label>
+                              <input type="text" value={preguntaNombre} onChange={(e) => setPreguntaNombre(e.target.value)} placeholder="Tu nombre" className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm" />
                             </div>
                             <div>
-                              <label className="text-sm font-semibold text-[#1E293B] block mb-1">Email</label>
-                              <input type="email" value={preguntaEmail} onChange={(e) => setPreguntaEmail(e.target.value)} placeholder="tu@email.com" className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm" />
+                              <label className="text-sm font-semibold text-[#0f1115] block mb-1">Email</label>
+                              <input type="email" value={preguntaEmail} onChange={(e) => setPreguntaEmail(e.target.value)} placeholder="tu@email.com" className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm" />
                             </div>
                           </div>
-                          <p className="text-xs text-[#64748B]">Tu pregunta sera respondida y publicada pronto.</p>
+                          <p className="text-xs text-[#5b6472]">Tu pregunta sera respondida y publicada pronto.</p>
                           <div className="flex gap-3">
-                            <Button type="submit" disabled={preguntaSending} className="gap-2 bg-[#1B2A6B] hover:bg-[#152259] text-white">
+                            <Button type="submit" disabled={preguntaSending} className="gap-2 bg-[#0f1115] hover:bg-[#000000] text-white">
                               <Send className="size-4" />
                               {preguntaSending ? "Enviando..." : "Enviar pregunta"}
                             </Button>
@@ -1687,7 +1687,7 @@ export default function ProductoPage() {
           {/* Ficha tecnica download - full width */}
           {producto.ficha_tecnica_url && (
             <div className="mb-6">
-              <a href={producto.ficha_tecnica_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#F0F7FF] border border-[#E2E8F0] text-sm font-medium text-[#1B2A6B] hover:bg-[#E0EFFF] transition-colors">
+              <a href={producto.ficha_tecnica_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-[#fafafb] border border-[#e8eaee] text-sm font-medium text-[#0f1115] hover:bg-[#E0EFFF] transition-colors">
                 <FileDown className="size-4" />
                 Descargar Ficha Tecnica (PDF)
               </a>
@@ -1695,19 +1695,19 @@ export default function ProductoPage() {
           )}
 
           {/* Product meta - Category & Tags - full width */}
-          <div className="mb-8 pt-5 border-t border-[#E2E8F0] space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-[#64748B]">
+          <div className="mb-8 pt-5 border-t border-[#e8eaee] space-y-2 text-sm">
+            <div className="flex items-center gap-2 text-[#5b6472]">
               <Folder className="size-3.5 shrink-0" />
               <span>Categoria:</span>
               <Link href={`/productos/${categoriaSlug}`} className="text-[#00B4D8] hover:underline font-medium">{catName}</Link>
             </div>
             {producto.tags.length > 0 && (
-              <div className="flex items-start gap-2 text-[#64748B]">
+              <div className="flex items-start gap-2 text-[#5b6472]">
                 <Tag className="size-3.5 shrink-0 mt-0.5" />
                 <span>Etiquetas:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {producto.tags.map((tag) => (
-                    <Link key={tag} href={`/productos?search=${encodeURIComponent(tag)}`} className="px-2 py-0.5 rounded bg-[#F0F7FF] text-[#00B4D8] text-xs font-medium hover:bg-[#E0EFFF] transition-colors">{tag}</Link>
+                    <Link key={tag} href={`/productos?search=${encodeURIComponent(tag)}`} className="px-2 py-0.5 rounded bg-[#fafafb] text-[#00B4D8] text-xs font-medium hover:bg-[#E0EFFF] transition-colors">{tag}</Link>
                   ))}
                 </div>
               </div>
@@ -1734,8 +1734,8 @@ export default function ProductoPage() {
             {/* Sidebar - quick info */}
             <div className="space-y-4">
               {/* Trust badges vertical */}
-              <div className="rounded-xl border border-[#E2E8F0] overflow-hidden">
-                <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00355a] px-4 py-2.5">
+              <div className="rounded-xl border border-[#e8eaee] overflow-hidden">
+                <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-4 py-2.5">
                   <p className="text-xs font-bold text-white">Por que elegirnos</p>
                 </div>
                 <div className="p-4 space-y-3 bg-white">
@@ -1746,12 +1746,12 @@ export default function ProductoPage() {
                     { icon: Award, text: "Garantia de color", sub: "Impresion 1440 DPI calibrada" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
                         <item.icon className="size-4 text-[#00B4D8]" />
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-[#1E293B]">{item.text}</p>
-                        <p className="text-[10px] text-[#64748B]">{item.sub}</p>
+                        <p className="text-xs font-semibold text-[#0f1115]">{item.text}</p>
+                        <p className="text-[10px] text-[#5b6472]">{item.sub}</p>
                       </div>
                     </div>
                   ))}
@@ -1768,7 +1768,7 @@ export default function ProductoPage() {
                     {producto.incluye.map((item, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <Check className="size-3.5 text-[#10b981] shrink-0" />
-                        <span className="text-xs text-[#1E293B]">{item}</span>
+                        <span className="text-xs text-[#0f1115]">{item}</span>
                       </div>
                     ))}
                   </div>
@@ -1794,10 +1794,10 @@ export default function ProductoPage() {
       <section className="mb-16">
         <div className="text-center mb-8">
           <p className="text-xs font-semibold text-[#00B4D8] uppercase tracking-wider mb-2">Antes de cotizar</p>
-          <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+          <h2 className="text-xl md:text-2xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
             Lo que siempre nos preguntan
           </h2>
-          <p className="text-sm text-[#64748B]">
+          <p className="text-sm text-[#5b6472]">
             4 respuestas directas para que no pierdas tiempo. Si tienes otra duda, escribenos por WhatsApp.
           </p>
         </div>
@@ -1825,12 +1825,12 @@ export default function ProductoPage() {
               respuesta: "Si. Pasa por nuestro taller en Errazuriz 09, Donihue. Lun-Vie 09:00-18:00 · Sab 10:00-14:00. Te mostramos muestras fisicas.",
             },
           ].map((item, i) => (
-            <div key={i} className="p-5 bg-white rounded-xl border border-[#E2E8F0] hover:border-[#00B4D8]/30 transition-colors">
+            <div key={i} className="p-5 bg-white rounded-xl border border-[#e8eaee] hover:border-[#00B4D8]/30 transition-colors">
               <div className="flex items-start gap-3">
                 <span className="text-2xl shrink-0">{item.emoji}</span>
                 <div>
-                  <p className="font-bold text-[#1E293B] text-sm mb-1.5">{item.pregunta}</p>
-                  <p className="text-sm text-[#64748B] leading-relaxed">{item.respuesta}</p>
+                  <p className="font-bold text-[#0f1115] text-sm mb-1.5">{item.pregunta}</p>
+                  <p className="text-sm text-[#5b6472] leading-relaxed">{item.respuesta}</p>
                 </div>
               </div>
             </div>
@@ -1838,7 +1838,7 @@ export default function ProductoPage() {
         </div>
 
         <div className="text-center mt-6">
-          <p className="text-xs text-[#64748B] mb-3">Otra duda? Te respondemos en menos de 2 horas habiles.</p>
+          <p className="text-xs text-[#5b6472] mb-3">Otra duda? Te respondemos en menos de 2 horas habiles.</p>
           <a
             href="https://wa.me/56966126645?text=Hola%20PrintUp,%20tengo%20una%20consulta"
             target="_blank"
@@ -1855,10 +1855,10 @@ export default function ProductoPage() {
       <section className="mb-16">
         <div className="text-center mb-8">
           <p className="text-xs font-semibold text-[#00B4D8] uppercase tracking-wider mb-2">Cotiza al instante</p>
-          <h2 className="text-xl md:text-2xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+          <h2 className="text-xl md:text-2xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
             Pon tus medidas y te damos el precio
           </h2>
-          <p className="text-sm text-[#64748B]">
+          <p className="text-sm text-[#5b6472]">
             Tu escribes cuanto mide y cuantos quieres. Te damos el precio real, sin compromiso.
           </p>
         </div>
@@ -1890,15 +1890,15 @@ export default function ProductoPage() {
               color: "#10b981",
             },
           ].map((item) => (
-            <div key={item.step} className="relative text-center p-5 rounded-xl bg-white border border-[#E2E8F0]">
+            <div key={item.step} className="relative text-center p-5 rounded-xl bg-white border border-[#e8eaee]">
               <div
                 className="w-10 h-10 mx-auto mb-3 rounded-full flex items-center justify-center text-white text-sm font-bold"
                 style={{ background: item.color }}
               >
                 {item.step}
               </div>
-              <h3 className="font-bold text-[#1E293B] text-sm mb-1">{item.title}</h3>
-              <p className="text-xs text-[#64748B] leading-relaxed">{item.desc}</p>
+              <h3 className="font-bold text-[#0f1115] text-sm mb-1">{item.title}</h3>
+              <p className="text-xs text-[#5b6472] leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -1908,7 +1908,7 @@ export default function ProductoPage() {
       {/* Reviews Section */}
       <section className="mb-16">
         <h2
-          className="text-xl font-extrabold text-[#1E293B] mb-6"
+          className="text-xl font-extrabold text-[#0f1115] mb-6"
           style={{ letterSpacing: "-0.02em" }}
         >
           Opiniones de Clientes
@@ -1924,13 +1924,13 @@ export default function ProductoPage() {
           <>
             {/* Average rating */}
             {reviews.length > 0 && (
-              <div className="flex items-center gap-4 mb-6 p-4 bg-white rounded-xl border border-[#E2E8F0]">
+              <div className="flex items-center gap-4 mb-6 p-4 bg-white rounded-xl border border-[#e8eaee]">
                 <div className="text-center">
-                  <div className="text-3xl font-extrabold text-[#1B2A6B]">
+                  <div className="text-3xl font-extrabold text-[#0f1115]">
                     {avgRating.toFixed(1)}
                   </div>
                   <StarRatingDisplay rating={Math.round(avgRating)} size="lg" />
-                  <p className="text-xs text-[#64748B] mt-1">
+                  <p className="text-xs text-[#5b6472] mt-1">
                     {reviews.length} opinion{reviews.length !== 1 ? "es" : ""}
                   </p>
                 </div>
@@ -1943,7 +1943,7 @@ export default function ProductoPage() {
                 {reviews.map((review) => (
                   <div
                     key={review.id}
-                    className="p-4 bg-white rounded-xl border border-[#E2E8F0]"
+                    className="p-4 bg-white rounded-xl border border-[#e8eaee]"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <StarRatingDisplay rating={review.rating} />
@@ -1954,14 +1954,14 @@ export default function ProductoPage() {
                       )}
                     </div>
                     {review.titulo && (
-                      <p className="font-semibold text-sm text-[#1E293B] mb-1">
+                      <p className="font-semibold text-sm text-[#0f1115] mb-1">
                         {review.titulo}
                       </p>
                     )}
-                    <p className="text-sm text-[#1E293B] leading-relaxed mb-2">
+                    <p className="text-sm text-[#0f1115] leading-relaxed mb-2">
                       {review.comentario}
                     </p>
-                    <div className="flex items-center gap-2 text-xs text-[#64748B]">
+                    <div className="flex items-center gap-2 text-xs text-[#5b6472]">
                       <span>{review.autor_nombre}</span>
                       <span>-</span>
                       <span>
@@ -1976,7 +1976,7 @@ export default function ProductoPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-[#64748B] mb-4">
+              <p className="text-sm text-[#5b6472] mb-4">
                 Se el primero en opinar sobre este producto.
               </p>
             )}
@@ -1994,13 +1994,13 @@ export default function ProductoPage() {
             ) : (
               <form
                 onSubmit={handleSubmitReview}
-                className="p-6 bg-white rounded-xl border border-[#E2E8F0] space-y-4"
+                className="p-6 bg-white rounded-xl border border-[#e8eaee] space-y-4"
               >
-                <h3 className="font-bold text-[#1E293B]">Tu opinion</h3>
+                <h3 className="font-bold text-[#0f1115]">Tu opinion</h3>
 
                 {/* Star selector */}
                 <div>
-                  <label className="text-sm font-semibold text-[#1E293B] block mb-2">
+                  <label className="text-sm font-semibold text-[#0f1115] block mb-2">
                     Calificacion
                   </label>
                   <StarRatingInput value={reviewRating} onChange={setReviewRating} />
@@ -2008,7 +2008,7 @@ export default function ProductoPage() {
 
                 {/* Title */}
                 <div>
-                  <label className="text-sm font-semibold text-[#1E293B] block mb-1">
+                  <label className="text-sm font-semibold text-[#0f1115] block mb-1">
                     Titulo (opcional)
                   </label>
                   <input
@@ -2016,13 +2016,13 @@ export default function ProductoPage() {
                     value={reviewTitulo}
                     onChange={(e) => setReviewTitulo(e.target.value)}
                     placeholder="Resume tu experiencia"
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                    className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                   />
                 </div>
 
                 {/* Comment */}
                 <div>
-                  <label className="text-sm font-semibold text-[#1E293B] block mb-1">
+                  <label className="text-sm font-semibold text-[#0f1115] block mb-1">
                     Comentario
                   </label>
                   <textarea
@@ -2030,14 +2030,14 @@ export default function ProductoPage() {
                     onChange={(e) => setReviewComentario(e.target.value)}
                     placeholder="Cuentanos que te parecio el producto..."
                     rows={4}
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm resize-none"
+                    className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm resize-none"
                   />
                 </div>
 
                 {/* Name + Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-semibold text-[#1E293B] block mb-1">
+                    <label className="text-sm font-semibold text-[#0f1115] block mb-1">
                       Nombre
                     </label>
                     <input
@@ -2045,11 +2045,11 @@ export default function ProductoPage() {
                       value={reviewNombre}
                       onChange={(e) => setReviewNombre(e.target.value)}
                       placeholder="Tu nombre"
-                      className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-[#1E293B] block mb-1">
+                    <label className="text-sm font-semibold text-[#0f1115] block mb-1">
                       Email
                     </label>
                     <input
@@ -2057,7 +2057,7 @@ export default function ProductoPage() {
                       value={reviewEmail}
                       onChange={(e) => setReviewEmail(e.target.value)}
                       placeholder="tu@email.com"
-                      className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm"
                     />
                   </div>
                 </div>
@@ -2067,7 +2067,7 @@ export default function ProductoPage() {
                   <Button
                     type="submit"
                     disabled={reviewSending}
-                    className="gap-2 bg-[#1B2A6B] hover:bg-[#152259] text-white"
+                    className="gap-2 bg-[#0f1115] hover:bg-[#000000] text-white"
                   >
                     <Send className="size-4" />
                     {reviewSending ? "Enviando..." : "Enviar opinion"}
@@ -2089,7 +2089,7 @@ export default function ProductoPage() {
       {/* Related Products */}
       {relacionados.length > 0 && (
         <section>
-          <h2 className="text-xl font-extrabold text-[#1E293B] mb-6" style={{ letterSpacing: "-0.02em" }}>
+          <h2 className="text-xl font-extrabold text-[#0f1115] mb-6" style={{ letterSpacing: "-0.02em" }}>
             Productos Relacionados
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -2102,12 +2102,12 @@ export default function ProductoPage() {
 
       {/* Sticky mobile add-to-cart bar */}
       {showStickyBar && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-[#E2E8F0] shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 py-3 animate-in slide-in-from-bottom duration-300">
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-[#e8eaee] shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 py-3 animate-in slide-in-from-bottom duration-300">
           <div className="flex items-center gap-3 max-w-7xl mx-auto">
             {/* Mini product info */}
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-[#64748B] truncate">{producto.nombre}</p>
-              <p className="text-lg font-extrabold text-[#1B2A6B] leading-tight">
+              <p className="text-xs text-[#5b6472] truncate">{producto.nombre}</p>
+              <p className="text-lg font-extrabold text-[#0f1115] leading-tight">
                 {producto.precio_m2 && producto.precio_m2 > 0
                   ? `Desde ${formatCLP(producto.precio_m2)}/m²`
                   : formatCLP(totalPrice)
@@ -2120,7 +2120,7 @@ export default function ProductoPage() {
                 onClick={() => {
                   ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
-                className="shrink-0 px-5 py-3 rounded-xl bg-[#1B2A6B] text-white text-sm font-bold flex items-center gap-2"
+                className="shrink-0 px-5 py-3 rounded-xl bg-[#0f1115] text-white text-sm font-bold flex items-center gap-2"
               >
                 <ChevronUp className="size-4" />
                 Cotizar
@@ -2129,7 +2129,7 @@ export default function ProductoPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={producto.stock === 0}
-                className="shrink-0 px-5 py-3 rounded-xl bg-[#1B2A6B] text-white text-sm font-bold disabled:opacity-50 flex items-center gap-2"
+                className="shrink-0 px-5 py-3 rounded-xl bg-[#0f1115] text-white text-sm font-bold disabled:opacity-50 flex items-center gap-2"
               >
                 <ShoppingCart className="size-4" />
                 Agregar

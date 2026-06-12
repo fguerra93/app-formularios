@@ -147,12 +147,12 @@ function CatalogoContent() {
       {/* Active filter chips */}
       {activeFilters.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <span className="text-xs font-semibold text-[#64748B] uppercase tracking-wider">Filtros:</span>
+          <span className="text-xs font-semibold text-[#8b94a3] uppercase tracking-wider">Filtros:</span>
           {activeFilters.map((f) => (
             <button
               key={f.key}
               onClick={() => clearFilter(f.key)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1B2A6B]/10 text-[#1B2A6B] text-xs font-medium hover:bg-[#1B2A6B]/20 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#e8eaee] bg-white text-[#0f1115] text-xs font-medium hover:border-[#0f1115] transition-colors"
             >
               {f.label}
               <X className="size-3" />
@@ -161,7 +161,7 @@ function CatalogoContent() {
           {activeFilters.length > 1 && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-[#00B4D8] hover:underline font-medium"
+              className="text-xs text-[#0e7490] hover:text-[#0f1115] font-semibold"
             >
               Limpiar todo
             </button>
@@ -201,7 +201,7 @@ function CatalogoContent() {
           {/* Search + mobile filter toggle */}
           <div className="flex gap-3 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#64748B]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#5b6472]" />
               <Input
                 placeholder="Buscar productos..."
                 value={search}
@@ -220,9 +220,9 @@ function CatalogoContent() {
 
           {/* Mobile filters */}
           {filtersOpen && (
-            <div className="md:hidden mb-6 p-4 bg-white rounded-xl border border-[#E2E8F0]">
+            <div className="md:hidden mb-6 p-4 mc-panel">
               <div className="flex items-center justify-between mb-3">
-                <span className="font-semibold text-sm">Filtros</span>
+                <span className="font-semibold text-sm text-[#0f1115]">Filtros</span>
                 <button onClick={() => setFiltersOpen(false)}>
                   <X className="size-4" />
                 </button>
@@ -253,7 +253,7 @@ function CatalogoContent() {
           )}
 
           {/* Results count */}
-          <p className="text-sm text-[#64748B] mb-4">
+          <p className="text-sm text-[#5b6472] mb-4">
             {total} producto{total !== 1 ? "s" : ""} encontrado{total !== 1 ? "s" : ""}
           </p>
 
@@ -266,11 +266,11 @@ function CatalogoContent() {
             </div>
           ) : productos.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#F0F7FF] flex items-center justify-center">
-                <PackageOpen className="size-8 text-[#00B4D8]" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#f1f3f6] flex items-center justify-center">
+                <PackageOpen className="size-8 text-[#0f1115]" />
               </div>
-              <h3 className="font-bold text-[#1E293B] mb-2">No encontramos productos</h3>
-              <p className="text-sm text-[#64748B] mb-4">
+              <h3 className="font-bold text-[#0f1115] mb-2">No encontramos productos</h3>
+              <p className="text-sm text-[#5b6472] mb-4">
                 {search
                   ? `No hay resultados para "${search}". Intenta con otros terminos.`
                   : "No hay productos con los filtros seleccionados."}
@@ -303,7 +303,7 @@ function CatalogoContent() {
               >
                 Anterior
               </Button>
-              <span className="text-sm text-[#64748B] px-3">
+              <span className="text-sm text-[#5b6472] px-3">
                 Pagina {page} de {totalPages}
               </span>
               <Button
@@ -361,15 +361,15 @@ function FilterPanel({
     <div className="space-y-6">
       {/* Categories */}
       <div>
-        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Categorias</h3>
+        <h3 className="text-sm font-bold text-[#0f1115] mb-3">Categorias</h3>
         <ul className="space-y-1">
           <li>
             <button
               onClick={() => onCategoryChange("")}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                 !activeCat
-                  ? "bg-[#1B2A6B] text-white font-medium"
-                  : "text-[#64748B] hover:bg-gray-50"
+                  ? "bg-[#0f1115] text-white font-medium"
+                  : "text-[#5b6472] hover:bg-[#fafafb]"
               }`}
             >
               Todas
@@ -381,8 +381,8 @@ function FilterPanel({
                 onClick={() => onCategoryChange(cat.slug)}
                 className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                   activeCat === cat.slug
-                    ? "bg-[#1B2A6B] text-white font-medium"
-                    : "text-[#64748B] hover:bg-gray-50"
+                    ? "bg-[#0f1115] text-white font-medium"
+                    : "text-[#5b6472] hover:bg-[#fafafb]"
                 }`}
               >
                 {cat.nombre}
@@ -394,7 +394,7 @@ function FilterPanel({
 
       {/* Price Range */}
       <div>
-        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Precio</h3>
+        <h3 className="text-sm font-bold text-[#0f1115] mb-3">Precio</h3>
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -402,21 +402,21 @@ function FilterPanel({
             placeholder="Min"
             value={minLocal}
             onChange={(e) => setMinLocal(e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+            className="mc-input mc-price"
           />
-          <span className="text-[#64748B] text-xs">-</span>
+          <span className="text-[#8b94a3] text-xs">-</span>
           <input
             type="number"
             min={0}
             placeholder="Max"
             value={maxLocal}
             onChange={(e) => setMaxLocal(e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+            className="mc-input mc-price"
           />
         </div>
         <button
           onClick={() => onPrecioChange(minLocal, maxLocal)}
-          className="mt-2 w-full px-3 py-1.5 rounded-lg border border-[#E2E8F0] text-xs font-medium text-[#1B2A6B] hover:bg-gray-50 transition-colors"
+          className="mt-2 w-full px-3 py-2 rounded-lg border border-[#d7dbe2] text-xs font-semibold text-[#0f1115] hover:border-[#0f1115] transition-colors"
         >
           Aplicar rango
         </button>
@@ -424,32 +424,32 @@ function FilterPanel({
 
       {/* Estado filters */}
       <div>
-        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Estado</h3>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+        <h3 className="text-sm font-bold text-[#0f1115] mb-3">Estado</h3>
+        <div className="space-y-2.5">
+          <label className="flex items-center gap-2.5 text-sm text-[#5b6472] cursor-pointer">
             <input
               type="checkbox"
               checked={enStock}
               onChange={(e) => onEstadoChange("en_stock", e.target.checked)}
-              className="rounded border-gray-300 accent-[#1B2A6B]"
+              className="mc-checkbox"
             />
             En stock
           </label>
-          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+          <label className="flex items-center gap-2.5 text-sm text-[#5b6472] cursor-pointer">
             <input
               type="checkbox"
               checked={conDescuento}
               onChange={(e) => onEstadoChange("con_descuento", e.target.checked)}
-              className="rounded border-gray-300 accent-[#1B2A6B]"
+              className="mc-checkbox"
             />
             Con descuento
           </label>
-          <label className="flex items-center gap-2 text-sm text-[#64748B] cursor-pointer">
+          <label className="flex items-center gap-2.5 text-sm text-[#5b6472] cursor-pointer">
             <input
               type="checkbox"
               checked={nuevos}
               onChange={(e) => onEstadoChange("nuevos", e.target.checked)}
-              className="rounded border-gray-300 accent-[#1B2A6B]"
+              className="mc-checkbox"
             />
             Nuevos (30 dias)
           </label>
@@ -458,11 +458,11 @@ function FilterPanel({
 
       {/* Sort */}
       <div>
-        <h3 className="text-sm font-bold text-[#1E293B] mb-3">Ordenar por</h3>
+        <h3 className="text-sm font-bold text-[#0f1115] mb-3">Ordenar por</h3>
         <select
           value={sort}
           onChange={(e) => onSortChange(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+          className="mc-select"
         >
           <option value="created_at:desc">Mas recientes</option>
           <option value="precio:asc">Precio: menor a mayor</option>

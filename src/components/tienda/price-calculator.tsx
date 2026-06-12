@@ -54,7 +54,7 @@ function PanoVisualization({
 
   // Build graphic rectangles for visualization
   const rects: { x: number; y: number; w: number; h: number; label: string; color: string }[] = [];
-  const colors = ["#00B4D8", "#8b5cf6", "#F97316", "#10b981", "#E91E8C", "#f59e0b"];
+  const colors = ["#00B4D8", "#8b5cf6", "#F97316", "#10b981", "#0f1115", "#f59e0b"];
   let currentY = separacion;
 
   nesting.graficaDetails.forEach((detail, gi) => {
@@ -87,9 +87,9 @@ function PanoVisualization({
   const displayH = Math.max(nesting.totalLength * scale, 60);
 
   return (
-    <div className="rounded-xl border border-[#E2E8F0] overflow-hidden">
+    <div className="rounded-xl border border-[#e8eaee] overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00355a] px-4 py-2.5 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-4 py-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Eye className="size-4 text-[#00B4D8]" />
           <span className="text-xs font-bold text-white">Vista de pano del trabajo</span>
@@ -107,10 +107,10 @@ function PanoVisualization({
       <div className={`bg-[#F8FAFC] p-4 transition-all ${expanded ? "" : "max-h-[250px] overflow-hidden"}`}>
         {/* Dimension label top */}
         <div className="flex items-center justify-center mb-2">
-          <div className="flex items-center gap-1 text-[10px] text-[#64748B]">
-            <div className="w-6 h-px bg-[#64748B]" />
+          <div className="flex items-center gap-1 text-[10px] text-[#5b6472]">
+            <div className="w-6 h-px bg-[#5b6472]" />
             <span className="font-semibold">Ancho imprimible: {(printableWidth / 100).toFixed(2)} m</span>
-            <div className="w-6 h-px bg-[#64748B]" />
+            <div className="w-6 h-px bg-[#5b6472]" />
           </div>
         </div>
 
@@ -170,11 +170,11 @@ function PanoVisualization({
 
           {/* Side dimension label */}
           <div className="flex flex-col items-center justify-center h-full" style={{ minHeight: displayH }}>
-            <div className="h-4 w-px bg-[#64748B]" />
-            <span className="text-[9px] text-[#64748B] font-semibold whitespace-nowrap [writing-mode:vertical-lr] rotate-180 py-1">
+            <div className="h-4 w-px bg-[#5b6472]" />
+            <span className="text-[9px] text-[#5b6472] font-semibold whitespace-nowrap [writing-mode:vertical-lr] rotate-180 py-1">
               {(nesting.totalLength / 100).toFixed(2)} m
             </span>
-            <div className="h-4 w-px bg-[#64748B]" />
+            <div className="h-4 w-px bg-[#5b6472]" />
           </div>
         </div>
 
@@ -190,7 +190,7 @@ function PanoVisualization({
             <span className="font-semibold">Area imprimible calculada: {nesting.printableArea.toFixed(2)} m².</span>
           </p>
         </div>
-        <p className="text-[9px] text-[#94A3B8] mt-1.5">
+        <p className="text-[9px] text-[#8b94a3] mt-1.5">
           Separacion entre piezas y bordes usada: {separacion} cm (default global).
         </p>
       </div>
@@ -490,7 +490,7 @@ export function PriceCalculator({
     <div className="space-y-5">
       {/* ━━━ HEADER ━━━ */}
       <div className="rounded-xl border-2 border-[#00B4D8]/30 overflow-hidden">
-        <div className="bg-gradient-to-r from-[#1B2A6B] to-[#00355a] px-5 py-4">
+        <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-5 py-4">
           <div className="flex items-center gap-3 mb-1">
             <div className="w-9 h-9 rounded-lg bg-[#00B4D8]/20 flex items-center justify-center">
               <Calculator className="size-5 text-[#00B4D8]" />
@@ -504,26 +504,26 @@ export function PriceCalculator({
           </div>
         </div>
 
-        <div className="p-5 bg-gradient-to-br from-[#F0F7FF] to-white space-y-5">
+        <div className="p-5 bg-gradient-to-br from-[#fafafb] to-white space-y-5">
 
           {/* ━━━ GRAFICAS DEL TRABAJO ━━━ */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Layers className="size-4 text-[#1B2A6B]" />
-                <span className="text-sm font-bold text-[#1E293B]">Graficas del trabajo</span>
+                <Layers className="size-4 text-[#0f1115]" />
+                <span className="text-sm font-bold text-[#0f1115]">Graficas del trabajo</span>
               </div>
               <button
                 onClick={addGrafica}
                 disabled={graficas.length >= 20}
-                className="text-[11px] font-semibold text-[#00B4D8] hover:text-[#1B2A6B] transition-colors flex items-center gap-1 disabled:opacity-40"
+                className="text-[11px] font-semibold text-[#00B4D8] hover:text-[#0f1115] transition-colors flex items-center gap-1 disabled:opacity-40"
               >
                 <Plus className="size-3.5" />
                 Agregar otra grafica
               </button>
             </div>
 
-            <p className="text-[10px] text-[#64748B] mb-3">
+            <p className="text-[10px] text-[#5b6472] mb-3">
               Medidas en centimetros. Tambien las usamos para revisar nitidez del archivo.
             </p>
 
@@ -547,7 +547,7 @@ export function PriceCalculator({
                   )}
                   <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-end">
                     <div>
-                      <label className="text-[10px] font-semibold text-[#64748B] block mb-1">
+                      <label className="text-[10px] font-semibold text-[#5b6472] block mb-1">
                         Ancho (cm)
                       </label>
                       <input
@@ -556,11 +556,11 @@ export function PriceCalculator({
                         onChange={(e) => updateGrafica(g.id, "anchoCm", e.target.value)}
                         placeholder="100"
                         min="1"
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent bg-white"
+                        className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent bg-white"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold text-[#64748B] block mb-1">
+                      <label className="text-[10px] font-semibold text-[#5b6472] block mb-1">
                         Alto (cm)
                       </label>
                       <input
@@ -569,17 +569,17 @@ export function PriceCalculator({
                         onChange={(e) => updateGrafica(g.id, "altoCm", e.target.value)}
                         placeholder="70"
                         min="1"
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent bg-white"
+                        className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] font-medium focus:outline-none focus:ring-2 focus:ring-[#00B4D8] focus:border-transparent bg-white"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-semibold text-[#64748B] block mb-1">
+                      <label className="text-[10px] font-semibold text-[#5b6472] block mb-1">
                         Cant.
                       </label>
                       <div className="flex items-center">
                         <button
                           onClick={() => updateGrafica(g.id, "cantidad", Math.max(1, g.cantidad - 1))}
-                          className="w-8 h-[38px] rounded-l-lg border border-r-0 border-[#E2E8F0] bg-white flex items-center justify-center text-sm font-bold text-[#64748B] hover:bg-[#F0F7FF]"
+                          className="w-8 h-[38px] rounded-l-lg border border-r-0 border-[#e8eaee] bg-white flex items-center justify-center text-sm font-bold text-[#5b6472] hover:bg-[#fafafb]"
                         >
                           -
                         </button>
@@ -588,11 +588,11 @@ export function PriceCalculator({
                           value={g.cantidad}
                           onChange={(e) => updateGrafica(g.id, "cantidad", Math.max(1, parseInt(e.target.value) || 1))}
                           min="1"
-                          className="w-10 h-[38px] text-center border-y border-[#E2E8F0] text-sm font-bold text-[#1E293B] bg-white focus:outline-none"
+                          className="w-10 h-[38px] text-center border-y border-[#e8eaee] text-sm font-bold text-[#0f1115] bg-white focus:outline-none"
                         />
                         <button
                           onClick={() => updateGrafica(g.id, "cantidad", g.cantidad + 1)}
-                          className="w-8 h-[38px] rounded-r-lg border border-l-0 border-[#E2E8F0] bg-white flex items-center justify-center text-sm font-bold text-[#64748B] hover:bg-[#F0F7FF]"
+                          className="w-8 h-[38px] rounded-r-lg border border-l-0 border-[#e8eaee] bg-white flex items-center justify-center text-sm font-bold text-[#5b6472] hover:bg-[#fafafb]"
                         >
                           +
                         </button>
@@ -610,7 +610,7 @@ export function PriceCalculator({
             </div>
 
             {graficas.length < 20 && (
-              <p className="text-[9px] text-[#94A3B8] mt-2">
+              <p className="text-[9px] text-[#8b94a3] mt-2">
                 Max. 20 disenos o medidas distintas por cotizacion. Puedes cotizar muchas unidades de cada uno.
               </p>
             )}
@@ -649,23 +649,23 @@ export function PriceCalculator({
           <div>
             <button
               onClick={() => setShowOptions(!showOptions)}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F8FAFC] transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-[#e8eaee] bg-white hover:bg-[#F8FAFC] transition-colors"
             >
               <div className="flex items-center gap-2">
-                <Settings className="size-4 text-[#1B2A6B]" />
-                <span className="text-sm font-bold text-[#1E293B]">Opciones reales del taller</span>
+                <Settings className="size-4 text-[#0f1115]" />
+                <span className="text-sm font-bold text-[#0f1115]">Opciones reales del taller</span>
               </div>
-              {showOptions ? <ChevronUp className="size-4 text-[#64748B]" /> : <ChevronDown className="size-4 text-[#64748B]" />}
+              {showOptions ? <ChevronUp className="size-4 text-[#5b6472]" /> : <ChevronDown className="size-4 text-[#5b6472]" />}
             </button>
 
             {showOptions && (
               <div className="mt-3 space-y-3">
                 {/* Roll info */}
-                <div className="p-3 rounded-lg bg-white border border-[#E2E8F0]">
+                <div className="p-3 rounded-lg bg-white border border-[#e8eaee]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-[#1E293B]">Rollo automatico recomendado</p>
-                      <p className="text-[10px] text-[#64748B]">El sistema elige el ancho mas eficiente</p>
+                      <p className="text-xs font-semibold text-[#0f1115]">Rollo automatico recomendado</p>
+                      <p className="text-[10px] text-[#5b6472]">El sistema elige el ancho mas eficiente</p>
                     </div>
                     <span className="px-2.5 py-1 rounded-md bg-[#10b981]/10 text-[10px] font-bold text-[#10b981]">
                       {rollWidth} cm
@@ -674,15 +674,15 @@ export function PriceCalculator({
                 </div>
 
                 {/* Separation */}
-                <div className="p-3 rounded-lg bg-white border border-[#E2E8F0]">
+                <div className="p-3 rounded-lg bg-white border border-[#e8eaee]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-[#1E293B]">Separacion entre piezas y bordes</p>
-                      <p className="text-[10px] text-[#64748B]">{separacion} cm (default global)</p>
+                      <p className="text-xs font-semibold text-[#0f1115]">Separacion entre piezas y bordes</p>
+                      <p className="text-[10px] text-[#5b6472]">{separacion} cm (default global)</p>
                     </div>
                     <button
                       onClick={() => setShowSepEdit(!showSepEdit)}
-                      className="text-[10px] font-semibold text-[#00B4D8] hover:text-[#1B2A6B]"
+                      className="text-[10px] font-semibold text-[#00B4D8] hover:text-[#0f1115]"
                     >
                       Editar
                     </button>
@@ -695,23 +695,23 @@ export function PriceCalculator({
                         onChange={(e) => setSeparacion(Math.max(0, Math.min(10, parseInt(e.target.value) || 0)))}
                         min="0"
                         max="10"
-                        className="w-16 px-2 py-1.5 rounded border border-[#E2E8F0] text-xs text-center"
+                        className="w-16 px-2 py-1.5 rounded border border-[#e8eaee] text-xs text-center"
                       />
-                      <span className="text-[10px] text-[#64748B]">cm (0-10)</span>
+                      <span className="text-[10px] text-[#5b6472]">cm (0-10)</span>
                     </div>
                   )}
                 </div>
 
                 {/* Material selector */}
                 {materiales.length > 0 && (
-                  <div className="p-3 rounded-lg bg-white border border-[#E2E8F0]">
-                    <label className="text-xs font-semibold text-[#1E293B] block mb-2">
+                  <div className="p-3 rounded-lg bg-white border border-[#e8eaee]">
+                    <label className="text-xs font-semibold text-[#0f1115] block mb-2">
                       Material de impresion
                     </label>
                     <select
                       value={material}
                       onChange={(e) => setMaterial(e.target.value)}
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] cursor-pointer"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] bg-white focus:outline-none focus:ring-2 focus:ring-[#00B4D8] cursor-pointer"
                     >
                       {materiales.map((m) => (
                         <option key={m.nombre} value={m.nombre}>
@@ -724,11 +724,11 @@ export function PriceCalculator({
 
                 {/* Terminaciones as checkboxes */}
                 {acabados.length > 0 && (
-                  <div className="p-3 rounded-lg bg-white border border-[#E2E8F0]">
-                    <p className="text-xs font-semibold text-[#1E293B] mb-1">
+                  <div className="p-3 rounded-lg bg-white border border-[#e8eaee]">
+                    <p className="text-xs font-semibold text-[#0f1115] mb-1">
                       Terminaciones opcionales
                     </p>
-                    <p className="text-[10px] text-[#64748B] mb-3">
+                    <p className="text-[10px] text-[#5b6472] mb-3">
                       Ojetillos, bolsillo, bastidor u otros acabados si los necesitas.
                     </p>
                     <div className="space-y-2">
@@ -740,7 +740,7 @@ export function PriceCalculator({
                             className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all ${
                               isChecked
                                 ? "border-[#00B4D8] bg-[#00B4D8]/5"
-                                : "border-[#E2E8F0] hover:border-[#CBD5E1]"
+                                : "border-[#e8eaee] hover:border-[#CBD5E1]"
                             }`}
                           >
                             <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all shrink-0 ${
@@ -751,7 +751,7 @@ export function PriceCalculator({
                               {isChecked && <CheckCircle className="size-3 text-white" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <span className="text-sm font-medium text-[#1E293B]">{a.nombre}</span>
+                              <span className="text-sm font-medium text-[#0f1115]">{a.nombre}</span>
                             </div>
                             <span className="text-xs font-semibold text-[#00B4D8] shrink-0">
                               {a.precioExtra > 0 ? `+${formatCLP(a.precioExtra)}/m²` : "Incluido"}
@@ -773,39 +773,39 @@ export function PriceCalculator({
           </div>
 
           {/* ━━━ PRICE DISPLAY ━━━ */}
-          <div className="text-center py-5 bg-white rounded-xl border border-[#E2E8F0] shadow-sm">
+          <div className="text-center py-5 bg-white rounded-xl border border-[#e8eaee] shadow-sm">
             {calculo ? (
               <>
-                <p className="text-xs text-[#64748B] uppercase tracking-wider mb-1">Precio estimado</p>
-                <p className="text-[40px] font-extrabold text-[#1B2A6B] leading-none">
+                <p className="text-xs text-[#5b6472] uppercase tracking-wider mb-1">Precio estimado</p>
+                <p className="text-[40px] font-extrabold text-[#0f1115] leading-none">
                   {formatCLP(calculo.total)}
                 </p>
-                <div className="flex items-center justify-center gap-2 mt-2 text-xs text-[#64748B] flex-wrap">
+                <div className="flex items-center justify-center gap-2 mt-2 text-xs text-[#5b6472] flex-wrap">
                   <span>{nesting.printableArea.toFixed(2)} m²</span>
-                  <span className="w-1 h-1 rounded-full bg-[#64748B]" />
+                  <span className="w-1 h-1 rounded-full bg-[#5b6472]" />
                   <span>{formatCLP(Math.round(precioM2 * multiplicador))}/m²</span>
-                  <span className="w-1 h-1 rounded-full bg-[#64748B]" />
+                  <span className="w-1 h-1 rounded-full bg-[#5b6472]" />
                   <span>{nesting.totalGraficas} grafica{nesting.totalGraficas > 1 ? "s" : ""}</span>
                   {nesting.utilization > 0 && (
                     <>
-                      <span className="w-1 h-1 rounded-full bg-[#64748B]" />
+                      <span className="w-1 h-1 rounded-full bg-[#5b6472]" />
                       <span>{nesting.utilization}% aprovech.</span>
                     </>
                   )}
                 </div>
                 {selectedTerminaciones.length > 0 && calculo.precioTerminaciones > 0 && (
-                  <p className="text-[10px] text-[#64748B] mt-1">
+                  <p className="text-[10px] text-[#5b6472] mt-1">
                     Incluye terminaciones: +{formatCLP(Math.round(calculo.precioTerminaciones))}
                   </p>
                 )}
               </>
             ) : (
               <>
-                <p className="text-xs text-[#64748B] uppercase tracking-wider mb-1">Desde</p>
-                <p className="text-[40px] font-extrabold text-[#1B2A6B] leading-none">
+                <p className="text-xs text-[#5b6472] uppercase tracking-wider mb-1">Desde</p>
+                <p className="text-[40px] font-extrabold text-[#0f1115] leading-none">
                   {formatCLP(precioM2)}
                 </p>
-                <p className="text-xs text-[#64748B] mt-2">por metro cuadrado</p>
+                <p className="text-xs text-[#5b6472] mt-2">por metro cuadrado</p>
               </>
             )}
           </div>
@@ -827,7 +827,7 @@ export function PriceCalculator({
                   });
                 }}
                 disabled={!calculo}
-                className="w-full py-3.5 rounded-xl bg-[#1B2A6B] text-white font-bold text-sm hover:bg-[#152259] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-[#0f1115] text-white font-bold text-sm hover:bg-[#000000] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 Agregar al Carrito
               </button>
@@ -844,7 +844,7 @@ export function PriceCalculator({
             {calculo && (
               <button
                 onClick={() => setShowQuoteForm(!showQuoteForm)}
-                className="w-full py-3 rounded-xl border-2 border-[#E91E8C]/30 text-[#E91E8C] font-semibold text-sm hover:bg-[#E91E8C]/5 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl border-2 border-[#0f1115]/30 text-[#0f1115] font-semibold text-sm hover:bg-[#0f1115]/5 transition-colors flex items-center justify-center gap-2"
               >
                 <FileText className="size-4" />
                 {showQuoteForm ? "Ocultar formulario" : "Solicitar cotizacion formal"}
@@ -859,9 +859,9 @@ export function PriceCalculator({
                 <div className="w-14 h-14 mx-auto rounded-full bg-[#10b981]/10 flex items-center justify-center">
                   <CheckCircle className="size-7 text-[#10b981]" />
                 </div>
-                <h4 className="font-bold text-[#1E293B]">Cotizacion enviada!</h4>
-                <p className="text-sm text-[#64748B]">
-                  Te responderemos en menos de 2 horas habiles a <span className="font-medium text-[#1E293B]">{quoteEmail}</span>
+                <h4 className="font-bold text-[#0f1115]">Cotizacion enviada!</h4>
+                <p className="text-sm text-[#5b6472]">
+                  Te responderemos en menos de 2 horas habiles a <span className="font-medium text-[#0f1115]">{quoteEmail}</span>
                 </p>
                 <button
                   onClick={() => { setQuoteSent(false); setShowQuoteForm(false); }}
@@ -872,26 +872,26 @@ export function PriceCalculator({
               </div>
             ) : (
               <form onSubmit={handleSubmitQuote} className="space-y-4 pt-2">
-                <div className="flex items-center gap-2 pb-2 border-b border-[#E2E8F0]">
-                  <Send className="size-4 text-[#E91E8C]" />
-                  <p className="text-sm font-bold text-[#1E293B]">Solicitar cotizacion formal</p>
+                <div className="flex items-center gap-2 pb-2 border-b border-[#e8eaee]">
+                  <Send className="size-4 text-[#0f1115]" />
+                  <p className="text-sm font-bold text-[#0f1115]">Solicitar cotizacion formal</p>
                 </div>
 
                 {/* File upload */}
                 <div>
-                  <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                  <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                     <Upload className="size-3 inline mr-1" />
                     Sube tu diseno (opcional)
                   </label>
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#E2E8F0] rounded-lg p-4 text-center cursor-pointer hover:border-[#00B4D8] hover:bg-[#F0F7FF]/50 transition-colors"
+                    className="border-2 border-dashed border-[#e8eaee] rounded-lg p-4 text-center cursor-pointer hover:border-[#00B4D8] hover:bg-[#fafafb]/50 transition-colors"
                   >
-                    <Upload className="size-6 mx-auto text-[#64748B] mb-2" />
-                    <p className="text-xs text-[#64748B]">
+                    <Upload className="size-6 mx-auto text-[#5b6472] mb-2" />
+                    <p className="text-xs text-[#5b6472]">
                       <span className="text-[#00B4D8] font-semibold">Click para subir</span> o arrastra tu archivo
                     </p>
-                    <p className="text-[10px] text-[#94A3B8] mt-1">PDF, JPG, PNG, AI, PSD. Max 25MB. Max 5 archivos.</p>
+                    <p className="text-[10px] text-[#8b94a3] mt-1">PDF, JPG, PNG, AI, PSD. Max 25MB. Max 5 archivos.</p>
                   </div>
                   <input
                     ref={fileInputRef}
@@ -904,11 +904,11 @@ export function PriceCalculator({
                   {quoteFiles.length > 0 && (
                     <div className="mt-2 space-y-1.5">
                       {quoteFiles.map((file, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-[#E2E8F0]">
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-[#e8eaee]">
                           <FileText className="size-4 text-[#00B4D8] shrink-0" />
-                          <span className="text-xs text-[#1E293B] truncate flex-1">{file.name}</span>
-                          <span className="text-[10px] text-[#64748B] shrink-0">{formatFileSize(file.size)}</span>
-                          <button type="button" onClick={() => removeFile(i)} className="shrink-0 p-0.5 rounded hover:bg-red-50 text-[#64748B] hover:text-red-500">
+                          <span className="text-xs text-[#0f1115] truncate flex-1">{file.name}</span>
+                          <span className="text-[10px] text-[#5b6472] shrink-0">{formatFileSize(file.size)}</span>
+                          <button type="button" onClick={() => removeFile(i)} className="shrink-0 p-0.5 rounded hover:bg-red-50 text-[#5b6472] hover:text-red-500">
                             <X className="size-3.5" />
                           </button>
                         </div>
@@ -920,44 +920,44 @@ export function PriceCalculator({
                 {/* Contact fields */}
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                    <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                       <User className="size-3 inline mr-1" />Nombre *
                     </label>
                     <input
                       type="text" required value={quoteNombre}
                       onChange={(e) => setQuoteNombre(e.target.value)}
                       placeholder="Tu nombre completo"
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                      <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                         <Mail className="size-3 inline mr-1" />Email *
                       </label>
                       <input
                         type="email" required value={quoteEmail}
                         onChange={(e) => setQuoteEmail(e.target.value)}
                         placeholder="tu@email.com"
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
+                        className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                      <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                         <Phone className="size-3 inline mr-1" />Telefono
                       </label>
                       <input
                         type="tel" value={quoteTelefono}
                         onChange={(e) => setQuoteTelefono(e.target.value)}
                         placeholder="+56 9 1234 5678"
-                        className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
+                        className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white"
                       />
                     </div>
                   </div>
 
                   {/* Boleta / Factura */}
                   <div>
-                    <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                    <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                       Tipo de documento
                     </label>
                     <div className="flex gap-2">
@@ -968,8 +968,8 @@ export function PriceCalculator({
                           onClick={() => setQuoteTipoDoc(tipo)}
                           className={`flex-1 py-2.5 rounded-lg text-sm font-medium border-2 transition-all capitalize ${
                             quoteTipoDoc === tipo
-                              ? "border-[#1B2A6B] bg-[#1B2A6B] text-white"
-                              : "border-[#E2E8F0] text-[#64748B] hover:border-[#00B4D8]"
+                              ? "border-[#0f1115] bg-[#0f1115] text-white"
+                              : "border-[#e8eaee] text-[#5b6472] hover:border-[#00B4D8]"
                           }`}
                         >
                           {tipo}
@@ -979,7 +979,7 @@ export function PriceCalculator({
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-[#1E293B] block mb-1.5">
+                    <label className="text-xs font-semibold text-[#0f1115] block mb-1.5">
                       Notas adicionales
                     </label>
                     <textarea
@@ -987,28 +987,28 @@ export function PriceCalculator({
                       onChange={(e) => setQuoteNotas(e.target.value)}
                       rows={2}
                       placeholder="Indicaciones especiales, plazo requerido, etc."
-                      className="w-full px-3 py-2.5 rounded-lg border border-[#E2E8F0] text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white resize-none"
+                      className="w-full px-3 py-2.5 rounded-lg border border-[#e8eaee] text-sm text-[#0f1115] focus:outline-none focus:ring-2 focus:ring-[#00B4D8] bg-white resize-none"
                     />
                   </div>
                 </div>
 
                 {/* Quote summary */}
-                <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0]">
-                  <p className="text-[10px] text-[#64748B] uppercase tracking-wider mb-2 font-semibold">Resumen de tu cotizacion</p>
+                <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#e8eaee]">
+                  <p className="text-[10px] text-[#5b6472] uppercase tracking-wider mb-2 font-semibold">Resumen de tu cotizacion</p>
                   <div className="space-y-1 text-xs">
-                    <div className="flex justify-between"><span className="text-[#64748B]">Producto</span><span className="text-[#1E293B] font-medium">{productoNombre}</span></div>
+                    <div className="flex justify-between"><span className="text-[#5b6472]">Producto</span><span className="text-[#0f1115] font-medium">{productoNombre}</span></div>
                     {graficas.filter((g) => (parseFloat(g.anchoCm) || 0) > 0).map((g, i) => (
                       <div key={g.id} className="flex justify-between">
-                        <span className="text-[#64748B]">Grafica {i + 1}</span>
-                        <span className="text-[#1E293B] font-medium">{g.anchoCm}x{g.altoCm}cm x{g.cantidad}</span>
+                        <span className="text-[#5b6472]">Grafica {i + 1}</span>
+                        <span className="text-[#0f1115] font-medium">{g.anchoCm}x{g.altoCm}cm x{g.cantidad}</span>
                       </div>
                     ))}
-                    <div className="flex justify-between"><span className="text-[#64748B]">Area</span><span className="text-[#1E293B] font-medium">{nesting.printableArea.toFixed(2)} m²</span></div>
-                    {materiales.length > 0 && <div className="flex justify-between"><span className="text-[#64748B]">Material</span><span className="text-[#1E293B] font-medium">{material}</span></div>}
-                    {selectedTerminaciones.length > 0 && <div className="flex justify-between"><span className="text-[#64748B]">Terminaciones</span><span className="text-[#1E293B] font-medium">{selectedTerminaciones.join(", ")}</span></div>}
-                    <div className="flex justify-between pt-2 mt-2 border-t border-[#E2E8F0]">
-                      <span className="font-bold text-[#1E293B]">Precio estimado</span>
-                      <span className="font-extrabold text-[#1B2A6B] text-base">{formatCLP(calculo.total)}</span>
+                    <div className="flex justify-between"><span className="text-[#5b6472]">Area</span><span className="text-[#0f1115] font-medium">{nesting.printableArea.toFixed(2)} m²</span></div>
+                    {materiales.length > 0 && <div className="flex justify-between"><span className="text-[#5b6472]">Material</span><span className="text-[#0f1115] font-medium">{material}</span></div>}
+                    {selectedTerminaciones.length > 0 && <div className="flex justify-between"><span className="text-[#5b6472]">Terminaciones</span><span className="text-[#0f1115] font-medium">{selectedTerminaciones.join(", ")}</span></div>}
+                    <div className="flex justify-between pt-2 mt-2 border-t border-[#e8eaee]">
+                      <span className="font-bold text-[#0f1115]">Precio estimado</span>
+                      <span className="font-extrabold text-[#0f1115] text-base">{formatCLP(calculo.total)}</span>
                     </div>
                   </div>
                 </div>
@@ -1016,20 +1016,20 @@ export function PriceCalculator({
                 <button
                   type="submit"
                   disabled={quoteSending || !quoteNombre.trim() || !quoteEmail.trim()}
-                  className="w-full py-3.5 rounded-xl bg-[#E91E8C] text-white font-bold text-sm hover:bg-[#d1187d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl bg-[#0f1115] text-white font-bold text-sm hover:bg-[#d1187d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   <Send className="size-4" />
                   {quoteSending ? "Enviando cotizacion..." : "Enviar cotizacion"}
                 </button>
 
-                <p className="text-[10px] text-[#64748B] text-center">
+                <p className="text-[10px] text-[#5b6472] text-center">
                   Te responderemos en menos de 2 horas habiles con el presupuesto confirmado.
                 </p>
               </form>
             )
           )}
 
-          <p className="text-[10px] text-[#64748B] text-center">
+          <p className="text-[10px] text-[#5b6472] text-center">
             Precio referencial. El valor final puede variar segun diseno y acabados.
           </p>
 

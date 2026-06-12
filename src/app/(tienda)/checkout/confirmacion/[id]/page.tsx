@@ -74,7 +74,7 @@ function ConfirmacionContent() {
   if (!pedido) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-[#1E293B] mb-4">Pedido no encontrado</h1>
+        <h1 className="text-2xl font-bold text-[#0f1115] mb-4">Pedido no encontrado</h1>
         <Button nativeButton={false} render={<Link href="/" />}>
           Volver al inicio
         </Button>
@@ -103,10 +103,10 @@ function ConfirmacionContent() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle className="size-8 text-green-600" />
             </div>
-            <h1 className="text-3xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+            <h1 className="text-3xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
               Pago Confirmado
             </h1>
-            <p className="text-[#64748B]">
+            <p className="text-[#5b6472]">
               Tu pago para el pedido <strong>#{pedido.numero_pedido}</strong> fue procesado exitosamente.
               Te enviaremos un email de confirmacion a <strong>{pedido.cliente_email}</strong>.
             </p>
@@ -116,10 +116,10 @@ function ConfirmacionContent() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
               <XCircle className="size-8 text-red-600" />
             </div>
-            <h1 className="text-3xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+            <h1 className="text-3xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
               Error en el Pago
             </h1>
-            <p className="text-[#64748B]">
+            <p className="text-[#5b6472]">
               Hubo un problema al procesar tu pago para el pedido <strong>#{pedido.numero_pedido}</strong>.
               Puedes intentar nuevamente o elegir otro metodo de pago.
             </p>
@@ -129,10 +129,10 @@ function ConfirmacionContent() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-100 flex items-center justify-center">
               <Clock className="size-8 text-yellow-600" />
             </div>
-            <h1 className="text-3xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+            <h1 className="text-3xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
               Pago Pendiente
             </h1>
-            <p className="text-[#64748B]">
+            <p className="text-[#5b6472]">
               Tu pago para el pedido <strong>#{pedido.numero_pedido}</strong> esta siendo procesado.
               Te notificaremos por email cuando se confirme.
             </p>
@@ -142,10 +142,10 @@ function ConfirmacionContent() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
               <CheckCircle className="size-8 text-green-600" />
             </div>
-            <h1 className="text-3xl font-extrabold text-[#1E293B] mb-2" style={{ letterSpacing: "-0.02em" }}>
+            <h1 className="text-3xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
               Pedido #{pedido.numero_pedido} Confirmado
             </h1>
-            <p className="text-[#64748B]">
+            <p className="text-[#5b6472]">
               Hemos recibido tu pedido. Te enviaremos un email de confirmacion a{" "}
               <strong>{pedido.cliente_email}</strong>.
             </p>
@@ -154,12 +154,12 @@ function ConfirmacionContent() {
       </div>
 
       {/* Order summary */}
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 mb-6">
-        <h2 className="font-bold text-[#1E293B] mb-4">Detalle del Pedido</h2>
+      <div className="bg-white rounded-xl border border-[#e8eaee] p-6 mb-6">
+        <h2 className="font-bold text-[#0f1115] mb-4">Detalle del Pedido</h2>
         <ul className="space-y-3 mb-4">
           {pedido.items.map((item, i) => (
             <li key={i} className="flex justify-between text-sm">
-              <span className="text-[#1E293B]">
+              <span className="text-[#0f1115]">
                 {item.nombre} x {item.cantidad}
               </span>
               <span className="font-medium">
@@ -168,18 +168,18 @@ function ConfirmacionContent() {
             </li>
           ))}
         </ul>
-        <div className="border-t border-[#E2E8F0] pt-3 space-y-1">
+        <div className="border-t border-[#e8eaee] pt-3 space-y-1">
           <div className="flex justify-between text-sm">
-            <span className="text-[#64748B]">Subtotal</span>
+            <span className="text-[#5b6472]">Subtotal</span>
             <span>{formatCLP(pedido.subtotal)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-[#64748B]">Envio</span>
+            <span className="text-[#5b6472]">Envio</span>
             <span>{pedido.costo_envio > 0 ? formatCLP(pedido.costo_envio) : "Gratis"}</span>
           </div>
-          <div className="flex justify-between font-bold text-lg border-t border-[#E2E8F0] pt-2 mt-2">
+          <div className="flex justify-between font-bold text-lg border-t border-[#e8eaee] pt-2 mt-2">
             <span>Total</span>
-            <span className="text-[#1B2A6B]">{formatCLP(pedido.total)}</span>
+            <span className="text-[#0f1115]">{formatCLP(pedido.total)}</span>
           </div>
         </div>
       </div>
@@ -208,23 +208,23 @@ function ConfirmacionContent() {
       )}
 
       {isTransferencia && !isPagoOk && (
-        <div className="bg-[#F0F7FF] rounded-xl border border-[#00B4D8]/20 p-6 mb-6">
-          <h2 className="font-bold text-[#1B2A6B] mb-3">Instrucciones de Pago</h2>
-          <p className="text-sm text-[#1E293B] mb-4">
+        <div className="bg-[#fafafb] rounded-xl border border-[#00B4D8]/20 p-6 mb-6">
+          <h2 className="font-bold text-[#0f1115] mb-3">Instrucciones de Pago</h2>
+          <p className="text-sm text-[#0f1115] mb-4">
             Realiza una transferencia bancaria con los siguientes datos y luego confirma tu pago por WhatsApp:
           </p>
           <div className="bg-white rounded-lg p-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-[#64748B]">Razon social:</span>
+              <span className="text-[#5b6472]">Razon social:</span>
               <span className="font-medium">Servicios Graficos Spa</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#64748B]">RUT:</span>
+              <span className="text-[#5b6472]">RUT:</span>
               <span className="font-medium">78.114.353-7</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#64748B]">Monto:</span>
-              <span className="font-bold text-[#1B2A6B]">{formatCLP(pedido.total)}</span>
+              <span className="text-[#5b6472]">Monto:</span>
+              <span className="font-bold text-[#0f1115]">{formatCLP(pedido.total)}</span>
             </div>
           </div>
           <button

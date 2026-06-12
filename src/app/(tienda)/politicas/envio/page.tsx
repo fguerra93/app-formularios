@@ -20,16 +20,16 @@ export default function EnvioPage() {
 
       {/* Header */}
       <section className="text-center mb-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center">
           <Truck className="size-8 text-white" />
         </div>
         <h1
-          className="text-3xl md:text-4xl font-extrabold text-[#1E293B] mb-3"
+          className="text-3xl md:text-4xl font-extrabold text-[#0f1115] mb-3"
           style={{ letterSpacing: "-0.02em" }}
         >
           Politica de <span className="text-[#00B4D8]">Envio</span>
         </h1>
-        <p className="text-[#64748B] max-w-xl mx-auto">
+        <p className="text-[#5b6472] max-w-xl mx-auto">
           En PrintUp nos esforzamos por entregar tus pedidos de manera rapida y
           segura en la Region de O&apos;Higgins.
         </p>
@@ -37,13 +37,13 @@ export default function EnvioPage() {
 
       {/* Dias de despacho */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Clock className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Dias de Despacho
               </h2>
               <p className="text-[#475569]">
@@ -59,20 +59,20 @@ export default function EnvioPage() {
 
       {/* Zonas y tarifas */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <MapPin className="size-5 text-[#00B4D8]" />
             </div>
-            <h2 className="text-xl font-extrabold text-[#1B2A6B]">
+            <h2 className="text-xl font-extrabold text-[#0f1115]">
               Zonas y Tarifas
             </h2>
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8F0] p-5 bg-[#F0F7FF]">
+            <div className="rounded-xl border border-[#e8eaee] p-5 bg-[#fafafb]">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-[#1B2A6B]">
+                <h3 className="font-bold text-[#0f1115]">
                   Zona 1 - Cercania
                 </h3>
                 <span className="text-lg font-extrabold text-[#00B4D8]">
@@ -84,9 +84,9 @@ export default function EnvioPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-[#E2E8F0] p-5 bg-[#F0F7FF]">
+            <div className="rounded-xl border border-[#e8eaee] p-5 bg-[#fafafb]">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-[#1B2A6B]">
+                <h3 className="font-bold text-[#0f1115]">
                   Zona 2 - Intermedia
                 </h3>
                 <span className="text-lg font-extrabold text-[#00B4D8]">
@@ -98,7 +98,7 @@ export default function EnvioPage() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-[#E2E8F0] p-5 bg-gradient-to-r from-[#1B2A6B] to-[#00B4D8] text-white">
+            <div className="rounded-xl border border-[#e8eaee] p-5 bg-gradient-to-r from-[#0f1115] to-[#00B4D8] text-white">
               <div className="flex items-center gap-2 mb-1">
                 <CircleDollarSign className="size-5" />
                 <h3 className="font-bold">Envio Gratis</h3>
@@ -114,23 +114,23 @@ export default function EnvioPage() {
 
       {/* Retiro en tienda */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Package className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Retiro en Tienda
               </h2>
               <p className="text-[#475569]">
                 El retiro en tienda es <strong>gratuito</strong>. Puedes pasar a
                 buscar tu pedido en nuestra direccion:
               </p>
-              <p className="mt-2 font-medium text-[#1B2A6B]">
+              <p className="mt-2 font-medium text-[#0f1115]">
                 Errazuriz 09, Donihue, Region de O&apos;Higgins
               </p>
-              <p className="text-sm text-[#64748B] mt-1">
+              <p className="text-sm text-[#5b6472] mt-1">
                 Horario de retiro: Lunes a Viernes de 9:00 a 18:00
               </p>
             </div>
@@ -140,13 +140,13 @@ export default function EnvioPage() {
 
       {/* Tiempos de produccion */}
       <section className="mb-8">
-        <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8">
+        <div className="bg-white rounded-2xl border border-[#e8eaee] p-6 md:p-8">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
               <Clock className="size-5 text-[#00B4D8]" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-[#1B2A6B] mb-1">
+              <h2 className="text-xl font-extrabold text-[#0f1115] mb-1">
                 Tiempos de Produccion
               </h2>
               <p className="text-[#475569] mb-3">
@@ -174,7 +174,7 @@ export default function EnvioPage() {
                   </span>
                 </li>
               </ul>
-              <p className="text-sm text-[#64748B] mt-3">
+              <p className="text-sm text-[#5b6472] mt-3">
                 Los tiempos de produccion no incluyen el dia de despacho. Una
                 vez listo tu pedido, sera despachado en el proximo dia de envio
                 disponible (Miercoles o Viernes).
@@ -185,7 +185,7 @@ export default function EnvioPage() {
       </section>
 
       {/* Nota final */}
-      <div className="text-center text-sm text-[#64748B]">
+      <div className="text-center text-sm text-[#5b6472]">
         <p>
           Para consultas sobre envios, contactanos a{" "}
           <a

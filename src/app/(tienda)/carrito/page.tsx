@@ -81,9 +81,9 @@ export default function CarritoPage() {
         <Breadcrumb items={[{ label: "Carrito" }]} />
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <ShoppingBag className="size-20 text-gray-300 mb-4" />
-          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">Tu carrito esta vacio</h1>
-          <p className="text-[#64748B] mb-6">Agrega productos para comenzar tu compra</p>
-          <Button nativeButton={false} render={<Link href="/productos" />} className="bg-[#1B2A6B] hover:bg-[#152259]">
+          <h1 className="text-2xl font-bold text-[#0f1115] mb-2">Tu carrito esta vacio</h1>
+          <p className="text-[#5b6472] mb-6">Agrega productos para comenzar tu compra</p>
+          <Button nativeButton={false} render={<Link href="/productos" />} className="bg-[#0f1115] hover:bg-[#000000]">
             Explorar Productos
           </Button>
         </div>
@@ -94,7 +94,7 @@ export default function CarritoPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <Breadcrumb items={[{ label: "Carrito" }]} />
-      <h1 className="text-2xl font-extrabold text-[#1E293B] mb-8" style={{ letterSpacing: "-0.02em" }}>
+      <h1 className="text-2xl font-extrabold text-[#0f1115] mb-8" style={{ letterSpacing: "-0.02em" }}>
         Mi Carrito
       </h1>
 
@@ -102,19 +102,19 @@ export default function CarritoPage() {
         {/* Items */}
         <div className="lg:col-span-2 space-y-4">
           {/* Coupon section */}
-          <div className="bg-white rounded-xl border border-[#E2E8F0] overflow-hidden">
+          <div className="bg-white rounded-xl border border-[#e8eaee] overflow-hidden">
             <button
               onClick={() => setCuponOpen(!cuponOpen)}
-              className="w-full flex items-center justify-between p-4 text-sm font-semibold text-[#1E293B] hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between p-4 text-sm font-semibold text-[#0f1115] hover:bg-gray-50 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <Tag className="size-4 text-[#00B4D8]" />
                 Tienes un cupon?
               </span>
               {cuponOpen ? (
-                <ChevronUp className="size-4 text-[#64748B]" />
+                <ChevronUp className="size-4 text-[#5b6472]" />
               ) : (
-                <ChevronDown className="size-4 text-[#64748B]" />
+                <ChevronDown className="size-4 text-[#5b6472]" />
               )}
             </button>
             {cuponOpen && (
@@ -139,7 +139,7 @@ export default function CarritoPage() {
                         value={cuponInput}
                         onChange={(e) => setCuponInput(e.target.value.toUpperCase())}
                         placeholder="Codigo del cupon"
-                        className="flex-1 px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm uppercase"
+                        className="flex-1 px-3 py-2 rounded-lg border border-[#e8eaee] text-sm uppercase"
                       />
                       <Button
                         onClick={handleAplicarCupon}
@@ -169,11 +169,11 @@ export default function CarritoPage() {
             return (
               <div
                 key={key}
-                className="flex gap-4 p-4 bg-white rounded-xl border border-[#E2E8F0]"
+                className="flex gap-4 p-4 bg-white rounded-xl border border-[#e8eaee]"
               >
                 <Link
                   href={`/productos/${item.categoria_slug}/${item.slug}`}
-                  className="w-20 h-20 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0 overflow-hidden"
+                  className="w-20 h-20 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0 overflow-hidden"
                 >
                   {item.imagen ? (
                     <img
@@ -188,18 +188,18 @@ export default function CarritoPage() {
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/productos/${item.categoria_slug}/${item.slug}`}
-                    className="font-semibold text-[#1E293B] hover:text-[#1B2A6B] transition-colors"
+                    className="font-semibold text-[#0f1115] hover:text-[#0f1115] transition-colors"
                   >
                     {item.nombre}
                   </Link>
                   {item.variante && Object.keys(item.variante).length > 0 && (
-                    <p className="text-xs text-[#64748B] mt-0.5">
+                    <p className="text-xs text-[#5b6472] mt-0.5">
                       {Object.entries(item.variante)
                         .map(([k, v]) => `${k}: ${v}`)
                         .join(" | ")}
                     </p>
                   )}
-                  <p className="text-sm font-bold text-[#1B2A6B] mt-1">
+                  <p className="text-sm font-bold text-[#0f1115] mt-1">
                     {formatCLP(unitPrice)}
                   </p>
                   <div className="flex items-center gap-4 mt-3">
@@ -209,7 +209,7 @@ export default function CarritoPage() {
                         updateQuantity(item.producto_id, q, item.variante)
                       }
                     />
-                    <span className="text-sm font-semibold text-[#1E293B]">
+                    <span className="text-sm font-semibold text-[#0f1115]">
                       {formatCLP(unitPrice * item.cantidad)}
                     </span>
                     <button
@@ -229,41 +229,41 @@ export default function CarritoPage() {
         </div>
 
         {/* Summary */}
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 h-fit sticky top-20">
-          <h2 className="font-bold text-[#1E293B] mb-4">Resumen del Pedido</h2>
+        <div className="bg-white rounded-xl border border-[#e8eaee] p-6 h-fit sticky top-20">
+          <h2 className="font-bold text-[#0f1115] mb-4">Resumen del Pedido</h2>
 
           {/* Delivery type */}
           <div className="space-y-2 mb-4">
-            <label className="text-sm font-semibold text-[#1E293B]">
+            <label className="text-sm font-semibold text-[#0f1115]">
               Tipo de entrega
             </label>
             <div className="space-y-2">
-              <label className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] cursor-pointer hover:bg-gray-50 transition-colors">
+              <label className="flex items-center gap-3 p-3 rounded-lg border border-[#e8eaee] cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
                   type="radio"
                   name="entrega"
                   value="retiro_tienda"
                   checked={tipoEntrega === "retiro_tienda"}
                   onChange={() => setTipoEntrega("retiro_tienda")}
-                  className="accent-[#1B2A6B]"
+                  className="accent-[#0f1115]"
                 />
                 <div>
                   <p className="text-sm font-medium">Retiro en Tienda</p>
-                  <p className="text-xs text-[#64748B]">Gratis - Donihue</p>
+                  <p className="text-xs text-[#5b6472]">Gratis - Donihue</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-3 rounded-lg border border-[#E2E8F0] cursor-pointer hover:bg-gray-50 transition-colors">
+              <label className="flex items-center gap-3 p-3 rounded-lg border border-[#e8eaee] cursor-pointer hover:bg-gray-50 transition-colors">
                 <input
                   type="radio"
                   name="entrega"
                   value="despacho"
                   checked={tipoEntrega === "despacho"}
                   onChange={() => setTipoEntrega("despacho")}
-                  className="accent-[#1B2A6B]"
+                  className="accent-[#0f1115]"
                 />
                 <div>
                   <p className="text-sm font-medium">Despacho a Domicilio</p>
-                  <p className="text-xs text-[#64748B]">Miercoles y Viernes</p>
+                  <p className="text-xs text-[#5b6472]">Miercoles y Viernes</p>
                 </div>
               </label>
             </div>
@@ -272,13 +272,13 @@ export default function CarritoPage() {
           {/* Zone selector */}
           {tipoEntrega === "despacho" && (
             <div className="mb-4">
-              <label className="text-sm font-semibold text-[#1E293B] block mb-2">
+              <label className="text-sm font-semibold text-[#0f1115] block mb-2">
                 Zona de envio
               </label>
               <select
                 value={zonaSeleccionada}
                 onChange={(e) => setZonaSeleccionada(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] text-sm bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-[#e8eaee] text-sm bg-white"
               >
                 <option value="">Selecciona tu zona</option>
                 {zonas.map((z) => (
@@ -295,9 +295,9 @@ export default function CarritoPage() {
             </div>
           )}
 
-          <div className="border-t border-[#E2E8F0] pt-4 space-y-2">
+          <div className="border-t border-[#e8eaee] pt-4 space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-[#64748B]">Subtotal</span>
+              <span className="text-[#5b6472]">Subtotal</span>
               <span className="font-medium">{formatCLP(subtotal)}</span>
             </div>
             {cuponAplicado && (
@@ -311,7 +311,7 @@ export default function CarritoPage() {
               </div>
             )}
             <div className="flex justify-between text-sm">
-              <span className="text-[#64748B]">Envio</span>
+              <span className="text-[#5b6472]">Envio</span>
               <span className="font-medium">
                 {tipoEntrega === "retiro_tienda"
                   ? "Gratis"
@@ -320,9 +320,9 @@ export default function CarritoPage() {
                     : formatCLP(costoEnvio)}
               </span>
             </div>
-            <div className="border-t border-[#E2E8F0] pt-2 flex justify-between">
-              <span className="font-bold text-[#1E293B]">Total</span>
-              <span className="text-xl font-extrabold text-[#1B2A6B]">
+            <div className="border-t border-[#e8eaee] pt-2 flex justify-between">
+              <span className="font-bold text-[#0f1115]">Total</span>
+              <span className="text-xl font-extrabold text-[#0f1115]">
                 {formatCLP(total)}
               </span>
             </div>
@@ -330,7 +330,7 @@ export default function CarritoPage() {
 
           <Button
             nativeButton={false} render={<Link href={`/checkout?tipo=${tipoEntrega}${zonaSeleccionada ? `&zona=${zonaSeleccionada}` : ""}${cuponAplicado ? `&cupon=${cuponAplicado.codigo}` : ""}`} />}
-            className="w-full mt-4 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-6"
+            className="w-full mt-4 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6"
             size="lg"
           >
             Proceder al Checkout

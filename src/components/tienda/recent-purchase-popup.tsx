@@ -156,7 +156,7 @@ export function RecentPurchasePopup() {
         }
       `}</style>
       <div
-        className={`fixed bottom-6 left-4 z-40 max-w-xs bg-white rounded-xl shadow-lg border border-[#E2E8F0] overflow-hidden ${
+        className={`fixed bottom-6 left-4 z-40 max-w-xs bg-white rounded-xl shadow-lg border border-[#e8eaee] overflow-hidden ${
           exiting ? "popup-exit" : "popup-enter"
         }`}
       >
@@ -166,10 +166,10 @@ export function RecentPurchasePopup() {
             <img
               src={purchase.producto_imagen}
               alt={purchase.producto_nombre}
-              className="w-12 h-12 rounded-lg object-cover shrink-0 bg-[#F0F7FF]"
+              className="w-12 h-12 rounded-lg object-cover shrink-0 bg-[#fafafb]"
             />
           ) : (
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#1B2A6B] to-[#00B4D8] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0f1115] to-[#00B4D8] flex items-center justify-center shrink-0">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -189,14 +189,14 @@ export function RecentPurchasePopup() {
 
           {/* Text */}
           <div className="min-w-0">
-            <p className="text-sm text-[#1E293B] leading-snug">
+            <p className="text-sm text-[#0f1115] leading-snug">
               <strong className="font-semibold">{purchase.nombre_parcial}</strong>{" "}
               de {city} compro{" "}
-              <strong className="font-semibold text-[#1B2A6B]">
+              <strong className="font-semibold text-[#0f1115]">
                 {purchase.producto_nombre}
               </strong>
             </p>
-            <p className="text-xs text-[#64748B] mt-0.5">
+            <p className="text-xs text-[#5b6472] mt-0.5">
               {timeAgo(purchase.created_at)}
             </p>
           </div>
@@ -205,7 +205,7 @@ export function RecentPurchasePopup() {
         {/* Close button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full text-[#94A3B8] hover:text-[#1E293B] hover:bg-[#F1F5F9] transition-colors"
+          className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full text-[#8b94a3] hover:text-[#0f1115] hover:bg-[#F1F5F9] transition-colors"
           aria-label="Cerrar"
         >
           <X className="size-3.5" />

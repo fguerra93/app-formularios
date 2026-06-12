@@ -25,7 +25,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
       <div className="fixed right-0 top-0 z-50 h-full w-full max-w-md bg-white shadow-xl flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-bold text-[#1E293B]">
+          <h2 className="text-lg font-bold text-[#0f1115]">
             Carrito ({getItemCount()})
           </h2>
           <button
@@ -42,7 +42,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center gap-4">
               <ShoppingBag className="size-16 text-gray-300" />
-              <p className="text-[#64748B]">Tu carrito esta vacio</p>
+              <p className="text-[#5b6472]">Tu carrito esta vacio</p>
               <Button nativeButton={false} render={<Link href="/productos" onClick={onClose} />}>
                 Explorar productos
               </Button>
@@ -59,9 +59,9 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                 return (
                   <li
                     key={key}
-                    className="flex gap-3 p-3 rounded-lg border border-[#E2E8F0]"
+                    className="flex gap-3 p-3 rounded-lg border border-[#e8eaee]"
                   >
-                    <div className="w-16 h-16 rounded-lg bg-[#F0F7FF] flex items-center justify-center shrink-0 overflow-hidden">
+                    <div className="w-16 h-16 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0 overflow-hidden">
                       {item.imagen ? (
                         <img
                           src={item.imagen}
@@ -73,17 +73,17 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[#1E293B] truncate">
+                      <p className="text-sm font-semibold text-[#0f1115] truncate">
                         {item.nombre}
                       </p>
                       {item.variante && Object.keys(item.variante).length > 0 && (
-                        <p className="text-xs text-[#64748B]">
+                        <p className="text-xs text-[#5b6472]">
                           {Object.entries(item.variante)
                             .map(([k, v]) => `${k}: ${v}`)
                             .join(" | ")}
                         </p>
                       )}
-                      <p className="text-sm font-bold text-[#1B2A6B] mt-1">
+                      <p className="text-sm font-bold text-[#0f1115] mt-1">
                         {formatCLP(unitPrice)}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
@@ -95,7 +95,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                               item.variante
                             )
                           }
-                          className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E8F0] hover:bg-gray-50"
+                          className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
                           aria-label="Reducir cantidad"
                         >
                           <Minus className="size-3" />
@@ -111,7 +111,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                               item.variante
                             )
                           }
-                          className="w-7 h-7 flex items-center justify-center rounded border border-[#E2E8F0] hover:bg-gray-50"
+                          className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
                           aria-label="Aumentar cantidad"
                         >
                           <Plus className="size-3" />
@@ -137,14 +137,14 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         {items.length > 0 && (
           <div className="border-t p-4 space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-[#64748B]">Subtotal</span>
-              <span className="font-bold text-[#1E293B]">
+              <span className="text-[#5b6472]">Subtotal</span>
+              <span className="font-bold text-[#0f1115]">
                 {formatCLP(getSubtotal())}
               </span>
             </div>
             <Button
               nativeButton={false} render={<Link href="/carrito" onClick={onClose} />}
-              className="w-full bg-[#1B2A6B] hover:bg-[#152259] text-white"
+              className="w-full bg-[#0f1115] hover:bg-[#000000] text-white"
             >
               Ver Carrito
             </Button>

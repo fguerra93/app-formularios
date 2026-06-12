@@ -87,12 +87,12 @@ export default function PortafolioPage() {
       <FadeIn>
         <section className="text-center mb-12">
           <h1
-            className="text-4xl md:text-5xl font-extrabold text-[#1E293B] mb-4"
+            className="text-4xl md:text-5xl font-extrabold text-[#0f1115] mb-4"
             style={{ letterSpacing: "-0.02em" }}
           >
             Nuestros <span className="text-[#00B4D8]">Trabajos</span>
           </h1>
-          <p className="text-lg text-[#64748B] max-w-2xl mx-auto">
+          <p className="text-lg text-[#5b6472] max-w-2xl mx-auto">
             Mira lo que hemos creado para nuestros clientes
           </p>
         </section>
@@ -108,8 +108,8 @@ export default function PortafolioPage() {
                 onClick={() => setCategoriaActiva(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   categoriaActiva === cat
-                    ? "bg-[#1B2A6B] text-white shadow-md"
-                    : "bg-white text-[#64748B] border border-[#E2E8F0] hover:border-[#00B4D8] hover:text-[#1B2A6B]"
+                    ? "bg-[#0f1115] text-white shadow-md"
+                    : "bg-white text-[#5b6472] border border-[#e8eaee] hover:border-[#00B4D8] hover:text-[#0f1115]"
                 }`}
               >
                 {cat}
@@ -128,8 +128,8 @@ export default function PortafolioPage() {
         </div>
       ) : trabajosFiltrados.length === 0 ? (
         <div className="text-center py-16">
-          <ImageIcon className="size-16 text-[#E2E8F0] mx-auto mb-4" />
-          <p className="text-[#64748B] text-lg">No hay trabajos en esta categoria</p>
+          <ImageIcon className="size-16 text-[#e8eaee] mx-auto mb-4" />
+          <p className="text-[#5b6472] text-lg">No hay trabajos en esta categoria</p>
         </div>
       ) : (
         <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -137,9 +137,9 @@ export default function PortafolioPage() {
             <StaggerItem key={trabajo.id}>
               <button
                 onClick={() => openModal(trabajo)}
-                className="group block w-full text-left bg-white rounded-xl border border-[#E2E8F0] overflow-hidden hover:shadow-lg transition-all duration-200"
+                className="group block w-full text-left bg-white rounded-xl border border-[#e8eaee] overflow-hidden hover:shadow-lg transition-all duration-200"
               >
-                <div className="relative aspect-[4/3] bg-[#F0F7FF] overflow-hidden">
+                <div className="relative aspect-[4/3] bg-[#fafafb] overflow-hidden">
                   {trabajo.imagenes?.[0]?.url ? (
                     <img
                       src={trabajo.imagenes[0].url}
@@ -153,7 +153,7 @@ export default function PortafolioPage() {
                   )}
 
                   {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A6B]/90 via-[#1B2A6B]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f1115]/90 via-[#0f1115]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                     <h3 className="text-white font-bold text-lg leading-snug">
                       {trabajo.titulo}
                     </h3>
@@ -188,12 +188,12 @@ export default function PortafolioPage() {
         <FadeIn delay={0.2}>
           <section className="mt-20 mb-16">
             <h2
-              className="text-2xl font-extrabold text-[#1E293B] text-center mb-2"
+              className="text-2xl font-extrabold text-[#0f1115] text-center mb-2"
               style={{ letterSpacing: "-0.02em" }}
             >
               Mas de {clientes.length} empresas confian en PrintUp
             </h2>
-            <p className="text-[#64748B] text-center mb-10">
+            <p className="text-[#5b6472] text-center mb-10">
               Empresas y emprendedores que eligieron nuestro trabajo
             </p>
 
@@ -237,7 +237,7 @@ export default function PortafolioPage() {
       <section
         className="rounded-2xl py-16 px-6 mb-8"
         style={{
-          background: "linear-gradient(135deg, #1B2A6B, #00B4D8)",
+          background: "linear-gradient(135deg, #0f1115, #00B4D8)",
         }}
       >
         <div className="max-w-2xl mx-auto text-center text-white">
@@ -262,7 +262,7 @@ export default function PortafolioPage() {
             </a>
             <Link
               href="/contacto"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-white text-[#1B2A6B] font-bold text-sm hover:bg-white/90 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-white text-[#0f1115] font-bold text-sm hover:bg-white/90 transition-colors"
             >
               <Mail className="size-5" />
               Contacto
@@ -287,12 +287,12 @@ export default function PortafolioPage() {
               className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition-colors"
               aria-label="Cerrar"
             >
-              <X className="size-5 text-[#1E293B]" />
+              <X className="size-5 text-[#0f1115]" />
             </button>
 
             {/* Image viewer */}
             {modalTrabajo.imagenes && modalTrabajo.imagenes.length > 0 ? (
-              <div className="relative aspect-[16/10] bg-[#F0F7FF] rounded-t-2xl overflow-hidden">
+              <div className="relative aspect-[16/10] bg-[#fafafb] rounded-t-2xl overflow-hidden">
                 <img
                   src={modalTrabajo.imagenes[modalImageIdx]?.url}
                   alt={
@@ -310,14 +310,14 @@ export default function PortafolioPage() {
                       className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition-colors"
                       aria-label="Imagen anterior"
                     >
-                      <ChevronLeft className="size-5 text-[#1E293B]" />
+                      <ChevronLeft className="size-5 text-[#0f1115]" />
                     </button>
                     <button
                       onClick={nextImage}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-md transition-colors"
                       aria-label="Siguiente imagen"
                     >
-                      <ChevronRight className="size-5 text-[#1E293B]" />
+                      <ChevronRight className="size-5 text-[#0f1115]" />
                     </button>
 
                     {/* Dot indicators */}
@@ -339,7 +339,7 @@ export default function PortafolioPage() {
                 )}
               </div>
             ) : (
-              <div className="aspect-[16/10] bg-[#F0F7FF] rounded-t-2xl flex items-center justify-center">
+              <div className="aspect-[16/10] bg-[#fafafb] rounded-t-2xl flex items-center justify-center">
                 <ImageIcon className="size-20 text-[#00B4D8]/30" />
               </div>
             )}
@@ -347,7 +347,7 @@ export default function PortafolioPage() {
             {/* Info */}
             <div className="p-6">
               <div className="flex items-start justify-between gap-4 mb-3">
-                <h3 className="text-2xl font-extrabold text-[#1E293B]">
+                <h3 className="text-2xl font-extrabold text-[#0f1115]">
                   {modalTrabajo.titulo}
                 </h3>
                 {modalTrabajo.categoria && (
@@ -357,7 +357,7 @@ export default function PortafolioPage() {
                 )}
               </div>
               {modalTrabajo.cliente_nombre && (
-                <p className="text-sm text-[#64748B] mb-3">
+                <p className="text-sm text-[#5b6472] mb-3">
                   Cliente: {modalTrabajo.cliente_nombre}
                 </p>
               )}
@@ -377,7 +377,7 @@ export default function PortafolioPage() {
                       className={`shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                         idx === modalImageIdx
                           ? "border-[#00B4D8]"
-                          : "border-transparent hover:border-[#E2E8F0]"
+                          : "border-transparent hover:border-[#e8eaee]"
                       }`}
                     >
                       <img

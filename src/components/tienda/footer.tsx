@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { toast } from "sonner";
-import { AccentLine } from "./decorative";
 import { ScheduleBadge } from "./schedule-badge";
 
 export function Footer() {
@@ -39,24 +38,19 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#1B2A6B] text-white">
-      {/* Accent line at top */}
-      <AccentLine />
-
+    <footer className="bg-[#0f1115] text-white">
       {/* Newsletter bar */}
-      <div
-        className="py-8"
-        style={{
-          background: "linear-gradient(135deg, #1B2A6B 0%, #00B4D8 100%)",
-        }}
-      >
+      <div className="border-b border-white/10 py-10">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-5">
             <div className="text-center md:text-left">
-              <h3 className="text-lg font-extrabold">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#38bdf8]">
+                Newsletter
+              </span>
+              <h3 className="text-xl font-extrabold mt-1.5 tracking-tight">
                 Suscribete y recibe ofertas exclusivas
               </h3>
-              <p className="text-sm text-white/70 mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Promociones, novedades y descuentos directo a tu correo.
               </p>
             </div>
@@ -69,15 +63,15 @@ export function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Tu correo electronico"
-                className="flex-1 min-w-0 px-4 py-2.5 rounded-lg text-sm text-[#1E293B] bg-white outline-none placeholder:text-[#94A3B8] focus:ring-2 focus:ring-white/30"
+                className="flex-1 min-w-0 px-4 py-2.5 rounded-xl text-sm text-[#0f1115] bg-white outline-none placeholder:text-[#8b94a3] focus:ring-2 focus:ring-[#00b4d8]/50"
               />
               <button
                 type="submit"
                 disabled={subscribing}
-                className="px-5 py-2.5 rounded-lg bg-white text-[#1B2A6B] font-bold text-sm hover:bg-white/90 disabled:opacity-60 transition-all flex items-center gap-2 shrink-0"
+                className="px-5 py-2.5 rounded-xl bg-[#00b4d8] text-white font-semibold text-sm hover:bg-[#009ec0] disabled:opacity-60 transition-colors flex items-center gap-2 shrink-0"
               >
                 {subscribing ? (
-                  <span className="w-4 h-4 border-2 border-[#1B2A6B]/30 border-t-[#1B2A6B] rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <Send className="size-4" />
                 )}

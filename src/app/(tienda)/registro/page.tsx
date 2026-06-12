@@ -111,18 +111,18 @@ export default function RegistroPage() {
     <div className="max-w-xl mx-auto px-4 py-8">
       <Breadcrumb items={[{ label: "Crear Cuenta" }]} />
 
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 md:p-8">
+      <div className="bg-white rounded-xl border border-[#e8eaee] p-6 md:p-8">
         <div className="text-center mb-6">
-          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#1B2A6B] flex items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#0f1115] flex items-center justify-center">
             <UserPlus className="size-6 text-white" />
           </div>
           <h1
-            className="text-2xl font-extrabold text-[#1E293B]"
+            className="text-2xl font-extrabold text-[#0f1115]"
             style={{ letterSpacing: "-0.02em" }}
           >
             Crear Cuenta
           </h1>
-          <p className="text-sm text-[#64748B] mt-1">
+          <p className="text-sm text-[#5b6472] mt-1">
             Registrate para gestionar tus pedidos y favoritos
           </p>
         </div>
@@ -192,7 +192,7 @@ export default function RegistroPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#1E293B] transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5b6472] hover:text-[#0f1115] transition-colors"
                   tabIndex={-1}
                 >
                   {showPassword ? (
@@ -232,7 +232,7 @@ export default function RegistroPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#1E293B] transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5b6472] hover:text-[#0f1115] transition-colors"
                   tabIndex={-1}
                 >
                   {showConfirm ? (
@@ -258,7 +258,7 @@ export default function RegistroPage() {
               onChange={(e) => setNewsletterOptIn(e.target.checked)}
               className="mt-0.5 accent-[#00B4D8]"
             />
-            <span className="text-sm text-[#64748B]">
+            <span className="text-sm text-[#5b6472]">
               Quiero recibir ofertas y novedades por email
             </span>
           </label>
@@ -266,7 +266,7 @@ export default function RegistroPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 bg-[#1B2A6B] hover:bg-[#152259] text-white font-bold py-5"
+            className="w-full mt-4 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-5"
             size="lg"
           >
             {loading && (
@@ -276,7 +276,7 @@ export default function RegistroPage() {
           </Button>
         </form>
 
-        <p className="text-center text-sm text-[#64748B] mt-6">
+        <p className="text-center text-sm text-[#5b6472] mt-6">
           Ya tienes cuenta?{" "}
           <Link
             href="/login"
