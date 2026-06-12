@@ -16,6 +16,7 @@ import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, Fi
 import { toast } from "sonner";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
 import { PriceCalculator } from "@/components/tienda/price-calculator";
+import { ConfiguradorM2, type ConfiguracionM2 } from "@/components/tienda/configurador-m2";
 import { SpecTable } from "@/components/tienda/spec-table";
 import type { Producto, PrecioCantidad, PreguntaProducto } from "@/lib/types";
 
@@ -256,6 +257,10 @@ export default function ProductoPage() {
 
   const totalPrice = basePrice + precioExtra;
 
+  // Productos por m²: la ficha se centra en el configurador
+  const esM2 = !!(producto.precio_m2 && producto.precio_m2 > 0);
+  const esVertical = /roller|pend[oó]n/i.test(`${producto.nombre} ${categoriaSlug}`);
+
   const handleStockNotif = async () => {
     if (!stockNotifEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(stockNotifEmail)) {
       toast.error("Ingresa un email valido");
@@ -292,6 +297,26 @@ export default function ProductoPage() {
       variante: Object.keys(selectedVariants).length > 0 ? selectedVariants : null,
       precio_extra: precioExtra,
     });
+  };
+
+  const handleAddToCartM2 = (config: ConfiguracionM2) => {
+    const variante: Record<string, string> = {
+      Medida: `${config.ancho} × ${config.alto} cm`,
+      ...(config.cantidad > 1 ? { Unidades: String(config.cantidad) } : {}),
+      ...(config.material ? { Material: config.material } : {}),
+      ...(config.terminaciones.length ? { Terminaciones: config.terminaciones.join(", ") } : {}),
+    };
+    addItem({
+      producto_id: producto.id,
+      nombre: producto.nombre,
+      precio: config.total,
+      imagen: mainImage?.url || "",
+      slug: producto.slug,
+      categoria_slug: categoriaSlug,
+      variante,
+      precio_extra: 0,
+    });
+    toast.success(`${producto.nombre} (${config.ancho}×${config.alto} cm) agregado al carrito`);
   };
 
   const handleSubmitReview = async (e: React.FormEvent) => {
@@ -428,6 +453,46 @@ export default function ProductoPage() {
         ]}
       />
 
+      {esM2 ? (
+        /* ============ FICHA M²: EL CONFIGURADOR ES LA PÁGINA ============ */
+        <div className="mb-14">
+          <div className="mb-8 max-w-3xl">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <Link href={`/productos/${categoriaSlug}`} className="mc-link text-sm">
+                {catName}
+              </Link>
+              {hasOffer && <Badge className="bg-[#F97316] text-white border-0">Oferta</Badge>}
+            </div>
+            <h1 className="mc-display text-3xl md:text-4xl mb-3">{producto.nombre}</h1>
+            {producto.descripcion_corta && (
+              <p className="mc-sub max-w-xl">{producto.descripcion_corta}</p>
+            )}
+            <p className="mc-tech mt-3 text-[12px] uppercase tracking-[0.08em]" style={{ color: "var(--mc-ink-2)" }}>
+              desde {formatCLP(producto.precio_m2!)}/m² · impreso en Doñihue · sale en 24–48 h
+            </p>
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-2 mt-2">
+                <StarRatingDisplay rating={Math.round(avgRating)} />
+                <span className="text-xs text-[#5b6472]">
+                  ({reviews.length} opinion{reviews.length !== 1 ? "es" : ""})
+                </span>
+              </div>
+            )}
+          </div>
+          <div ref={ctaRef}>
+            <ConfiguradorM2
+              precioM2={producto.precio_m2!}
+              anchoMaxCm={producto.ancho_max_cm || 300}
+              areaMinCm2={producto.area_min_cm2 || 900}
+              materiales={producto.materiales_calculadora || []}
+              acabados={producto.acabados_calculadora || []}
+              productoNombre={producto.nombre}
+              vertical={esVertical}
+              onAddToCart={handleAddToCartM2}
+            />
+          </div>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         {/* Image gallery with lightbox */}
         <ProductGallery
@@ -1284,66 +1349,42 @@ export default function ProductoPage() {
           )}
         </div>
       </div>
+      )}
 
       {/* ============ FULL-WIDTH SECTIONS FOR M² PRODUCTS ============ */}
       {producto.precio_m2 && producto.precio_m2 > 0 && (
         <>
-          {/* Personalizar button - full width */}
-          <div className="mb-6">
-            <Button
-              variant="outline"
-              className="w-full max-w-md gap-2 border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8]/10"
-              nativeButton={false}
-              render={<Link href={`/productos/${categoriaSlug}/${slug}/personalizar`} />}
-            >
-              <Palette className="size-5" />
-              Personalizar este producto
-            </Button>
-          </div>
-
-          {/* Trust badges - full width 3-col */}
-          <div className="grid grid-cols-3 gap-3 mb-8">
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
-              <div className="w-10 h-10 rounded-full bg-[#00B4D8]/10 flex items-center justify-center">
-                <Truck className="size-5 text-[#00B4D8]" />
-              </div>
-              <span className="text-xs font-semibold text-[#0f1115]">Despacho Rapido</span>
-            </div>
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
-              <div className="w-10 h-10 rounded-full bg-[#10b981]/10 flex items-center justify-center">
-                <Shield className="size-5 text-[#10b981]" />
-              </div>
-              <span className="text-xs font-semibold text-[#0f1115]">Calidad Garantizada</span>
-            </div>
-            <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#fafafb] border border-[#e8eaee] text-center">
-              <div className="w-10 h-10 rounded-full bg-[#8b5cf6]/10 flex items-center justify-center">
-                <Headphones className="size-5 text-[#8b5cf6]" />
-              </div>
-              <span className="text-xs font-semibold text-[#0f1115]">Soporte WhatsApp</span>
+          {/* Fotos del producto + qué incluye (una sola vez) + personalizar */}
+          <div className="grid md:grid-cols-[minmax(0,420px)_1fr] gap-8 mb-12 items-start">
+            <ProductGallery images={producto.imagenes} productName={producto.nombre} />
+            <div>
+              {producto.incluye && producto.incluye.length > 0 && (
+                <>
+                  <p className="mc-tech text-[11px] uppercase tracking-[0.12em] mb-3" style={{ color: "var(--mc-ink-2)" }}>
+                    Qué incluye
+                  </p>
+                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-7">
+                    {producto.incluye.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--mc-ink)" }}>
+                        <Check className="size-4 mt-0.5 shrink-0" style={{ color: "var(--mc-accent-ink)" }} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <p className="mc-tech text-[11px] uppercase tracking-[0.12em] mb-3" style={{ color: "var(--mc-ink-2)" }}>
+                ¿Tienes tu diseño listo?
+              </p>
+              <Link
+                href={`/productos/${categoriaSlug}/${slug}/personalizar`}
+                className="mc-btn mc-btn-ghost gap-2"
+              >
+                <Palette className="size-4" />
+                Personalizar este producto
+              </Link>
             </div>
           </div>
-
-          {/* Que incluye - full width */}
-          {producto.incluye && producto.incluye.length > 0 && (
-            <div className="mb-8 rounded-xl border border-[#e8eaee] overflow-hidden">
-              <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-5 py-3 flex items-center gap-2">
-                <Package className="size-4 text-[#00B4D8]" />
-                <span className="text-sm font-bold text-white">Que incluye</span>
-              </div>
-              <div className="bg-white p-5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                  {producto.incluye.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-3 bg-[#ecfdf5] rounded-lg">
-                      <div className="w-6 h-6 rounded-full bg-[#10b981]/15 flex items-center justify-center shrink-0">
-                        <Check className="size-3.5 text-[#10b981]" />
-                      </div>
-                      <span className="text-sm text-[#0f1115] font-medium">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* TABS - full width for m² products */}
           <div className="mb-8" id="product-info-tabs-m2">
@@ -1441,25 +1482,6 @@ export default function ProductoPage() {
                     </div>
                   </div>
 
-                  {producto.incluye && producto.incluye.length > 0 && (
-                    <div className="p-5 bg-gradient-to-br from-[#ecfdf5] to-white rounded-xl border border-[#d1fae5]">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#10b981]/10 flex items-center justify-center">
-                          <Package className="size-4 text-[#10b981]" />
-                        </div>
-                        <h3 className="text-base font-bold text-[#0f1115]">Que incluye tu pedido</h3>
-                      </div>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {producto.incluye.map((item, i) => (
-                          <li key={i} className="flex items-center gap-3">
-                            <Check className="size-4 text-[#10b981] shrink-0" />
-                            <span className="text-sm text-[#0f1115]">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
                   <div className="p-5 bg-white rounded-xl border border-[#e8eaee]">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-8 h-8 rounded-lg bg-[#0f1115]/10 flex items-center justify-center">
@@ -1484,10 +1506,10 @@ export default function ProductoPage() {
                     </div>
                     <div className="flex gap-3 mt-5">
                       <button
-                        onClick={() => document.getElementById("calculadora-m2")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                        onClick={() => document.getElementById("configurador")?.scrollIntoView({ behavior: "smooth", block: "start" })}
                         className="px-5 py-2.5 rounded-xl bg-[#0f1115] text-white text-sm font-bold hover:bg-[#000000] transition-colors"
                       >
-                        Ir al cotizador
+                        Ir al configurador
                       </button>
                       <a
                         href="https://wa.me/56966126645?text=Hola%20PrintUp,%20quiero%20saber%20los%20requisitos%20del%20archivo"
@@ -1716,77 +1738,33 @@ export default function ProductoPage() {
         </>
       )}
 
-      {/* ============ FULL-WIDTH CALCULATOR for m² products ============ */}
-      {producto.precio_m2 && producto.precio_m2 > 0 && (
+      {/* ============ MODO TALLER: varias gráficas o cotización formal ============ */}
+      {esM2 && (
         <section className="mb-16" id="calculadora-m2">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
-            {/* Calculator - main area */}
-            <PriceCalculator
-              precioM2={producto.precio_m2}
-              anchoMaxCm={producto.ancho_max_cm || 300}
-              altoMaxCm={producto.alto_max_cm || 0}
-              areaMinCm2={producto.area_min_cm2 || 900}
-              materiales={producto.materiales_calculadora || []}
-              acabados={producto.acabados_calculadora || []}
-              productoNombre={producto.nombre}
-            />
-
-            {/* Sidebar - quick info */}
-            <div className="space-y-4">
-              {/* Trust badges vertical */}
-              <div className="rounded-xl border border-[#e8eaee] overflow-hidden">
-                <div className="bg-gradient-to-r from-[#0f1115] to-[#0f1115] px-4 py-2.5">
-                  <p className="text-xs font-bold text-white">Por que elegirnos</p>
-                </div>
-                <div className="p-4 space-y-3 bg-white">
-                  {[
-                    { icon: Shield, text: "Materiales de primera calidad", sub: "Resistentes a UV y agua" },
-                    { icon: Clock, text: "Entrega rapida", sub: "24-48h habiles la mayoria" },
-                    { icon: Headphones, text: "Soporte directo", sub: "WhatsApp en horario laboral" },
-                    { icon: Award, text: "Garantia de color", sub: "Impresion 1440 DPI calibrada" },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#fafafb] flex items-center justify-center shrink-0">
-                        <item.icon className="size-4 text-[#00B4D8]" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-[#0f1115]">{item.text}</p>
-                        <p className="text-[10px] text-[#5b6472]">{item.sub}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Que incluye - sidebar */}
-              {producto.incluye && producto.incluye.length > 0 && (
-                <div className="rounded-xl border border-[#d1fae5] overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#059669] to-[#10b981] px-4 py-2.5">
-                    <p className="text-xs font-bold text-white">Que incluye tu pedido</p>
-                  </div>
-                  <div className="p-4 bg-[#ecfdf5] space-y-2">
-                    {producto.incluye.map((item, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <Check className="size-3.5 text-[#10b981] shrink-0" />
-                        <span className="text-xs text-[#0f1115]">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recomendaciones */}
-              <div className="p-4 bg-[#FFF7ED] rounded-xl border border-[#FFEDD5]">
-                <p className="text-xs font-semibold text-[#92400E] mb-2">Requisitos del archivo:</p>
-                <ul className="text-[10px] text-[#92400E]/80 space-y-1">
-                  <li>• Resolucion: 150 DPI para gran formato</li>
-                  <li>• Modo de color: CMYK preferido</li>
-                  <li>• Formatos: PDF, AI, PSD, JPG o PNG</li>
-                  <li>• Tamano real 1:1 con 3mm de sangria</li>
-                </ul>
-              </div>
+          <details className="rounded-2xl border bg-white" style={{ borderColor: "var(--mc-line)" }}>
+            <summary className="cursor-pointer select-none px-5 md:px-6 py-4 flex items-center justify-between gap-4 list-none [&::-webkit-details-marker]:hidden">
+              <span>
+                <span className="font-semibold text-[15px] block" style={{ color: "var(--mc-ink)" }}>
+                  ¿Varias gráficas distintas o quieres enviarnos tu archivo?
+                </span>
+                <span className="text-sm mt-0.5 block" style={{ color: "var(--mc-ink-2)" }}>
+                  Abre el modo taller: combina medidas en un mismo paño y pide una cotización formal.
+                </span>
+              </span>
+              <ChevronUp className="size-4 shrink-0 rotate-180 transition-transform" style={{ color: "var(--mc-ink-3)" }} />
+            </summary>
+            <div className="px-5 md:px-6 pb-6 border-t pt-6" style={{ borderColor: "var(--mc-line)" }}>
+              <PriceCalculator
+                precioM2={producto.precio_m2!}
+                anchoMaxCm={producto.ancho_max_cm || 300}
+                altoMaxCm={producto.alto_max_cm || 0}
+                areaMinCm2={producto.area_min_cm2 || 900}
+                materiales={producto.materiales_calculadora || []}
+                acabados={producto.acabados_calculadora || []}
+                productoNombre={producto.nombre}
+              />
             </div>
-          </div>
+          </details>
         </section>
       )}
 
@@ -1850,60 +1828,6 @@ export default function ProductoPage() {
           </a>
         </div>
       </section>
-
-      {/* ============ COTIZA AL INSTANTE - Process Steps ============ */}
-      <section className="mb-16">
-        <div className="text-center mb-8">
-          <p className="text-xs font-semibold text-[#00B4D8] uppercase tracking-wider mb-2">Cotiza al instante</p>
-          <h2 className="text-xl md:text-2xl font-extrabold text-[#0f1115] mb-2" style={{ letterSpacing: "-0.02em" }}>
-            Pon tus medidas y te damos el precio
-          </h2>
-          <p className="text-sm text-[#5b6472]">
-            Tu escribes cuanto mide y cuantos quieres. Te damos el precio real, sin compromiso.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            {
-              step: "1",
-              title: "Pon tus medidas",
-              desc: "Ancho y alto en cm. Si no sabes, escribenos y te ayudamos.",
-              color: "#00B4D8",
-            },
-            {
-              step: "2",
-              title: "Sube tu diseno",
-              desc: "PDF, JPG o PNG. Te avisamos si queda nitido para ese tamano.",
-              color: "#8b5cf6",
-            },
-            {
-              step: "3",
-              title: "Dejanos tu dato",
-              desc: "Nombre y correo o WhatsApp para enviarte la cotizacion.",
-              color: "#FF9710",
-            },
-            {
-              step: "4",
-              title: "Recibe tu precio",
-              desc: "Te confirmamos precio, plazo y coordinamos pago.",
-              color: "#10b981",
-            },
-          ].map((item) => (
-            <div key={item.step} className="relative text-center p-5 rounded-xl bg-white border border-[#e8eaee]">
-              <div
-                className="w-10 h-10 mx-auto mb-3 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                style={{ background: item.color }}
-              >
-                {item.step}
-              </div>
-              <h3 className="font-bold text-[#0f1115] text-sm mb-1">{item.title}</h3>
-              <p className="text-xs text-[#5b6472] leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
 
       {/* Reviews Section */}
       <section className="mb-16">
@@ -2123,7 +2047,7 @@ export default function ProductoPage() {
                 className="shrink-0 px-5 py-3 rounded-xl bg-[#0f1115] text-white text-sm font-bold flex items-center gap-2"
               >
                 <ChevronUp className="size-4" />
-                Cotizar
+                Configurar
               </button>
             ) : (
               <button
