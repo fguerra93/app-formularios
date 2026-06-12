@@ -24,20 +24,20 @@ const SERVICIOS = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pl-halftone" style={{ background: "#0a0b0d" }}>
-      {/* Fotografía real del trabajo (impresión DTF saliendo del taller) */}
+    <section className="relative overflow-hidden" style={{ background: "#0a0b0d" }}>
+      {/* Pliego de prensa: planchas CMYK sobreimpresas (arte SVG propio) */}
       <img
-        src="https://cdn.shopify.com/s/files/1/0865/0077/0149/files/DTFTEXTIL2.jpg?v=1768931472&width=2000"
+        src="/img/hero-pliego.svg"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 size-full object-cover object-[70%_center]"
+        className="absolute inset-0 size-full object-cover"
       />
-      {/* Tinta: la foto respira a la derecha, el texto manda a la izquierda */}
+      {/* Velo de tinta suave para asegurar la lectura del texto */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(102deg, rgba(10,11,13,.97) 0%, rgba(10,11,13,.88) 42%, rgba(10,11,13,.45) 72%, rgba(10,11,13,.25) 100%)",
+            "linear-gradient(102deg, rgba(10,11,13,.88) 0%, rgba(10,11,13,.55) 45%, rgba(10,11,13,0) 75%)",
         }}
       />
 
