@@ -710,3 +710,84 @@ textarea:focus-visible,
     opacity: 1;
   }
 }
+/* ===================================================================
+   PLIEGO DE TALLER — identidad de imprenta real (e-commerce definitivo)
+   Cotas, voz técnica monoespaciada, marcas de corte y registro CMYK.
+   Un lenguaje del oficio gráfico, no de SaaS.
+   =================================================================== */
+:root {
+  --mc-mono: ui-monospace, "Cascadia Mono", "Roboto Mono", "SF Mono", Menlo, Consolas, monospace;
+  --mc-c: #00aeef; /* cyan proceso */
+  --mc-m: #ec008c; /* magenta proceso */
+  --mc-y: #ffd100; /* amarillo proceso */
+  --mc-k: #0f1115; /* negro tinta */
+}
+
+/* Voz técnica: datos duros (precios, medidas, SKU, plazos) en mono tabular */
+.mc-tech {
+  font-family: var(--mc-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Eyebrow con voz de taller */
+.mc-eyebrow { font-family: var(--mc-mono); letter-spacing: .12em; }
+
+/* Línea de cota: |———— texto ————| */
+.mc-cota {
+  display: flex; align-items: center; gap: .65rem;
+  font-family: var(--mc-mono); font-size: .72rem;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--mc-ink-2);
+}
+.mc-cota::before, .mc-cota::after {
+  content: ""; height: 1px; flex: 1; min-width: 14px;
+  background: currentColor; opacity: .4;
+  box-shadow: 0 0 0 0 currentColor;
+}
+.mc-cota > .mc-cota-tope { display: none; }
+
+/* Marcas de corte en las esquinas (aparecen al hover de la tarjeta) */
+.mc-cropmarks { position: relative; }
+.mc-cropmarks::after {
+  content: ""; position: absolute; inset: 7px; pointer-events: none;
+  opacity: 0; transition: opacity .25s ease;
+  background:
+    linear-gradient(var(--mc-ink) 0 0) top left / 11px 1px,
+    linear-gradient(var(--mc-ink) 0 0) top left / 1px 11px,
+    linear-gradient(var(--mc-ink) 0 0) top right / 11px 1px,
+    linear-gradient(var(--mc-ink) 0 0) top right / 1px 11px,
+    linear-gradient(var(--mc-ink) 0 0) bottom left / 11px 1px,
+    linear-gradient(var(--mc-ink) 0 0) bottom left / 1px 11px,
+    linear-gradient(var(--mc-ink) 0 0) bottom right / 11px 1px,
+    linear-gradient(var(--mc-ink) 0 0) bottom right / 1px 11px;
+  background-repeat: no-repeat;
+}
+.mc-cropmarks:hover::after { opacity: .5; }
+
+/* Barra de registro CMYK: firma del oficio, 3px, sin gradientes */
+.mc-cmyk {
+  display: grid; grid-template-columns: repeat(4, 1fr); height: 3px;
+}
+.mc-cmyk > i:nth-child(1) { background: var(--mc-c); }
+.mc-cmyk > i:nth-child(2) { background: var(--mc-m); }
+.mc-cmyk > i:nth-child(3) { background: var(--mc-y); }
+.mc-cmyk > i:nth-child(4) { background: #3a3f47; }
+
+/* Inputs sobre tinta (panel cotizador) — sin vidrio, sin blur */
+.mc-input-ink, .mc-select-ink {
+  width: 100%; background: rgba(255,255,255,.07); color: #fff;
+  border: 1px solid rgba(255,255,255,.18); border-radius: 10px;
+  padding: .65rem .85rem; font-size: .9rem;
+}
+.mc-input-ink::placeholder { color: rgba(255,255,255,.45); }
+.mc-input-ink:focus, .mc-select-ink:focus {
+  outline: none; border-color: var(--mc-accent);
+  box-shadow: 0 0 0 3px rgba(0,180,216,.25);
+}
+.mc-select-ink option { color: var(--mc-ink); background: #fff; }
+.mc-label-ink {
+  display: block; font-family: var(--mc-mono); font-size: .68rem;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: rgba(255,255,255,.55); margin-bottom: .45rem;
+}

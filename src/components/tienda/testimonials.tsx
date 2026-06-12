@@ -1,40 +1,40 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
-import { FloatingCircles } from './decorative'
+import { Star, ArrowLeft, ArrowRight } from 'lucide-react'
 
 const testimonials = [
   {
-    name: 'Carolina Munoz',
-    company: 'Cafe & Bistro Santiago',
+    name: 'Carolina Muñoz',
+    company: 'Café & Bistró Santiago',
     rating: 5,
-    text: 'Excelente calidad en los pendones y la atencion fue rapida. Los colores quedaron perfectos y el material es muy resistente. Totalmente recomendados.',
-    avatar: null,
+    text: 'Excelente calidad en los pendones y la atención fue rápida. Los colores quedaron perfectos y el material es muy resistente. Totalmente recomendados.',
   },
   {
-    name: 'Andres Rojas',
+    name: 'Andrés Rojas',
     company: 'Gimnasio FitZone',
     rating: 5,
-    text: 'Hicimos poleras DTF para todo el equipo y quedaron increibles. La impresion se mantiene como nueva despues de muchos lavados.',
-    avatar: null,
+    text: 'Hicimos poleras DTF para todo el equipo y quedaron increíbles. La impresión se mantiene como nueva después de muchos lavados.',
   },
   {
-    name: 'Maria Jose Tapia',
+    name: 'María José Tapia',
     company: 'Eventos MJT',
     rating: 5,
-    text: 'Siempre recurro a PrintUp para mis eventos. La calidad de impresion es superior y los precios son muy competitivos. El despacho siempre es puntual.',
-    avatar: null,
+    text: 'Siempre recurro a PrintUp para mis eventos. La calidad de impresión es superior y los precios son muy competitivos. El despacho siempre es puntual.',
   },
   {
     name: 'Felipe Contreras',
     company: 'Constructora FC',
     rating: 4,
-    text: 'Muy buen servicio para nuestras necesidades de senaletica y material publicitario. Responden rapido por WhatsApp y cumplen con los plazos.',
-    avatar: null,
+    text: 'Muy buen servicio para nuestras necesidades de señalética y material publicitario. Responden rápido por WhatsApp y cumplen con los plazos.',
   },
 ]
 
+/**
+ * Testimonios editoriales — cita grande alineada a la izquierda, autor con
+ * filete, paginación en voz técnica. Sin blobs, sin carrusel centrado de
+ * plantilla, sin estrellas amarillas.
+ */
 export function Testimonials() {
   const [current, setCurrent] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
@@ -43,104 +43,75 @@ export function Testimonials() {
     if (isPaused) return
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
+    }, 6000)
     return () => clearInterval(timer)
   }, [isPaused])
 
   const prev = () => setCurrent((c) => (c - 1 + testimonials.length) % testimonials.length)
   const next = () => setCurrent((c) => (c + 1) % testimonials.length)
+  const t = testimonials[current]
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-gradient-to-br from-[#fafafb] to-white">
-      <FloatingCircles theme="testimonios" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-[#0f1115]">
-            Lo que dicen nuestros clientes
-          </h2>
-          <div className="w-16 h-1 bg-gradient-to-r from-[#ec4899] to-[#f59e0b] mx-auto mt-4 rounded-full" />
-        </div>
-
-        <div
-          className="max-w-3xl mx-auto"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Quote icon */}
-          <div className="flex justify-center mb-6">
-            <Quote className="w-10 h-10 text-[#00B4D8]/20" />
+    <section style={{ background: 'var(--mc-surface)' }} className="border-y border-[#e8eaee]">
+      <div
+        className="max-w-7xl mx-auto px-4 py-16 md:py-20 grid lg:grid-cols-[1fr_2fr] gap-10"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {/* Columna izquierda: título + controles */}
+        <div className="flex flex-col justify-between gap-8">
+          <div>
+            <span className="mc-eyebrow">Clientes</span>
+            <h2 className="mc-h2 mt-3">Lo que dicen de nuestro trabajo</h2>
           </div>
-
-          {/* Testimonial card */}
-          <div className="relative glass-white rounded-2xl p-8 md:p-10 text-center shadow-lg">
-            {/* Stars */}
-            <div className="flex justify-center gap-1 mb-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  className="w-5 h-5"
-                  fill={i < testimonials[current].rating ? '#FFD100' : 'transparent'}
-                  stroke={i < testimonials[current].rating ? '#FFD100' : '#D1D5DB'}
-                />
-              ))}
-            </div>
-
-            {/* Text */}
-            <p className="text-[#0f1115] text-base md:text-lg leading-relaxed mb-6 italic">
-              &ldquo;{testimonials[current].text}&rdquo;
-            </p>
-
-            {/* Author */}
-            <div className="flex items-center justify-center gap-3">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
-                style={{ background: 'linear-gradient(135deg, #0f1115, #00B4D8)' }}
-              >
-                {testimonials[current].name.charAt(0)}
-              </div>
-              <div className="text-left">
-                <div className="font-semibold text-[#0f1115] text-sm">
-                  {testimonials[current].name}
-                </div>
-                <div className="text-xs text-[#5b6472]">
-                  {testimonials[current].company}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4 mt-6">
+          <div className="flex items-center gap-4">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#fafafb] transition-colors"
+              aria-label="Testimonio anterior"
+              className="size-10 rounded-lg border bg-white flex items-center justify-center transition-colors hover:border-[#0f1115]"
+              style={{ borderColor: 'var(--mc-line-2)', color: 'var(--mc-ink)' }}
             >
-              <ChevronLeft className="w-5 h-5 text-[#0f1115]" />
+              <ArrowLeft className="size-4" />
             </button>
-
-            <div className="flex gap-2">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrent(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                    i === current
-                      ? 'bg-[#00B4D8] w-6'
-                      : 'bg-[#0f1115]/20 hover:bg-[#0f1115]/40'
-                  }`}
-                />
-              ))}
-            </div>
-
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-[#fafafb] transition-colors"
+              aria-label="Testimonio siguiente"
+              className="size-10 rounded-lg border bg-white flex items-center justify-center transition-colors hover:border-[#0f1115]"
+              style={{ borderColor: 'var(--mc-line-2)', color: 'var(--mc-ink)' }}
             >
-              <ChevronRight className="w-5 h-5 text-[#0f1115]" />
+              <ArrowRight className="size-4" />
             </button>
+            <span className="mc-tech text-xs ml-1" style={{ color: 'var(--mc-ink-2)' }}>
+              {String(current + 1).padStart(2, '0')} / {String(testimonials.length).padStart(2, '0')}
+            </span>
           </div>
         </div>
+
+        {/* Cita */}
+        <figure className="border-l pl-8 md:pl-12" style={{ borderColor: 'var(--mc-line-2)' }}>
+          <div className="flex gap-1 mb-5" aria-label={`${t.rating} de 5 estrellas`}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className="size-4"
+                fill={i < t.rating ? 'var(--mc-ink)' : 'transparent'}
+                stroke={i < t.rating ? 'var(--mc-ink)' : 'var(--mc-line-2)'}
+              />
+            ))}
+          </div>
+          <blockquote
+            className="text-xl md:text-2xl font-medium leading-snug tracking-tight"
+            style={{ color: 'var(--mc-ink)' }}
+          >
+            “{t.text}”
+          </blockquote>
+          <figcaption className="mt-6">
+            <span className="font-semibold text-sm" style={{ color: 'var(--mc-ink)' }}>{t.name}</span>
+            <span className="mc-tech text-xs ml-3 uppercase tracking-[0.08em]" style={{ color: 'var(--mc-ink-2)' }}>
+              {t.company}
+            </span>
+          </figcaption>
+        </figure>
       </div>
     </section>
   )

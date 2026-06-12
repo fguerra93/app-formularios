@@ -34,9 +34,9 @@ export function ScrollReveal({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      initial={{ y: 32 }}
+      whileInView={{ y: 0 }}
+      viewport={{ once: true, amount: 0.05 }}
       transition={{ duration: 0.6, delay, ease: "easeOut" }}
       className={className}
     >
@@ -56,7 +56,7 @@ export function StaggerContainer({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, amount: 0.05 }}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: 0.08 } },
@@ -78,8 +78,10 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+        // Solo desplazamiento: el contenido nunca queda oculto para crawlers
+        // ni para usuarios que saltan el scroll (End, anclas, etc.).
+        hidden: { y: 18 },
+        visible: { y: 0, transition: { duration: 0.4, ease: "easeOut" } },
       }}
       className={className}
     >

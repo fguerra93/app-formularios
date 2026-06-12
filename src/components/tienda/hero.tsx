@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, Truck, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 /**
- * Hero minimal claro: fondo blanco, titular fuerte, 1 acento cyan, una imagen
- * de producto limpia. Sin video, círculos flotantes ni glassmorphism.
+ * Hero "pliego de taller": titular fuerte, foto real del trabajo con cota
+ * de imprenta debajo y datos duros en voz técnica monoespaciada.
+ * Sin video, sin círculos, sin glassmorphism, sin chips con iconitos.
  */
 export function Hero() {
   return (
@@ -18,7 +19,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <span className="mc-eyebrow">Imprenta en Doñihue · O&apos;Higgins</span>
+          <span className="mc-eyebrow">Imprenta en Doñihue · Región de O&apos;Higgins</span>
 
           <h1 className="mc-display text-4xl md:text-5xl lg:text-6xl mt-4 mb-5">
             Tu impresión,
@@ -46,42 +47,35 @@ export function Hero() {
             </a>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            {[
-              { icon: ShieldCheck, label: "+500 clientes" },
-              { icon: Truck, label: "Envío gratis +$50.000" },
-              { icon: Clock, label: "Entrega 24–48h" },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2 text-sm" style={{ color: "var(--mc-ink-2)" }}>
-                <Icon className="size-4" style={{ color: "var(--mc-accent)" }} />
-                {label}
-              </div>
-            ))}
-          </div>
+          {/* Datos duros del taller, en voz técnica */}
+          <p className="mc-tech text-[12px] uppercase tracking-[0.08em]" style={{ color: "var(--mc-ink-2)" }}>
+            +500 clientes · +2.000 trabajos · sale en 24–48 h
+          </p>
         </motion.div>
 
-        {/* Imagen */}
+        {/* Imagen con cota de taller */}
         <motion.div
-          className="relative"
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
         >
-          <div className="mc-card overflow-hidden">
+          <div className="mc-card mc-cropmarks overflow-hidden">
             <img
               src="https://cdn.shopify.com/s/files/1/0865/0077/0149/files/DTFTEXTIL2.jpg?v=1768931472"
               alt="Impresión DTF textil profesional"
               className="w-full aspect-[4/3] object-cover"
             />
           </div>
-          {/* Chip de precio — único detalle flotante, sobrio */}
-          <div className="absolute -bottom-4 -left-4 bg-white border border-[#e8eaee] rounded-2xl shadow-[0_14px_34px_-12px_rgba(15,17,21,.18)] px-5 py-3">
-            <p className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: "var(--mc-ink-3)" }}>
+          <div className="mc-cota mt-4">
+            <span>DTF textil · 1440 dpi · full color</span>
+          </div>
+          <div className="flex items-baseline justify-between mt-3">
+            <span className="mc-tech text-[11px] uppercase tracking-[0.1em]" style={{ color: "var(--mc-ink-3)" }}>
               Gran formato desde
-            </p>
-            <p className="text-xl font-extrabold" style={{ color: "var(--mc-ink)" }}>
+            </span>
+            <span className="mc-tech text-xl font-bold" style={{ color: "var(--mc-ink)" }}>
               $7.500<span className="text-sm font-medium" style={{ color: "var(--mc-ink-2)" }}>/m²</span>
-            </p>
+            </span>
           </div>
         </motion.div>
       </div>

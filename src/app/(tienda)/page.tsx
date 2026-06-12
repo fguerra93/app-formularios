@@ -12,7 +12,7 @@ import { FaqAccordion } from "@/components/tienda/faq-accordion";
 import { CotizadorInline } from "@/components/tienda/cotizador";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Categoria, Producto, Trabajo, ClienteDestacado } from "@/lib/types";
-import { MousePointerClick, ArrowRight, Image as ImageIcon, Upload, Palette, Truck } from "lucide-react";
+import { ArrowRight, Image as ImageIcon } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/tienda/motion";
 
 const verCatalogoLink = (
@@ -103,17 +103,15 @@ export default function HomePage() {
         <SectionHeader eyebrow="Proceso" title="Cómo funciona" sub="4 pasos simples, de tu idea al producto." />
         <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#e8eaee] rounded-2xl overflow-hidden border border-[#e8eaee]">
           {[
-            { icon: MousePointerClick, n: "01", title: "Elige tu producto", desc: "Explora el catálogo y selecciona lo que necesitas." },
-            { icon: Upload, n: "02", title: "Envía tu diseño", desc: "Sube tu archivo o cuéntanos tu idea y te ayudamos." },
-            { icon: Palette, n: "03", title: "Producción", desc: "Imprimimos con tecnología DTF, DTG, sublimación y más." },
-            { icon: Truck, n: "04", title: "Recibe o retira", desc: "Despacho a domicilio o retiro en nuestro taller." },
+            { n: "01", title: "Elige tu producto", desc: "Explora el catálogo y selecciona lo que necesitas." },
+            { n: "02", title: "Envía tu diseño", desc: "Sube tu archivo o cuéntanos tu idea y te ayudamos." },
+            { n: "03", title: "Producción", desc: "Imprimimos con tecnología DTF, DTG, sublimación y más." },
+            { n: "04", title: "Recibe o retira", desc: "Despacho a domicilio o retiro en nuestro taller." },
           ].map((item) => (
             <StaggerItem key={item.n}>
-              <div className="h-full bg-white p-6 md:p-7 group">
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--mc-accent-ink)" }}>{item.n}</span>
-                  <item.icon className="size-5" style={{ color: "var(--mc-ink-3)" }} />
-                </div>
+              <div className="h-full bg-white p-6 md:p-7">
+                <span className="mc-tech text-2xl font-bold tracking-tight" style={{ color: "var(--mc-ink-3)" }}>{item.n}</span>
+                <hr className="mc-rule my-4" />
                 <h3 className="font-semibold text-[15px] mb-1.5" style={{ color: "var(--mc-ink)" }}>{item.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--mc-ink-2)" }}>{item.desc}</p>
               </div>

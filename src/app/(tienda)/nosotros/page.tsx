@@ -3,7 +3,6 @@
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { ModuleHero } from "@/components/tienda/module-hero";
 import { StatsCounter } from "@/components/tienda/stats-counter";
-import { FloatingCircles, PulsingDots, RotatingRing, GlassmorphCard } from "@/components/tienda/decorative";
 import { ScheduleBadgeInline } from "@/components/tienda/schedule-badge";
 import { ScrollReveal } from "@/components/tienda/motion";
 import { MapPin, Clock, Phone, Mail, Printer, Palette, Shirt, Flag, Heart, Target, Award } from "lucide-react";

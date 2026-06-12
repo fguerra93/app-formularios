@@ -47,7 +47,7 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
   return (
     <Link
       href={`/productos/${categoriaSlug}/${producto.slug}`}
-      className="mc-card mc-card-hover group block overflow-hidden"
+      className="mc-card mc-card-hover mc-cropmarks group block overflow-hidden"
     >
       {/* Imagen */}
       <div className="relative aspect-square overflow-hidden" style={{ background: "var(--mc-surface)" }}>
@@ -101,7 +101,7 @@ export function ProductCard({ producto, rating, reviewCount }: ProductCardProps)
         </h3>
 
         <div className="flex items-baseline gap-2 mt-2">
-          <span className="text-xl font-extrabold" style={{ color: "var(--mc-ink)" }}>
+          <span className="mc-tech text-xl font-bold" style={{ color: "var(--mc-ink)" }}>
             {formatCLP(displayPrice)}
           </span>
           {hasOffer && (

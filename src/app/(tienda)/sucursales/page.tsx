@@ -3,7 +3,6 @@
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { ModuleHero } from "@/components/tienda/module-hero";
 import { ScheduleBadgeInline } from "@/components/tienda/schedule-badge";
-import { FloatingCircles, PulsingDots } from "@/components/tienda/decorative";
 import { MapPin, Clock, Phone, Mail, Printer, Shirt, Flag, Palette, Scissors, Package, Navigation } from "lucide-react";
 
 const serviciosTaller = [
@@ -201,10 +200,8 @@ export default function SucursalesPage() {
       </div>
 
       {/* CTA full width */}
-      <section className="relative py-16 px-4 overflow-hidden" style={{ background: "linear-gradient(135deg, #0f766e, #14b8a6)" }}>
-        <FloatingCircles theme="sucursales" />
-        <PulsingDots color="rgba(255,255,255,0.3)" />
-        <div className="relative z-10 max-w-3xl mx-auto text-center text-white">
+      <section className="py-16 px-4" style={{ background: "var(--mc-ink)" }}>
+        <div className="max-w-3xl mx-auto text-center text-white">
           <h2 className="text-2xl md:text-3xl font-extrabold mb-4">
             Te esperamos en nuestro taller
           </h2>

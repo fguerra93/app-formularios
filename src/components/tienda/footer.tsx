@@ -13,7 +13,7 @@ export function Footer() {
   const handleNewsletter = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Ingresa un email valido");
+      toast.error("Ingresa un email válido");
       return;
     }
     setSubscribing(true);
@@ -31,7 +31,7 @@ export function Footer() {
         toast.error(data.error || "Error al suscribirse");
       }
     } catch {
-      toast.error("Error de conexion. Intenta nuevamente.");
+      toast.error("Error de conexión. Intenta nuevamente.");
     } finally {
       setSubscribing(false);
     }
@@ -39,6 +39,8 @@ export function Footer() {
 
   return (
     <footer className="bg-[#0f1115] text-white">
+      {/* Registro CMYK — firma del oficio */}
+      <div className="mc-cmyk" aria-hidden="true"><i /><i /><i /><i /></div>
       {/* Newsletter bar */}
       <div className="border-b border-white/10 py-10">
         <div className="max-w-7xl mx-auto px-4">
@@ -48,7 +50,7 @@ export function Footer() {
                 Newsletter
               </span>
               <h3 className="text-xl font-extrabold mt-1.5 tracking-tight">
-                Suscribete y recibe ofertas exclusivas
+                Suscríbete y recibe ofertas exclusivas
               </h3>
               <p className="text-sm text-white/60 mt-1">
                 Promociones, novedades y descuentos directo a tu correo.
