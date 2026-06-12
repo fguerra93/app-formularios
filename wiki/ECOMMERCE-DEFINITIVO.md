@@ -313,8 +313,41 @@ Reglas:
 
 ---
 
-## 7. Ejecutado en esta sesión (FASE 2)
+## 7. Ejecutado en esta sesión (FASE 2 — Etapa 1 completa)
 
-Ver commits de la rama `ecommerce-definitivo`. Detalle al final de la sesión:
-- E1: rediseño anti-IA de chrome + home (cotizador, stats, testimonios, hero, decorative).
-- E2: configurador-m2 con escala humana + reestructuración de la ficha del roller.
+Rama `ecommerce-definitivo`, build de producción verde, validado navegando en local
+(capturas after en `wiki/audit/after-*.jpeg`).
+
+**Commit `9909a2b` — E1 dirección de arte "pliego de taller" (chrome + home):**
+- Cotizador inline: de glassmorphism+círculos a orden de cotización sobre tinta plana.
+- Stats: banda técnica clara con cifras reales (+500/+2.000/5 años/<24 h) — se acabaron
+  los "0+" y el "anos" sin ñ.
+- Testimonios editoriales (tildes corregidas, estrellas tinta, paginación mono).
+- Hero con cota de taller bajo la foto y datos duros en voz monoespaciada.
+- Footer con barra de registro CMYK. Tarjetas de producto con marcas de corte al hover
+  y precio tabular. `decorative.tsx` (FloatingCircles/Glassmorph) eliminado del repo.
+- `motion.tsx`: el stagger ya no oculta contenido (solo desplaza) → el HTML siempre es
+  legible para crawlers y para usuarios que saltan el scroll.
+
+**Commit `958bb43` — E2 ficha m² = configurador (piloto roller pendón):**
+- `configurador-m2.tsx`: preview SVG a escala real con silueta humana de 1,70 m,
+  presets, medida libre, validación en vivo (ancho imprimible/área mínima, con
+  sugerencia de girar la medida), precio total en vivo con desglose y **agregar al
+  carrito directo** con la medida como variante — antes un producto m² no se podía
+  comprar, solo cotizar.
+- Ficha reestructurada: header compacto + configurador above the fold; fotos +
+  "qué incluye" una sola vez; tabs conservan el contenido útil; el PriceCalculator
+  multi-gráficas queda como "modo taller" plegable (cotización formal con archivos
+  se preserva); fuera tarjetas multicolor y sección "4 pasos".
+- Verificado E2E en local: configurar 85×200 → total $21.100 (1,75 m² × $12.000,
+  consistente con la matemática del taller) → ítem en carrito con variante
+  `Medida: 85 × 200 cm · Material: Tela PVC 10oz`.
+
+**Deuda anotada para la siguiente etapa:**
+- Tildes del contenido seed (descripciones, tabs, "Pendon", "Informacion"…): corregir
+  en `supabase/seed-shopify-products.sql` + textos duros restantes de la ficha.
+- La rama del grid estándar conserva un branch m² muerto (inalcanzable) en la columna
+  info — limpiar en la próxima pasada sobre la ficha.
+- `recent-purchase-popup` (popup "alguien compró"): sigue activo; recomendación:
+  apagarlo o alimentarlo solo con compras reales.
+- Foto real del producto para el hero del roller (hoy mockup genérico de Shopify).
