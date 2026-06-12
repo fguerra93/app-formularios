@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Recalcular precios, stock y envio en el SERVIDOR. Nunca se confia
     // en subtotal/total/precio del navegador.
     const comuna = (direccion_envio as { comuna?: string } | null)?.comuna ?? null;
-    const calculo = await calcularPedido({ items, tipo_entrega, comuna });
+    const calculo = await calcularPedido({ items, tipo_entrega, comuna, cliente_id });
 
     if (calculo.faltantes.length > 0) {
       return NextResponse.json(

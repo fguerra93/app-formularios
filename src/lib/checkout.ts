@@ -1,4 +1,4 @@
-import { productosRepo, zonasRepo, gangSheetsRepo } from "@/server/repositories";
+import { productosRepo, zonasRepo, gangSheetsRepo, clientesRepo } from "@/server/repositories";
 import type { Producto, PrecioCantidad, Variante } from "./types";
 
 // ============================================================
@@ -96,10 +96,24 @@ export async function calcularPedido(opts: {
   items: ItemEntrada[];
   tipo_entrega: "retiro_tienda" | "despacho";
   comuna?: string | null;
+  /** Cliente logueado: si tiene descuento B2B se aplica en el servidor. */
+  cliente_id?: string | null;
 }): Promise<ResultadoCalculo> {
   const errores: string[] = [];
   const faltantes: Faltante[] = [];
   const itemsCalc: ItemCalculado[] = [];
+
+  // Descuento B2B del cliente (precios especiales), validado contra la BD.
+  let descuentoPct = 0;
+  if (opts.cliente_id) {
+    try {
+      const cliente = await clientesRepo.findByIdFull(opts.cliente_id);
+      const pct = Number((cliente as { descuento_pct?: number } | null)?.descuento_pct) || 0;
+      if (pct > 0 && pct <= 50) descuentoPct = pct;
+    } catch {
+      /* sin migración o sin cliente: sin descuento */
+    }
+  }
 
   const ids = [...new Set(opts.items.map((i) => i.producto_id))];
   const productos = await productosRepo.findByIds(ids);
@@ -167,6 +181,11 @@ export async function calcularPedido(opts: {
         disponible: producto.stock,
         solicitado: cantidad,
       });
+    }
+
+    // Precio especial B2B: descuento del cliente aplicado al unitario.
+    if (descuentoPct > 0) {
+      precioUnitario = Math.round(precioUnitario * (1 - descuentoPct / 100));
     }
 
     itemsCalc.push({

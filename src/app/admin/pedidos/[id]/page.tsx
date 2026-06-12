@@ -109,6 +109,12 @@ function PedidoDetail({ params }: { params: Promise<{ id: string }> }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={() => window.open(`/api/admin/pedidos/${pedido.id}/ficha`, "_blank")}
+          >
+            Ficha de trabajo
+          </Button>
           {nextEstado && pedido.estado !== "cancelado" && (
             <Button
               onClick={() => updateEstado(nextEstado)}
