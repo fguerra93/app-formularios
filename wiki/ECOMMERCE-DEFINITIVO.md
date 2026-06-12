@@ -343,6 +343,43 @@ Rama `ecommerce-definitivo`, build de producción verde, validado navegando en l
   consistente con la matemática del taller) → ítem en carrito con variante
   `Medida: 85 × 200 cm · Material: Tela PVC 10oz`.
 
+## 7-bis. Etapa 2 ejecutada (2026-06-12, misma rama)
+
+Los seis P1 de paridad quedaron así (build verde, validado navegando en local):
+
+1. **Webpay Plus — construido y probado E2E** (`cb1318c`). Compra real en el
+   ambiente de integración de Transbank: configurador 80×200 → checkout invitado →
+   formulario Webpay ($21.100) → tarjeta de prueba → banco simulado → retorno →
+   commit → **pedido #2 `pagado/confirmado`, referencia `PU-2/1213`** (verificado
+   en BD). Retorno idempotente (un refresh resuelve vía `tx.status()`), anulación
+   y timeout manejados, y el post-commit es 100% best-effort: nada puede botar la
+   respuesta después de cobrar. Evidencia: `wiki/audit/etapa2-webpay-*.jpeg`.
+   Producción: setear `webpay_commerce_code`, `webpay_api_key`, `webpay_env=produccion`
+   (config BD u env).
+2. **Precios escalonados + variantes — el motor ya existía** (storefront y
+   `calcularPedido` con tramos; variantes JSONB con UI). Lo que faltaba era el
+   admin: `product-form` ahora edita tramos por cantidad, y un tab "Calculadora m²"
+   (precio/m², ancho imprimible, área mínima, materiales, terminaciones, qué
+   incluye) — el configurador es 100% autogestionable (`0317699`).
+3. **Emails transaccionales — existían inline ×4 con branding viejo**; ahora
+   servicio único `src/server/services/emails.ts` con plantilla "pliego" (tinta +
+   banda CMYK + tildes), registro en `email_log`, y "listo para retiro en Doñihue"
+   cuando la entrega es retiro (`2dd15fc`).
+4. **Estados pago/fulfillment separados — ya existían** (schema `pago_estado` +
+   `estado`, FSM de transiciones, audit log, badges en admin). La auditoría §3 los
+   marcaba ❌ por error. Se sumó doble chip pago/fulfillment en el dashboard.
+5. **Dashboard — existía con KPIs básicos** (skeleton eterno en la auditoría era
+   `/api/stats` lento en frío). Se agregó: ticket promedio del mes, top productos
+   por ingresos, pedidos por estado con barras (`0317699`). Evidencia:
+   `wiki/audit/etapa2-admin-dashboard.jpeg` con la venta E2E reflejada.
+6. **Robustez de venta:** `pedidosRepo.create` reintenta sin columnas opcionales
+   si el esquema está desfasado (la venta del E2E falló primero por `cliente_id`
+   inexistente en el Supabase local — eso ya no puede pasar).
+
+**Pendiente de configuración (no de código):** `NEXT_PUBLIC_APP_URL` del
+`.env.local` apunta al deploy viejo de Vercel; el código ya no depende de ella
+para el retorno de Webpay (usa el origin del request), pero conviene corregirla.
+
 **Deuda anotada para la siguiente etapa:**
 - Tildes del contenido seed (descripciones, tabs, "Pendon", "Informacion"…): corregir
   en `supabase/seed-shopify-products.sql` + textos duros restantes de la ficha.
