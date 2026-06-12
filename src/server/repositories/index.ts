@@ -57,6 +57,7 @@ export {
 } from "./mercado";
 export { pushSubscriptionsRepo } from "./push";
 export { pagosRepo } from "./pagos";
+export { gruposRepo, generarCodigoGrupo } from "./grupos";
 export { whatsappRepo } from "./whatsapp";
 export {
   mensajeriaRepo,

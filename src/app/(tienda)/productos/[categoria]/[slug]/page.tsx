@@ -12,7 +12,7 @@ import { ProductCard } from "@/components/tienda/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown, Palette, Check, Shield, Clock, Headphones, Zap, Award, ChevronUp, Wrench, Eye, Lightbulb, Target, Layers, Sparkles, Tag, Folder } from "lucide-react";
+import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown, Palette, Check, Shield, Clock, Headphones, Zap, Award, ChevronUp, Wrench, Eye, Lightbulb, Target, Layers, Sparkles, Tag, Folder, Users } from "lucide-react";
 import { toast } from "sonner";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
 import { PriceCalculator } from "@/components/tienda/price-calculator";
@@ -808,13 +808,23 @@ export default function ProductoPage() {
           {/* Personalizar button */}
           <Button
             variant="outline"
-            className="w-full gap-2 border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8]/10 mb-4"
+            className="w-full gap-2 border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8]/10 mb-3"
             nativeButton={false}
             render={<Link href={`/productos/${categoriaSlug}/${slug}/personalizar`} />}
           >
             <Palette className="size-5" />
             Personalizar este producto
           </Button>
+
+          {/* Pedido grupal (generaciones, equipos, empresas) */}
+          <Link
+            href={`/grupal/crear?producto=${slug}`}
+            className="w-full mb-4 flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-colors hover:border-[#0f1115]"
+            style={{ borderColor: "var(--mc-line-2)", color: "var(--mc-ink)" }}
+          >
+            <Users className="size-4" />
+            Pedido grupal: cada uno paga lo suyo
+          </Link>
 
           {/* Trust / Benefit Badges - ChileImprime style */}
           <div className="grid grid-cols-3 gap-2 mb-5">

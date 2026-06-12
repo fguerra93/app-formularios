@@ -47,14 +47,19 @@ export const pedidosRepo = {
       pago_metodo: input.pago_metodo ?? "transferencia",
       notas: input.notas ?? null,
       cliente_id: input.cliente_id ?? null,
+      grupo_id: (input as { grupo_id?: string | null }).grupo_id ?? null,
     };
 
     let { data, error } = await getDb().from("pedidos").insert(fila).select().single();
 
-    // Esquema desfasado (p. ej. local sin la migración de fase 5): una VENTA
-    // no puede caerse por una columna opcional → se reintenta sin ella.
-    if (error && /cliente_id/i.test(error.message || "")) {
-      delete fila.cliente_id;
+    // Esquema desfasado (p. ej. local sin migraciones de fase 5 / etapa 4):
+    // una VENTA no puede caerse por una columna opcional → se reintenta sin
+    // la columna que el esquema no conoce (hasta 3 veces).
+    for (let i = 0; i < 3 && error; i++) {
+      const m = /the '(\w+)' column/i.exec(error.message || "");
+      const columna = m?.[1];
+      if (!columna || !(columna in fila) || columna === "items" || columna === "total") break;
+      delete fila[columna];
       ({ data, error } = await getDb().from("pedidos").insert(fila).select().single());
     }
 

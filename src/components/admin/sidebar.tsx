@@ -50,6 +50,7 @@ const navSections: NavSection[] = [
     label: "TIENDA",
     items: [
       { href: "/admin/pedidos", label: "Pedidos", icon: ShoppingBag },
+      { href: "/admin/grupos", label: "Pedidos grupales", icon: Users },
       { href: "/admin/productos", label: "Productos", icon: Package },
       { href: "/admin/categorias", label: "Categorias", icon: FolderTree },
       { href: "/admin/inventario", label: "Inventario", icon: Warehouse },
