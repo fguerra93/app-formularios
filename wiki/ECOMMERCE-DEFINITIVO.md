@@ -380,6 +380,35 @@ Los seis P1 de paridad quedaron así (build verde, validado navegando en local):
 `.env.local` apunta al deploy viejo de Vercel; el código ya no depende de ella
 para el retorno de Webpay (usa el origin del request), pero conviene corregirla.
 
+## 7-ter. Etapa 3 ejecutada (2026-06-12, misma rama)
+
+Commits `e427305` + `95f37d7`, build verde (57 rutas):
+
+1. **Carrito abandonado end-to-end:** captura temprana al tipear el email en el
+   checkout → cron real (el endpoint existente solo marcaba, ahora ENVÍA el
+   recordatorio con link `/carrito/recuperar/<token>`, ventana 3–72 h, 1 email
+   por carrito) → página de recuperación restaura el carrito → al comprar se
+   cierra la captura. **Requiere `supabase/migration-etapa3.sql`** (cliente_id
+   nullable + email/token/total) y `CRON_SECRET` + Cloud Scheduler en prod
+   (`Authorization: Bearer $CRON_SECRET`, cada hora).
+2. **Reviews con fotos:** subida acotada (3 fotos, 4 MB) a GCS vía
+   `/api/reviews/upload`, thumbnails en la lista; el email de "entregado" pide
+   la reseña con link directo a la ficha (`/r/<slug>#opiniones` — los items del
+   pedido ahora guardan slug).
+3. **SEO:** OG por producto con **precio en el título** (validado:
+   `og:title "Pendon Roller PVC — desde $12.000/m²"` + imagen → WhatsApp-ready),
+   JSON-LD LocalBusiness (horario/geo/pagos), feed Google Merchant en
+   `/api/feed/google-merchant` (validado: 13 ítems con todos los campos g:).
+   Registrar en Merchant Center como feed programado.
+4. **RUT módulo 11** en checkout: valida (rechaza DV malo y RUTs de relleno
+   tipo 11.111.111-1; acepta el RUT real de PrintUp), formatea al salir del
+   campo y bloquea el submit con mensaje claro.
+
+Validación local: RUT (unit), OG/LocalBusiness/feed (curl contra dev). El
+flujo de abandono no es testeable en local sin la migración (la tabla local no
+la tiene) — el código degrada con mensaje claro y en prod queda operativo al
+aplicar la migración.
+
 **Deuda anotada para la siguiente etapa:**
 - Tildes del contenido seed (descripciones, tabs, "Pendon", "Informacion"…): corregir
   en `supabase/seed-shopify-products.sql` + textos duros restantes de la ficha.
