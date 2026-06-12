@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import { Resend } from "resend";
 import {
   configuracionRepo,
   domainEventsRepo,
@@ -11,6 +10,7 @@ import {
 } from "@/server/repositories";
 import { verifyMpSignature } from "@/lib/mercadopago";
 import { emitirDocumento } from "@/server/services/dte";
+import { emailPagoConfirmado } from "@/server/services/emails";
 import type { Pedido } from "@/server/domain";
 
 export async function POST(request: NextRequest) {
@@ -122,45 +122,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Send payment confirmation email to client
+    // Email de pago confirmado — servicio único
     if (payment.status === "approved" && pedido) {
       try {
-        const apiKey =
-          (await configuracionRepo.get("resend_api_key")) ||
-          process.env.RESEND_API_KEY ||
-          "";
-
-        if (apiKey) {
-          const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-          const fromName = process.env.FROM_NAME || "PrintUp Tienda";
-          const resend = new Resend(apiKey);
-
-          await resend.emails.send({
-            from: `${fromName} <${fromEmail}>`,
-            to: [pedido.cliente_email],
-            subject: `Pago confirmado - Pedido #${pedido.numero_pedido}`,
-            html: `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
-<div style="max-width:600px;margin:0 auto;background:#fff;">
-  <div style="background:linear-gradient(135deg,#1B2A6B,#00B4D8);padding:24px;text-align:center;">
-    <h1 style="color:#fff;margin:0;font-size:20px;">Pago Confirmado</h1>
-  </div>
-  <div style="padding:24px;">
-    <p>Hola ${pedido.cliente_nombre},</p>
-    <p>Tu pago para el pedido <strong>#${pedido.numero_pedido}</strong> ha sido confirmado exitosamente.</p>
-    <p style="font-size:18px;font-weight:bold;color:#1B2A6B;">Total: $${pedido.total.toLocaleString("es-CL")}</p>
-    <p>Estamos preparando tu pedido. Te avisaremos cuando este listo.</p>
-    <p style="color:#64748B;font-size:14px;">Gracias por comprar en PrintUp!</p>
-  </div>
-  <div style="padding:16px 24px;background:#f8f8f8;text-align:center;font-size:12px;color:#64748B;">
-    PrintUp - Tu impresion, nuestra huella
-  </div>
-</div>
-</body></html>`,
-          });
-        }
+        await emailPagoConfirmado(pedido);
       } catch (e) {
         console.error("Error sending payment email:", e);
       }

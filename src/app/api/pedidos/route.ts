@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   pedidosRepo,
-  configuracionRepo,
   domainEventsRepo,
   stockRepo,
   aprobacionesRepo,
 } from "@/server/repositories";
 import type { Pedido } from "@/server/domain";
 import { calcularPedido } from "@/lib/checkout";
-import { Resend } from "resend";
+import { emailPedidoCreado } from "@/server/services/emails";
 
 const itemSchema = z.object({
   producto_id: z.string().min(1),
@@ -142,98 +141,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Send notification email
-    let apiKey = process.env.RESEND_API_KEY || "";
-    const apiKeyCfg = await configuracionRepo.get("resend_api_key");
-    if (apiKeyCfg) apiKey = apiKeyCfg;
-
-    if (apiKey) {
-      let notifyTo = process.env.NOTIFY_TO || "guerrafelipe93@gmail.com";
-      const notifyCfg = await configuracionRepo.getMany(["notification_email", "notify_to"]);
-      if (notifyCfg["notification_email"]) notifyTo = notifyCfg["notification_email"];
-      else if (notifyCfg["notify_to"]) notifyTo = notifyCfg["notify_to"];
-
-      const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
-      const fromName = process.env.FROM_NAME || "PrintUp Tienda";
-
-      const resend = new Resend(apiKey);
-
-      const itemsHtml = itemsServidor
-        .map(
-          (item) =>
-            `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${item.nombre}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.cantidad}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">$${item.precio_unitario.toLocaleString("es-CL")}</td></tr>`
-        )
-        .join("");
-
-      // Email to admin
-      try {
-        await resend.emails.send({
-          from: `${fromName} <${fromEmail}>`,
-          to: [notifyTo],
-          subject: `Nuevo pedido #${pedido.numero_pedido} de ${cliente_nombre}`,
-          html: `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
-<div style="max-width:600px;margin:0 auto;background:#fff;">
-  <div style="background:linear-gradient(135deg,#1B2A6B,#00B4D8);padding:24px;text-align:center;">
-    <h1 style="color:#fff;margin:0;font-size:20px;">Nuevo Pedido #${pedido.numero_pedido}</h1>
-  </div>
-  <div style="padding:24px;">
-    <p><strong>Cliente:</strong> ${cliente_nombre} (${cliente_email})</p>
-    <p><strong>Tipo entrega:</strong> ${tipo_entrega === "despacho" ? "Despacho a domicilio" : "Retiro en tienda"}</p>
-    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-      <tr style="background:#f8f8f8;"><th style="padding:8px;text-align:left;">Producto</th><th style="padding:8px;text-align:center;">Cant.</th><th style="padding:8px;text-align:right;">Precio</th></tr>
-      ${itemsHtml}
-    </table>
-    <p style="text-align:right;font-size:18px;font-weight:bold;color:#1B2A6B;">Total: $${total.toLocaleString("es-CL")}</p>
-  </div>
-</div>
-</body></html>`,
-        });
-      } catch (e) {
-        console.error("Error sending admin email:", e);
-      }
-
-      // Email confirmation to client
-      try {
-        await resend.emails.send({
-          from: `${fromName} <${fromEmail}>`,
-          to: [cliente_email],
-          subject: `Confirmacion de tu pedido #${pedido.numero_pedido} - PrintUp`,
-          html: `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
-<div style="max-width:600px;margin:0 auto;background:#fff;">
-  <div style="background:linear-gradient(135deg,#1B2A6B,#00B4D8);padding:24px;text-align:center;">
-    <h1 style="color:#fff;margin:0;font-size:20px;">Pedido #${pedido.numero_pedido} Confirmado</h1>
-  </div>
-  <div style="padding:24px;">
-    <p>Hola ${cliente_nombre},</p>
-    <p>Hemos recibido tu pedido correctamente. Aqui tienes el resumen:</p>
-    <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-      <tr style="background:#f8f8f8;"><th style="padding:8px;text-align:left;">Producto</th><th style="padding:8px;text-align:center;">Cant.</th><th style="padding:8px;text-align:right;">Precio</th></tr>
-      ${itemsHtml}
-    </table>
-    <p style="text-align:right;font-size:18px;font-weight:bold;color:#1B2A6B;">Total: $${total.toLocaleString("es-CL")}</p>
-    <div style="margin:20px 0;padding:16px;background:#F0F7FF;border-radius:8px;">
-      <p style="margin:0 0 8px;font-weight:bold;color:#1B2A6B;">Datos para transferencia:</p>
-      <p style="margin:4px 0;font-size:14px;">Servicios Graficos Spa</p>
-      <p style="margin:4px 0;font-size:14px;">RUT: 78.114.353-7</p>
-      <p style="margin:4px 0;font-size:14px;">Enviar comprobante al WhatsApp: +56 9 66126645</p>
-    </div>
-    <p style="color:#64748B;font-size:14px;">Si tienes dudas, contactanos por WhatsApp al +56 9 66126645 o a contacto@printup.cl</p>
-  </div>
-  <div style="padding:16px 24px;background:#f8f8f8;text-align:center;font-size:12px;color:#64748B;">
-    PrintUp - Tu impresion, nuestra huella
-  </div>
-</div>
-</body></html>`,
-        });
-      } catch (e) {
-        console.error("Error sending client email:", e);
-      }
+    // Emails de confirmación (cliente + aviso al taller) — servicio único
+    try {
+      await emailPedidoCreado(pedido);
+    } catch (e) {
+      console.error("Error enviando emails de pedido (no fatal):", e);
     }
 
     return NextResponse.json({ success: true, pedido });
