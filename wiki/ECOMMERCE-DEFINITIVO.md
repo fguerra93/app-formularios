@@ -409,6 +409,38 @@ flujo de abandono no es testeable en local sin la migración (la tabla local no
 la tiene) — el código degrada con mensaje claro y en prod queda operativo al
 aplicar la migración.
 
+## 7-quater. Etapa 4 ejecutada (2026-06-12, misma rama)
+
+Commits `6b51bb5` + `82c8763`, build verde (59 rutas):
+
+1. **Pedido grupal de generación (feature estrella):** el delegado lo crea desde
+   la ficha del producto ("Pedido grupal: cada uno paga lo suyo") → recibe link
+   corto `/grupal/<CODIGO>` para el WhatsApp del curso → cada apoderado elige
+   talla, pone el nombre del estampado y **paga SU parte con Webpay** como
+   pedido individual vinculado (`pedidos.grupo_id`). La landing muestra el
+   progreso en vivo (barra unidades/meta) y quiénes ya están adentro. Reusa
+   todo el motor probado: `calcularPedido` (precio real con extra de talla),
+   Webpay con retorno idempotente, emails y stock. Admin en `/admin/grupos`
+   con recaudado y lista imprimible de tallas+nombres. **Requiere
+   `supabase/migration-etapa4.sql`.**
+2. **Ficha de trabajo imprimible:** botón en el detalle del pedido admin →
+   `/api/admin/pedidos/<id>/ficha` (HTML directo a Ctrl+P): número grande,
+   entrega en recuadro, items con todas las variantes (talla/medida/estampado),
+   notas y firmas de control. El papel que acompaña el trabajo en el taller.
+3. **B2B base:** `clientes.descuento_pct` (+ `es_empresa`, `razon_social`)
+   aplicado EN EL SERVIDOR dentro de `calcularPedido` para clientes logueados
+   (tope 50%). Falta la UI admin para asignarlo (hoy vía SQL/Supabase) y la
+   cotización formal PDF — anotado como siguiente paso B2B.
+4. **Robustez:** `pedidosRepo.create` ahora tolera cualquier columna opcional
+   ausente (no solo `cliente_id`) — las migraciones nunca bloquean una venta.
+5. **DTE SII:** sin cambios — el modelo (`schema-fase6-dte.sql`) y el servicio
+   `emitirDocumento` ya existen; falta contratar el emisor (OpenFactura/
+   LibreDTE) y poner credenciales.
+
+Smoke local: `/grupal/crear` renderiza, crear grupo degrada con mensaje claro
+sin la migración, GET de grupo inexistente da 404 limpio. El E2E completo del
+flujo grupal requiere la migración aplicada (GCP o Supabase con esquema).
+
 **Deuda anotada para la siguiente etapa:**
 - Tildes del contenido seed (descripciones, tabs, "Pendon", "Informacion"…): corregir
   en `supabase/seed-shopify-products.sql` + textos duros restantes de la ficha.
