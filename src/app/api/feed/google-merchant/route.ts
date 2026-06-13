@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { productosRepo } from "@/server/repositories";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ function limpiarHtml(s: unknown): string {
 }
 
 export async function GET(request: NextRequest) {
-  const base = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+  const base = publicOrigin(request);
 
   let productos: Record<string, unknown>[] = [];
   try {

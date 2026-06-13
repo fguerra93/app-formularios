@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { carritosRepo } from "@/server/repositories";
 import { emailCarritoAbandonado } from "@/server/services/emails";
 
@@ -50,7 +51,7 @@ async function procesar(request: NextRequest) {
     return NextResponse.json({ ok: true, candidatos: 0, enviados: 0 });
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+  const origin = publicOrigin(request);
   const enviados: string[] = [];
   let fallidos = 0;
 

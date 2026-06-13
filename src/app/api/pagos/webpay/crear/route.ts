@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { pedidosRepo, pagosRepo } from "@/server/repositories";
 import { getWebpayTransaction } from "@/server/services/webpay";
 
@@ -21,9 +22,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "El pedido ya está pagado" }, { status: 409 });
     }
 
-    // El cliente debe volver al MISMO host desde el que compró (local, sandbox
-    // o prod). El origin del request manda; la env queda como respaldo.
-    const appUrl = request.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    // Host público real (Cloud Run reenvía el host; env runtime de respaldo).
+    const appUrl = publicOrigin(request);
     // buyOrder máx. 26 chars; sessionId lleva el id del pedido para el retorno.
     const buyOrder = `PU-${pedido.numero_pedido}`;
     const sessionId = String(pedido_id).slice(0, 61);

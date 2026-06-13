@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { productosRepo } from "@/server/repositories";
 
 /**
@@ -10,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const origin = request.nextUrl.origin;
+  const origin = publicOrigin(request);
 
   const producto = await productosRepo.findActivoBySlug(slug);
   const categoriaSlug = (producto?.categoria as { slug?: string } | null)?.slug;

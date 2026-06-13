@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { publicOrigin } from "@/lib/url";
 import { configuracionRepo } from "@/server/repositories";
 import { getDb } from "@/server/db";
 import type { Pedido } from "@/server/domain";
@@ -286,7 +287,7 @@ export async function emailEstadoPedido(pedido: Pedido, estado: string): Promise
   if (estado === "entregado") {
     const items = (pedido.items as { slug?: string }[]) || [];
     const slug = items.find((i) => i.slug)?.slug;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://printup.cl";
+    const appUrl = publicOrigin();
     const link = slug ? `${appUrl}/r/${slug}#opiniones` : `${appUrl}/productos`;
     ctaReview = `
     <p style="font-size:14px;color:#5b6472;margin:18px 0 10px;">¿Cómo quedó tu impresión? Tu opinión (con foto, ojalá) ayuda a otros clientes y a nuestro taller:</p>

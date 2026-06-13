@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import {
   domainEventsRepo,
   pagosRepo,
@@ -20,7 +21,7 @@ import { emailPagoConfirmado } from "@/server/services/emails";
  * un refresh del navegador sobre esta URL no duplica el procesamiento.
  */
 async function handleRetorno(request: NextRequest, params: URLSearchParams) {
-  const appUrl = request.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = publicOrigin(request);
   const pedidoId =
     request.nextUrl.searchParams.get("pedido") || params.get("TBK_ID_SESION") || "";
 

@@ -409,6 +409,40 @@ flujo de abandono no es testeable en local sin la migración (la tabla local no
 la tiene) — el código degrada con mensaje claro y en prod queda operativo al
 aplicar la migración.
 
+## 7-quinquies. Repaso visual "espectacular" (2026-06-13)
+
+Tras las 4 etapas, pulido visual para que la home se vea extraordinaria y no "hecha por IA":
+
+- **Hero afiche de taller:** tipografía de serigrafía (Anton, `--font-poster`),
+  eslogan real a tamaño póster, y **fondo de arte SVG propio** "pliego de prensa"
+  (`public/img/hero-pliego.svg`: planchas C/M/Y sobreimpresas con registro corrido,
+  trama de medios tonos, marcas de corte). Vectorial, ~2 KB, sin stock.
+- **Logo vectorial** (`logo.tsx`): recreación SVG del logo (salpicaduras CMYK +
+  Print/Up + tagline) — el GIF pixelaba el eslogan; variante blanca para footer.
+- **Header/Footer de prensa:** header con blur al scroll + cinta CMYK; footer con
+  logo blanco que contrasta, marca de agua tipográfica gigante y resplandor cyan.
+- **"Explora por categoría" → mosaico de tinta:** foto real por categoría bajo velo
+  ink, nombre en póster, grilla bento (1 destacada + 2×2), registro CMYK por tile.
+- **"Productos destacados":** primer producto como tile editorial (`featured-product.tsx`).
+- **"Cómo funciona" → línea de tiempo:** números gigantes en contorno sobre riel
+  con nodos cyan.
+- **Configurador m²:** botón "Sube tu diseño y míralo a escala" — la imagen del
+  cliente se renderiza dentro del pendón a la medida; alto por defecto 100 cm.
+- **Tarjetas de catálogo:** botón WhatsApp real (ícono oficial) junto a "Agregar".
+
+Commits `9735914`, `a567695`, `a253d02`, `6092129`, `7bbfdf4`.
+
+## 7-sexies. Despliegue a GCP (2026-06-13)
+
+Todo lo anterior (Etapas 1–4 + repaso visual) desplegado a producción:
+- **Migraciones aplicadas a Cloud SQL** (`migration-etapa3.sql` + `migration-etapa4.sql`):
+  carrito abandonado (email/token/total + cliente_id nullable), `grupos_pedido`,
+  `pedidos.grupo_id`, B2B (`clientes.descuento_pct/es_empresa/razon_social`).
+  Verificadas en la BD. Se autorizó la IP temporalmente y se restauró la red original.
+- **Cloud Run** `printup-app` (proyecto `adminsmart`, `southamerica-west1`) redeploy
+  con `gcloud run deploy --source .` (Cloud Build), preservando env/secrets/Cloud SQL.
+  URL: `https://printup-app-v7r3a35o5a-tl.a.run.app`.
+
 ## 7-quater. Etapa 4 ejecutada (2026-06-12, misma rama)
 
 Commits `6b51bb5` + `82c8763`, build verde (59 rutas):

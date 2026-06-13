@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { z } from "zod";
 import { gruposRepo, productosRepo } from "@/server/repositories";
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
       fecha_limite: parsed.data.fecha_limite || null,
       notas: parsed.data.notas || null,
     });
-    const origin = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+    const origin = publicOrigin(request);
     return NextResponse.json(
       { codigo: grupo.codigo, link: `${origin}/grupal/${grupo.codigo}` },
       { status: 201 },

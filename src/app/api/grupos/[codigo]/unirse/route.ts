@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin } from "@/lib/url";
 import { z } from "zod";
 import { gruposRepo, pedidosRepo, pagosRepo, domainEventsRepo } from "@/server/repositories";
 import { calcularPedido } from "@/lib/checkout";
@@ -94,7 +95,7 @@ export async function POST(
 
   // Pago Webpay de SU parte (el retorno estándar confirma el pedido).
   try {
-    const origin = request.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || "";
+    const origin = publicOrigin(request);
     const tx = await getWebpayTransaction();
     const resp = await tx.create(
       `PU-${pedido.numero_pedido}`,
