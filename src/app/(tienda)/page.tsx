@@ -57,14 +57,19 @@ export default function HomePage() {
           action={verCatalogoLink}
         />
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="aspect-[4/3] rounded-2xl" />)}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:auto-rows-[210px]">
+            <Skeleton className="col-span-2 row-span-2 rounded-none min-h-[300px]" />
+            {[2, 3, 4, 5].map((i) => <Skeleton key={i} className="rounded-none min-h-[210px]" />)}
           </div>
         ) : (
-          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categorias.map((cat) => (
-              <StaggerItem key={cat.id}>
-                <CategoryCard categoria={cat} productCount={(cat as Categoria & { product_count?: number }).product_count} />
+          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:auto-rows-[210px]">
+            {categorias.map((cat, idx) => (
+              <StaggerItem key={cat.id} className={idx === 0 ? "col-span-2 lg:row-span-2 h-full" : "h-full"}>
+                <CategoryCard
+                  categoria={cat}
+                  featured={idx === 0}
+                  productCount={(cat as Categoria & { product_count?: number }).product_count}
+                />
               </StaggerItem>
             ))}
           </StaggerContainer>
