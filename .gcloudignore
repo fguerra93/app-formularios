@@ -2,7 +2,8 @@
 .git
 .github
 node_modules
-.next/cache
+.next/
+.playwright-mcp/
 .env
 .env.*
 !.env.example
