@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 import { toast } from "sonner";
 import { ScheduleBadge } from "./schedule-badge";
+import { Logo } from "./logo";
 
 export function Footer() {
   const [email, setEmail] = useState("");
@@ -38,9 +39,22 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-[#0f1115] text-white">
+    <footer className="relative overflow-hidden bg-[#0f1115] text-white">
       {/* Registro CMYK — firma del oficio */}
-      <div className="mc-cmyk" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="mc-cmyk relative z-10" aria-hidden="true"><i /><i /><i /><i /></div>
+      {/* Marca de agua tipográfica de prensa */}
+      <span
+        aria-hidden="true"
+        className="pl-poster pointer-events-none select-none absolute -bottom-10 -right-6 text-[22vw] leading-none text-white/[0.035]"
+      >
+        PrintUp
+      </span>
+      {/* Resplandor de tinta cyan en la esquina */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-32 -left-32 size-96 rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(0,180,216,.13) 0%, transparent 70%)" }}
+      />
       {/* Newsletter bar */}
       <div className="border-b border-white/10 py-10">
         <div className="max-w-7xl mx-auto px-4">
@@ -87,13 +101,9 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Col 1: Brand */}
         <div>
-          <img
-            src="https://printup.cl/cdn/shop/files/LOGO-2.gif?v=1768853492"
-            alt="PrintUp"
-            className="h-10 w-auto"
-          />
+          <Logo tinta="#ffffff" className="h-11 w-auto" />
           <p className="mt-3 text-sm text-white/70 leading-relaxed">
-            Tu impresion, nuestra huella. Servicios de impresion y publicidad en Donihue, Region de O&apos;Higgins.
+            Tu impresión, nuestra huella. Servicios de impresión y publicidad en Doñihue, Región de O&apos;Higgins.
           </p>
           <div className="flex gap-3 mt-4">
             <a

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ChevronDown, Upload, Heart, User, LogOut, Phone, Mail, MapPin } from "lucide-react";
 import { CartIcon } from "@/components/cart/cart-icon";
+import { Logo } from "./logo";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchBar } from "./search-bar";
 import { useWishlist } from "@/lib/wishlist";
@@ -112,15 +113,11 @@ export function Navbar() {
       </div>
 
       {/* Main navbar */}
-      <header className={`sticky top-0 z-40 w-full bg-white border-b border-[#e8eaee] header-shrink ${scrolled ? "scrolled" : ""}`}>
+      <header className={`sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b border-[#e8eaee] header-shrink ${scrolled ? "scrolled" : ""}`}>
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between header-inner">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <img
-              src="https://printup.cl/cdn/shop/files/LOGO-2.gif?v=1768853492"
-              alt="PrintUp"
-              className="header-logo w-auto"
-            />
+            <Logo className="header-logo w-auto" />
           </Link>
 
           {/* Desktop nav */}
@@ -357,6 +354,7 @@ export function Navbar() {
             </nav>
           </div>
         )}
+        <div className="mc-cmyk" style={{ height: 2 }} aria-hidden="true"><i /><i /><i /><i /></div>
       </header>
 
       {/* Info bar */}

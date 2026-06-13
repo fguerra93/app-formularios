@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ImagePlus, Minus, Plus, ShoppingCart, X } from "lucide-react";
 import { formatCLP } from "@/lib/format";
 
 /**
@@ -91,12 +91,14 @@ function PreviewEscala({
   cantidad,
   vertical,
   error,
+  diseno,
 }: {
   w: number;
   h: number;
   cantidad: number;
   vertical: boolean;
   error: boolean;
+  diseno?: string | null;
 }) {
   const ALTURA_PERSONA = 170; // cm
 
@@ -154,19 +156,44 @@ function PreviewEscala({
               strokeWidth={1.5}
               style={trans}
             />
-            {/* Diagonales de "área de diseño" */}
-            <line x1={px} y1={py} x2={px + pw} y2={py + ph} stroke="var(--mc-line-2)" strokeWidth={1} style={trans} />
-            <line x1={px + pw} y1={py} x2={px} y2={py + ph} stroke="var(--mc-line-2)" strokeWidth={1} style={trans} />
-            <text
-              x={px + pw / 2}
-              y={py + ph / 2}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="var(--mc-ink-2)"
-              style={{ ...trans, font: "600 11px ui-monospace, monospace", paintOrder: "stroke", stroke: "#fff", strokeWidth: 4 }}
-            >
-              TU DISEÑO
-            </text>
+            {diseno ? (
+              /* El diseño real del cliente, estirado a la medida elegida */
+              <image
+                href={diseno}
+                x={px + 1}
+                y={py + 1}
+                width={Math.max(pw - 2, 1)}
+                height={Math.max(ph - 2, 1)}
+                preserveAspectRatio="xMidYMid slice"
+                style={trans}
+              />
+            ) : (
+              <>
+                {/* Diagonales de "área de diseño" */}
+                <line x1={px} y1={py} x2={px + pw} y2={py + ph} stroke="var(--mc-line-2)" strokeWidth={1} style={trans} />
+                <line x1={px + pw} y1={py} x2={px} y2={py + ph} stroke="var(--mc-line-2)" strokeWidth={1} style={trans} />
+                <text
+                  x={px + pw / 2}
+                  y={py + ph / 2}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="var(--mc-ink-2)"
+                  style={{ ...trans, font: "600 11px ui-monospace, monospace", paintOrder: "stroke", stroke: "#fff", strokeWidth: 4 }}
+                >
+                  TU DISEÑO
+                </text>
+              </>
+            )}
+            <rect
+              x={px}
+              y={py}
+              width={pw}
+              height={ph}
+              fill="none"
+              stroke={error ? "var(--mc-danger)" : "var(--mc-ink)"}
+              strokeWidth={1.5}
+              style={trans}
+            />
             {/* Base del roller */}
             {vertical && (
               <rect x={px - 6} y={groundY} width={pw + 12} height={5} rx={2} fill="var(--mc-ink)" style={trans} />
@@ -250,10 +277,24 @@ export function ConfiguradorM2({
   const inicial = presets[Math.min(1, Math.max(presets.length - 1, 0))] ?? { ancho: Math.min(80, anchoMaxCm), alto: 200 };
 
   const [anchoCm, setAnchoCm] = useState(String(inicial.ancho));
-  const [altoCm, setAltoCm] = useState(String(inicial.alto));
+  // Por defecto compacto (≤100 cm de alto): 200 se ve alargado de entrada.
+  const [altoCm, setAltoCm] = useState(String(Math.min(inicial.alto, 100)));
   const [cantidad, setCantidad] = useState(1);
   const [material, setMaterial] = useState(materiales[0]?.nombre || "");
   const [terminaciones, setTerminaciones] = useState<string[]>([]);
+  const [diseno, setDiseno] = useState<string | null>(null);
+  const disenoInputRef = useRef<HTMLInputElement>(null);
+
+  const cargarDiseno = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    setDiseno((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  };
 
   const w = parseFloat(anchoCm) || 0;
   const h = parseFloat(altoCm) || 0;
@@ -298,7 +339,39 @@ export function ConfiguradorM2({
   return (
     <section id="configurador" className="grid lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-10 items-stretch">
       {/* Preview a escala */}
-      <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} />
+      <div className="flex flex-col gap-3">
+        <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={diseno} />
+        <div className="flex items-center gap-2">
+          <input
+            ref={disenoInputRef}
+            type="file"
+            accept="image/*"
+            onChange={cargarDiseno}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => disenoInputRef.current?.click()}
+            className="mc-btn mc-btn-ghost flex-1 gap-2 text-sm"
+          >
+            <ImagePlus className="size-4" />
+            {diseno ? "Cambiar mi diseño" : "Sube tu diseño y míralo a escala"}
+          </button>
+          {diseno && (
+            <button
+              type="button"
+              aria-label="Quitar diseño"
+              onClick={() => {
+                URL.revokeObjectURL(diseno);
+                setDiseno(null);
+              }}
+              className="mc-btn mc-btn-ghost px-3"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Controles + precio */}
       <div className="flex flex-col">
