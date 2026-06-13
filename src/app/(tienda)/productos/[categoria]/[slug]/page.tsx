@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
 import { PriceCalculator } from "@/components/tienda/price-calculator";
 import { ConfiguradorM2, type ConfiguracionM2 } from "@/components/tienda/configurador-m2";
+import { DisenoInline } from "@/components/tienda/diseno-inline";
 import { SpecTable } from "@/components/tienda/spec-table";
 import type { Producto, PrecioCantidad, PreguntaProducto } from "@/lib/types";
 
@@ -805,16 +806,12 @@ export default function ProductoPage() {
           {/* === Below sections only for STANDARD products (m² gets full-width versions after grid) === */}
           {!(producto.precio_m2 && producto.precio_m2 > 0) && (
           <>
-          {/* Personalizar button */}
-          <Button
-            variant="outline"
-            className="w-full gap-2 border-[#00B4D8] text-[#00B4D8] hover:bg-[#00B4D8]/10 mb-3"
-            nativeButton={false}
-            render={<Link href={`/productos/${categoriaSlug}/${slug}/personalizar`} />}
-          >
-            <Palette className="size-5" />
-            Personalizar este producto
-          </Button>
+          {/* Prueba tu diseño inline (sube y velo sobre el producto) */}
+          <DisenoInline
+            productoImagen={mainImage?.url || ""}
+            productoNombre={producto.nombre}
+            personalizarHref={`/productos/${categoriaSlug}/${slug}/personalizar`}
+          />
 
           {/* Pedido grupal (generaciones, equipos, empresas) */}
           <Link
