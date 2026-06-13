@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Hero } from "@/components/tienda/hero";
 import { CategoryCard } from "@/components/tienda/category-card";
 import { ProductCard } from "@/components/tienda/product-card";
+import { FeaturedProduct } from "@/components/tienda/featured-product";
 import { SectionHeader } from "@/components/tienda/section-header";
 import { StatsCounter } from "@/components/tienda/stats-counter";
 import { Testimonials } from "@/components/tienda/testimonials";
@@ -85,14 +86,23 @@ export default function HomePage() {
             action={verCatalogoLink}
           />
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-80 rounded-2xl" />)}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:auto-rows-[235px]">
+              <Skeleton className="col-span-2 row-span-2 rounded-none min-h-[340px]" />
+              {[2, 3, 4, 5].map((i) => <Skeleton key={i} className="rounded-none min-h-[235px]" />)}
             </div>
           ) : (
-            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {productos.map((prod) => (
-                <StaggerItem key={prod.id}><ProductCard producto={prod} /></StaggerItem>
-              ))}
+            <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:auto-rows-[235px]">
+              {productos.slice(0, 5).map((prod, idx) =>
+                idx === 0 ? (
+                  <StaggerItem key={prod.id} className="col-span-2 lg:row-span-2 h-full">
+                    <FeaturedProduct producto={prod} />
+                  </StaggerItem>
+                ) : (
+                  <StaggerItem key={prod.id} className="h-full">
+                    <ProductCard producto={prod} />
+                  </StaggerItem>
+                )
+              )}
             </StaggerContainer>
           )}
         </div>
@@ -103,22 +113,43 @@ export default function HomePage() {
 
       <CotizadorInline />
 
-      {/* Cómo funciona — numerado, un solo acento */}
-      <section className="max-w-7xl mx-auto px-4 py-16 md:py-20">
-        <SectionHeader eyebrow="Proceso" title="Cómo funciona" sub="4 pasos simples, de tu idea al producto." />
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#e8eaee] rounded-2xl overflow-hidden border border-[#e8eaee]">
+      {/* Cómo funciona — línea de tiempo con números de pliego */}
+      <section className="max-w-7xl mx-auto px-4 py-16 md:py-24">
+        <SectionHeader eyebrow="Proceso" title="De tu idea al taller" sub="Cuatro pasos. Sin vueltas." />
+        <StaggerContainer className="relative mt-12 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-y-0">
+          {/* Riel conector (desktop) */}
+          <div
+            className="pointer-events-none absolute left-0 right-0 top-[52px] hidden h-px lg:block"
+            style={{ background: "var(--mc-line-2)" }}
+            aria-hidden="true"
+          />
           {[
-            { n: "01", title: "Elige tu producto", desc: "Explora el catálogo y selecciona lo que necesitas." },
-            { n: "02", title: "Envía tu diseño", desc: "Sube tu archivo o cuéntanos tu idea y te ayudamos." },
-            { n: "03", title: "Producción", desc: "Imprimimos con tecnología DTF, DTG, sublimación y más." },
-            { n: "04", title: "Recibe o retira", desc: "Despacho a domicilio o retiro en nuestro taller." },
+            { n: "01", title: "Elige tu producto", desc: "Explora el catálogo y configura tu medida con precio en vivo." },
+            { n: "02", title: "Envía tu diseño", desc: "Súbelo y velo a escala, o cuéntanos tu idea y te ayudamos." },
+            { n: "03", title: "Producción", desc: "Imprimimos acá: DTF, DTG, sublimación y gran formato." },
+            { n: "04", title: "Recibe o retira", desc: "Despacho a domicilio o retiro gratis en el taller." },
           ].map((item) => (
-            <StaggerItem key={item.n}>
-              <div className="h-full bg-white p-6 md:p-7">
-                <span className="mc-tech text-2xl font-bold tracking-tight" style={{ color: "var(--mc-ink-3)" }}>{item.n}</span>
-                <hr className="mc-rule my-4" />
-                <h3 className="font-semibold text-[15px] mb-1.5" style={{ color: "var(--mc-ink)" }}>{item.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--mc-ink-2)" }}>{item.desc}</p>
+            <StaggerItem key={item.n} className="relative lg:pr-8">
+              {/* Nodo sobre el riel */}
+              <span
+                className="absolute left-[3px] top-[46px] hidden size-3 rounded-full ring-4 ring-white lg:block"
+                style={{ background: "var(--mc-accent)" }}
+                aria-hidden="true"
+              />
+              <div className="flex items-start gap-4 lg:block">
+                <span
+                  className="pl-poster shrink-0 text-6xl leading-none md:text-7xl lg:text-[5.5rem]"
+                  style={{
+                    color: "transparent",
+                    WebkitTextStroke: "1.5px var(--mc-ink)",
+                  }}
+                >
+                  {item.n}
+                </span>
+                <div className="lg:mt-7">
+                  <h3 className="font-semibold text-lg mb-1.5" style={{ color: "var(--mc-ink)" }}>{item.title}</h3>
+                  <p className="text-sm leading-relaxed max-w-[26ch]" style={{ color: "var(--mc-ink-2)" }}>{item.desc}</p>
+                </div>
               </div>
             </StaggerItem>
           ))}
