@@ -602,20 +602,20 @@ export default function PersonalizarPage() {
     <div className="min-h-screen bg-[#fafafb] flex flex-col">
       {/* Top bar */}
       <div className="bg-white border-b border-[#e8eaee] px-4 py-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <Link
             href={`/productos/${categoriaSlug}/${slug}`}
-            className="flex items-center gap-1.5 text-sm text-[#5b6472] hover:text-[#0f1115]"
+            className="flex items-center gap-1.5 text-sm text-[#5b6472] hover:text-[#0f1115] shrink-0"
           >
             <ArrowLeft className="size-4" />
             <span className="hidden sm:inline">Volver</span>
           </Link>
-          <div className="h-5 w-px bg-[#e8eaee]" />
-          <h1 className="text-sm font-semibold text-[#0f1115] truncate">
+          <div className="h-5 w-px bg-[#e8eaee] shrink-0" />
+          <h1 className="text-sm font-semibold text-[#0f1115] truncate min-w-0">
             Personalizar: {producto.nombre}
           </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Mobile toggle buttons */}
           <button
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100"

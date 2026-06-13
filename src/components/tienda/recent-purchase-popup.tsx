@@ -156,7 +156,7 @@ export function RecentPurchasePopup() {
         }
       `}</style>
       <div
-        className={`fixed bottom-6 left-4 z-40 max-w-xs bg-white rounded-xl shadow-lg border border-[#e8eaee] overflow-hidden ${
+        className={`recent-pop fixed bottom-6 left-4 z-40 max-w-xs bg-white rounded-xl shadow-lg border border-[#e8eaee] overflow-hidden ${
           exiting ? "popup-exit" : "popup-enter"
         }`}
       >

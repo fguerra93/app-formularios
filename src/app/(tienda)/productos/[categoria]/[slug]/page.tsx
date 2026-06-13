@@ -150,6 +150,14 @@ export default function ProductoPage() {
     return () => observer.disconnect();
   }, [producto]);
 
+  // Marca el body cuando la barra fija de compra está visible, para que los
+  // botones flotantes (WhatsApp/scroll-top) suban y el popup se oculte y no
+  // tapen el "Agregar al carrito" en móvil.
+  useEffect(() => {
+    document.body.classList.toggle("has-mobile-cta", showStickyBar);
+    return () => document.body.classList.remove("has-mobile-cta");
+  }, [showStickyBar]);
+
   useEffect(() => {
     setLoading(true);
     fetch(`/api/productos/${slug}`)

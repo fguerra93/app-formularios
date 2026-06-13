@@ -821,3 +821,13 @@ textarea:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .pl-marquee { animation: none; }
 }
+
+/* Botones flotantes vs barra fija de compra (móvil).
+   Cuando la ficha de producto muestra la barra "Agregar al carrito" abajo
+   (`body.has-mobile-cta`), subimos los flotantes y ocultamos el popup de
+   compras para no tapar el botón de compra. Solo aplica < md. */
+@media (max-width: 767px) {
+  body.has-mobile-cta .wa-fab { bottom: 5.5rem; }
+  body.has-mobile-cta .scrolltop-fab { bottom: 10rem; }
+  body.has-mobile-cta .recent-pop { display: none; }
+}
