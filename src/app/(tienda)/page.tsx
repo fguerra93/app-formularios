@@ -99,7 +99,7 @@ export default function HomePage() {
                   </StaggerItem>
                 ) : (
                   <StaggerItem key={prod.id} className="h-full">
-                    <ProductCard producto={prod} />
+                    <FeaturedProduct producto={prod} variant="compact" />
                   </StaggerItem>
                 )
               )}
