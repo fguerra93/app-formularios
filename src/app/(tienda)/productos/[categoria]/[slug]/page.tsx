@@ -12,7 +12,7 @@ import { ProductCard } from "@/components/tienda/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown, Palette, Check, Shield, Clock, Headphones, Zap, Award, ChevronUp, Wrench, Eye, Lightbulb, Target, Layers, Sparkles, Tag, Folder, Users } from "lucide-react";
+import { ShoppingCart, Package, Truck, Info, Star, Send, Bell, MessageCircle, FileDown, Check, Shield, Clock, Headphones, Zap, Award, ChevronUp, Wrench, Eye, Lightbulb, Target, Layers, Sparkles, Tag, Folder, Users } from "lucide-react";
 import { toast } from "sonner";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
 import { PriceCalculator } from "@/components/tienda/price-calculator";
@@ -538,6 +538,7 @@ export default function ProductoPage() {
               productoNombre={producto.nombre}
               vertical={esVertical}
               onAddToCart={handleAddToCartM2}
+              imagenes={producto.imagenes}
             />
           </div>
         </div>
@@ -818,7 +819,6 @@ export default function ProductoPage() {
           <DisenoInline
             productoImagen={mainImage?.url || ""}
             productoNombre={producto.nombre}
-            personalizarHref={`/productos/${categoriaSlug}/${slug}/personalizar`}
           />
 
           {/* Pedido grupal (generaciones, equipos, empresas) */}
@@ -1409,37 +1409,22 @@ export default function ProductoPage() {
       {/* ============ FULL-WIDTH SECTIONS FOR M² PRODUCTS ============ */}
       {producto.precio_m2 && producto.precio_m2 > 0 && (
         <>
-          {/* Fotos del producto + qué incluye (una sola vez) + personalizar */}
-          <div className="grid md:grid-cols-[minmax(0,420px)_1fr] gap-8 mb-12 items-start">
-            <ProductGallery images={producto.imagenes} productName={producto.nombre} />
-            <div>
-              {producto.incluye && producto.incluye.length > 0 && (
-                <>
-                  <p className="mc-tech text-[11px] uppercase tracking-[0.12em] mb-3" style={{ color: "var(--mc-ink-2)" }}>
-                    Qué incluye
-                  </p>
-                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-7">
-                    {producto.incluye.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--mc-ink)" }}>
-                        <Check className="size-4 mt-0.5 shrink-0" style={{ color: "var(--mc-accent-ink)" }} />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+          {/* Qué incluye — la galería y el personalizar ahora viven integrados en el configurador */}
+          {producto.incluye && producto.incluye.length > 0 && (
+            <div className="mb-12 max-w-3xl">
               <p className="mc-tech text-[11px] uppercase tracking-[0.12em] mb-3" style={{ color: "var(--mc-ink-2)" }}>
-                ¿Tienes tu diseño listo?
+                Qué incluye
               </p>
-              <Link
-                href={`/productos/${categoriaSlug}/${slug}/personalizar`}
-                className="mc-btn mc-btn-ghost gap-2"
-              >
-                <Palette className="size-4" />
-                Personalizar este producto
-              </Link>
+              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
+                {producto.incluye.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--mc-ink)" }}>
+                    <Check className="size-4 mt-0.5 shrink-0" style={{ color: "var(--mc-accent-ink)" }} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
 
           {/* TABS - full width for m² products */}
           <div className="mb-8" id="product-info-tabs-m2">

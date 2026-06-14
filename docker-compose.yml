@@ -1,0 +1,31 @@
+# Backend local que replica el Postgres de Cloud SQL (Variante B).
+#
+#   docker compose up -d        # levanta el motor
+#   docker compose down         # lo apaga (conserva datos en el volumen)
+#   docker compose down -v      # lo apaga y BORRA los datos
+#
+# La app usa este motor automáticamente cuando .env.local define
+# DB_HOST + DB_USER (ver src/server/db/pg.ts -> usePg()).
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: printup-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: printup
+      POSTGRES_PASSWORD: printup
+      POSTGRES_DB: printup
+      # Mismo locale/encoding que Cloud SQL (UTF8).
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - printup-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U printup -d printup"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  printup-pgdata:

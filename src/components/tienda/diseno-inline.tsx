@@ -1,34 +1,31 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
-import { ImagePlus, X, Move, Sparkles } from "lucide-react";
+import { ImagePlus, X, Move, Sparkles, Lock } from "lucide-react";
 
 /**
  * Prueba-tu-diseño inline para la ficha de producto estándar.
  *
- * Sin salir de la página: el cliente sube su arte y lo ve superpuesto sobre la
- * foto del producto, lo arrastra y lo escala. Es la versión liviana del estudio
- * completo (`/personalizar`), pensada para "ver cómo quedaría" al instante.
- * Todo es client-side (objectURL), no toca el backend.
+ * Sin salir de la página: el cliente sube su arte (clic o arrastrando) y lo ve
+ * superpuesto sobre la foto del producto, lo arrastra y lo escala. Es la versión
+ * liviana para "ver cómo quedaría" al instante. Todo es client-side (objectURL),
+ * no toca el backend.
  */
 interface DisenoInlineProps {
   productoImagen: string;
   productoNombre: string;
-  personalizarHref: string;
 }
 
-export function DisenoInline({ productoImagen, productoNombre, personalizarHref }: DisenoInlineProps) {
+export function DisenoInline({ productoImagen, productoNombre }: DisenoInlineProps) {
   const [diseno, setDiseno] = useState<string | null>(null);
   const [scale, setScale] = useState(42); // ancho del diseño en % del lienzo
   const [pos, setPos] = useState({ x: 50, y: 40 }); // centro del diseño en %
+  const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ dx: number; dy: number } | null>(null);
 
-  const cargar = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
+  const procesarArchivo = (file?: File | null) => {
     if (!file || !file.type.startsWith("image/")) return;
     setDiseno((prev) => {
       if (prev) URL.revokeObjectURL(prev);
@@ -36,6 +33,18 @@ export function DisenoInline({ productoImagen, productoNombre, personalizarHref 
     });
     setPos({ x: 50, y: 40 });
     setScale(42);
+  };
+
+  const cargar = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    procesarArchivo(file);
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    procesarArchivo(e.dataTransfer.files?.[0]);
   };
 
   const quitar = () => {
@@ -76,15 +85,44 @@ export function DisenoInline({ productoImagen, productoNombre, personalizarHref 
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="flex w-full flex-col items-center gap-2 rounded-xl border-2 border-dashed p-6 transition-colors hover:border-[var(--mc-accent)] hover:bg-[var(--mc-accent-soft)]"
-          style={{ borderColor: "var(--mc-line-2)" }}
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={onDrop}
+          className="group relative flex w-full items-center gap-4 overflow-hidden rounded-2xl border-2 border-dashed px-4 py-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-16px_rgba(0,0,0,0.32)]"
+          style={{
+            borderColor: "var(--mc-accent)",
+            background: dragging ? "var(--mc-accent-soft)" : "linear-gradient(135deg, var(--mc-accent-soft), #ffffff 78%)",
+            transform: dragging ? "scale(1.012)" : undefined,
+          }}
         >
-          <ImagePlus className="size-7" style={{ color: "var(--mc-accent)" }} />
-          <span className="text-sm font-medium" style={{ color: "var(--mc-ink)" }}>
-            Sube tu diseño y míralo sobre el producto
+          {/* glow decorativo */}
+          <span className="pointer-events-none absolute -right-10 -top-12 size-36 rounded-full opacity-30 blur-3xl transition-opacity group-hover:opacity-50" style={{ background: "var(--mc-accent)" }} />
+
+          {/* icono */}
+          <span className="relative flex size-12 shrink-0 items-center justify-center rounded-xl shadow-sm transition-transform group-hover:scale-105 group-hover:rotate-3" style={{ background: "var(--mc-accent)", color: "#fff" }}>
+            <ImagePlus className="size-5" />
+            <span className="absolute inset-0 rounded-xl ring-2 ring-inset ring-white/30" />
           </span>
-          <span className="text-xs" style={{ color: "var(--mc-ink-3)" }}>
-            PNG, JPG o SVG · luego arrástralo y escálalo
+
+          {/* texto */}
+          <span className="relative min-w-0 flex-1">
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="text-[15px] font-bold" style={{ color: "var(--mc-ink)" }}>Sube tu diseño</span>
+              <span className="mc-tech rounded-full border px-2 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-accent-ink)", borderColor: "var(--mc-line-2)" }}>
+                o arrástralo aquí
+              </span>
+            </span>
+            <span className="mt-0.5 block text-[12px] leading-snug" style={{ color: "var(--mc-ink-2)" }}>
+              {dragging ? "Suelta para verlo sobre el producto" : "Míralo sobre el producto al instante"}
+            </span>
+            <span className="mt-2 flex flex-wrap items-center gap-1.5">
+              {["PNG", "JPG", "SVG"].map((f) => (
+                <span key={f} className="mc-tech rounded-md border px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-ink-3)", borderColor: "var(--mc-line-2)" }}>{f}</span>
+              ))}
+              <span className="mc-tech ml-auto inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--mc-ink-3)" }}>
+                <Lock className="size-3" /> queda en tu navegador
+              </span>
+            </span>
           </span>
         </button>
       ) : (
@@ -166,14 +204,6 @@ export function DisenoInline({ productoImagen, productoNombre, personalizarHref 
       )}
 
       <input ref={inputRef} type="file" accept="image/*" onChange={cargar} className="hidden" />
-
-      <Link
-        href={personalizarHref}
-        className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold"
-        style={{ color: "var(--mc-accent)" }}
-      >
-        ¿Texto, clipart, varias caras? Abre el editor completo →
-      </Link>
     </div>
   );
 }

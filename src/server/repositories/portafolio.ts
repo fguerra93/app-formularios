@@ -1,8 +1,9 @@
 import { getDb } from "@/server/db";
 
 /**
- * Acceso al portafolio. Ojo: el sitio público lee la tabla `trabajos`, mientras
- * que el admin gestiona `portafolio_trabajos` (tablas distintas en el esquema actual).
+ * Acceso al portafolio. El sitio público y el admin comparten la misma tabla
+ * `trabajos` (una sola fuente de verdad): lo que se edita en el admin se ve en
+ * el sitio. El admin lista todos; el público filtra por `activo`.
  */
 export const portafolioRepo = {
   /** Trabajos públicos (tabla `trabajos`), con filtros opcionales. */
@@ -26,10 +27,10 @@ export const portafolioRepo = {
     return (data || []) as Record<string, unknown>[];
   },
 
-  // --- Admin: tabla `portafolio_trabajos` ---
+  // --- Admin: gestiona la tabla `trabajos` (misma que el sitio público) ---
   async listAdmin(): Promise<Record<string, unknown>[]> {
     const { data, error } = await getDb()
-      .from("portafolio_trabajos")
+      .from("trabajos")
       .select("*")
       .order("orden", { ascending: true });
     if (error) throw new Error(error.message);
@@ -38,7 +39,7 @@ export const portafolioRepo = {
 
   async create(values: Record<string, unknown>): Promise<Record<string, unknown>> {
     const { data, error } = await getDb()
-      .from("portafolio_trabajos")
+      .from("trabajos")
       .insert(values)
       .select()
       .single();
@@ -51,7 +52,7 @@ export const portafolioRepo = {
     values: Record<string, unknown>
   ): Promise<Record<string, unknown>> {
     const { data, error } = await getDb()
-      .from("portafolio_trabajos")
+      .from("trabajos")
       .update(values)
       .eq("id", id)
       .select()
@@ -62,7 +63,7 @@ export const portafolioRepo = {
 
   async remove(id: string): Promise<void> {
     const { error } = await getDb()
-      .from("portafolio_trabajos")
+      .from("trabajos")
       .delete()
       .eq("id", id);
     if (error) throw new Error(error.message);

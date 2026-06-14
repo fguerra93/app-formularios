@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { ImagePlus, Minus, Plus, ShoppingCart, X } from "lucide-react";
+import { ImagePlus, Minus, Plus, ShoppingCart, X, Ruler, Image as ImageIcon, Lock } from "lucide-react";
 import { formatCLP } from "@/lib/format";
+import { ProductGallery } from "@/components/tienda/image-lightbox";
 
 /**
  * Configurador por m² — la herramienta ES la ficha.
@@ -34,6 +35,8 @@ interface ConfiguradorM2Props {
   /** Producto que se exhibe parado (roller, pendón): activa la silueta humana */
   vertical?: boolean;
   onAddToCart?: (config: ConfiguracionM2) => void;
+  /** Fotos del producto para el lienzo conmutable (Vista a escala ⟷ Fotos) */
+  imagenes?: { url: string; alt?: string }[];
 }
 
 const SEPARACION_CM = 3;
@@ -270,6 +273,7 @@ export function ConfiguradorM2({
   productoNombre,
   vertical = false,
   onAddToCart,
+  imagenes = [],
 }: ConfiguradorM2Props) {
   const presets = (vertical ? PRESETS_VERTICAL : PRESETS_HORIZONTAL).filter(
     (p) => p.ancho <= anchoMaxCm,
@@ -283,17 +287,30 @@ export function ConfiguradorM2({
   const [material, setMaterial] = useState(materiales[0]?.nombre || "");
   const [terminaciones, setTerminaciones] = useState<string[]>([]);
   const [diseno, setDiseno] = useState<string | null>(null);
+  const [vista, setVista] = useState<"escala" | "fotos">("escala");
+  const [dragging, setDragging] = useState(false);
   const disenoInputRef = useRef<HTMLInputElement>(null);
+  const tieneFotos = imagenes.length > 0;
 
-  const cargarDiseno = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    if (!file.type.startsWith("image/")) return;
+  const procesarArchivo = (file?: File | null) => {
+    if (!file || !file.type.startsWith("image/")) return;
     setDiseno((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
     });
+    setVista("escala"); // al subir, muestra el diseño colocado a escala
+  };
+
+  const cargarDiseno = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    procesarArchivo(file);
+  };
+
+  const onDropDiseno = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    procesarArchivo(e.dataTransfer.files?.[0]);
   };
 
   const w = parseFloat(anchoCm) || 0;
@@ -338,43 +355,110 @@ export function ConfiguradorM2({
 
   return (
     <section id="configurador" className="grid lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-10 items-stretch">
-      {/* Preview a escala */}
+      {/* Lienzo conmutable: Vista a escala (tu diseño) ⟷ Fotos del producto */}
       <div className="flex flex-col gap-3">
-        <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={diseno} />
         <div className="flex items-center gap-2">
-          <input
-            ref={disenoInputRef}
-            type="file"
-            accept="image/*"
-            onChange={cargarDiseno}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => disenoInputRef.current?.click()}
-            className="mc-btn mc-btn-ghost flex-1 gap-2 text-sm"
-          >
-            <ImagePlus className="size-4" />
-            {diseno ? "Cambiar mi diseño" : "Sube tu diseño y míralo a escala"}
-          </button>
-          {diseno && (
+          <div className="inline-flex rounded-full border p-0.5" style={{ borderColor: "var(--mc-line-2)", background: "#fff" }}>
             <button
               type="button"
-              aria-label="Quitar diseño"
-              onClick={() => {
-                URL.revokeObjectURL(diseno);
-                setDiseno(null);
-              }}
-              className="mc-btn mc-btn-ghost px-3"
+              onClick={() => setVista("escala")}
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors"
+              style={vista === "escala" ? { background: "var(--mc-ink)", color: "#fff" } : { color: "var(--mc-ink-2)" }}
             >
-              <X className="size-4" />
+              <Ruler className="size-3.5" /> Vista a escala
             </button>
-          )}
+            {tieneFotos && (
+              <button
+                type="button"
+                onClick={() => setVista("fotos")}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold transition-colors"
+                style={vista === "fotos" ? { background: "var(--mc-ink)", color: "#fff" } : { color: "var(--mc-ink-2)" }}
+              >
+                <ImageIcon className="size-3.5" /> Fotos
+              </button>
+            )}
+          </div>
         </div>
+
+        {vista === "escala" || !tieneFotos ? (
+          <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={diseno} />
+        ) : (
+          <div className="rounded-2xl border p-4 md:p-5" style={{ borderColor: "var(--mc-line)", background: "var(--mc-surface)" }}>
+            <ProductGallery images={imagenes} productName={productoNombre} />
+          </div>
+        )}
       </div>
 
       {/* Controles + precio */}
       <div className="flex flex-col">
+        {/* Sube tu diseño — moderno, a la derecha */}
+        <input ref={disenoInputRef} type="file" accept="image/*" onChange={cargarDiseno} className="hidden" />
+        {!diseno ? (
+          <button
+            type="button"
+            onClick={() => disenoInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={onDropDiseno}
+            className="group relative mb-5 flex w-full items-center gap-4 overflow-hidden rounded-2xl border-2 border-dashed px-4 py-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_34px_-16px_rgba(0,0,0,0.32)]"
+            style={{
+              borderColor: "var(--mc-accent)",
+              background: dragging ? "var(--mc-accent-soft)" : "linear-gradient(135deg, var(--mc-accent-soft), #ffffff 78%)",
+              transform: dragging ? "scale(1.012)" : undefined,
+            }}
+          >
+            {/* glow decorativo */}
+            <span className="pointer-events-none absolute -right-10 -top-12 size-36 rounded-full opacity-30 blur-3xl transition-opacity group-hover:opacity-50" style={{ background: "var(--mc-accent)" }} />
+
+            {/* icono */}
+            <span className="relative flex size-12 shrink-0 items-center justify-center rounded-xl shadow-sm transition-transform group-hover:scale-105 group-hover:rotate-3" style={{ background: "var(--mc-accent)", color: "#fff" }}>
+              <ImagePlus className="size-5" />
+              <span className="absolute inset-0 rounded-xl ring-2 ring-inset ring-white/30" />
+            </span>
+
+            {/* texto */}
+            <span className="relative min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-[15px] font-bold" style={{ color: "var(--mc-ink)" }}>Sube tu diseño</span>
+                <span className="mc-tech rounded-full border px-2 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-accent-ink)", borderColor: "var(--mc-line-2)" }}>
+                  o arrástralo aquí
+                </span>
+              </span>
+              <span className="mt-0.5 block text-[12px] leading-snug" style={{ color: "var(--mc-ink-2)" }}>
+                {dragging ? "Suelta para verlo a escala real" : "Velo a escala real sobre el producto, al instante"}
+              </span>
+              <span className="mt-2 flex flex-wrap items-center gap-1.5">
+                {["PNG", "JPG", "SVG"].map((f) => (
+                  <span key={f} className="mc-tech rounded-md border px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-ink-3)", borderColor: "var(--mc-line-2)" }}>{f}</span>
+                ))}
+                <span className="mc-tech ml-auto inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--mc-ink-3)" }}>
+                  <Lock className="size-3" /> queda en tu navegador
+                </span>
+              </span>
+            </span>
+          </button>
+        ) : (
+          <div className="mb-5 flex items-center gap-3 rounded-2xl border p-2.5" style={{ borderColor: "var(--mc-line-2)", background: "#fff" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={diseno} alt="Tu diseño" className="size-12 shrink-0 rounded-lg border object-cover" style={{ borderColor: "var(--mc-line-2)" }} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>Tu diseño cargado</p>
+              <p className="text-[12px]" style={{ color: "var(--mc-ink-3)" }}>Se ve en la vista a escala</p>
+            </div>
+            <button type="button" onClick={() => disenoInputRef.current?.click()} className="mc-btn mc-btn-ghost gap-1.5 px-3 py-2 text-xs">
+              <ImagePlus className="size-3.5" /> Cambiar
+            </button>
+            <button
+              type="button"
+              aria-label="Quitar diseño"
+              onClick={() => { URL.revokeObjectURL(diseno); setDiseno(null); }}
+              className="mc-btn mc-btn-ghost px-2.5 py-2"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        )}
+
         {/* Medidas */}
         <div>
           <p className="mc-tech text-[11px] uppercase tracking-[0.12em] mb-2.5" style={{ color: "var(--mc-ink-2)" }}>

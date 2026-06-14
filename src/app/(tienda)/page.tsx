@@ -217,7 +217,7 @@ export default function HomePage() {
       {/* Pliego fotográfico — poleras a pantalla completa */}
       <section className="relative overflow-hidden" style={{ background: "#0a0b0d" }}>
         <img
-          src="https://printup.cl/cdn/shop/files/POLERAS.jpg"
+          src="https://cdn.shopify.com/s/files/1/0865/0077/0149/files/DTFTEXTIL2.jpg?v=1768931472"
           alt=""
           aria-hidden="true"
           className="absolute inset-0 size-full object-cover object-center"
@@ -226,12 +226,12 @@ export default function HomePage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(98deg, rgba(10,11,13,.95) 0%, rgba(10,11,13,.78) 48%, rgba(10,11,13,.3) 100%)",
+              "linear-gradient(100deg, rgba(10,11,13,.93) 0%, rgba(10,11,13,.72) 42%, rgba(10,11,13,.22) 76%, rgba(10,11,13,0) 100%)",
           }}
         />
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 md:py-28">
           <p className="mc-tech text-[12px] uppercase tracking-[0.16em] mb-4" style={{ color: "var(--mc-accent)" }}>
-            Poleras personalizadas · DTG y DTF
+            Estampado textil · DTF y DTG
           </p>
           <h2 className="pl-poster text-white text-5xl md:text-7xl max-w-3xl">
             Tu diseño,
