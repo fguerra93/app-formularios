@@ -18,8 +18,9 @@ import { ProductGallery } from "@/components/tienda/image-lightbox";
 import { PriceCalculator } from "@/components/tienda/price-calculator";
 import { ConfiguradorM2, type ConfiguracionM2 } from "@/components/tienda/configurador-m2";
 import { DisenoInline } from "@/components/tienda/diseno-inline";
+import { PersonalizadorArchivos } from "@/components/tienda/personalizador-archivos";
 import { SpecTable } from "@/components/tienda/spec-table";
-import type { Producto, PrecioCantidad, PreguntaProducto } from "@/lib/types";
+import type { Producto, PrecioCantidad, PreguntaProducto, ArchivoDiseno } from "@/lib/types";
 
 interface Review {
   id: string;
@@ -93,6 +94,7 @@ export default function ProductoPage() {
   const [relacionados, setRelacionados] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [cantidad, setCantidad] = useState(1);
+  const [archivosPz, setArchivosPz] = useState<ArchivoDiseno[]>([]);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"descripcion" | "especificaciones" | "envio" | "preguntas">("descripcion");
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -309,6 +311,29 @@ export default function ProductoPage() {
       variante: Object.keys(selectedVariants).length > 0 ? selectedVariants : null,
       precio_extra: precioExtra,
     });
+  };
+
+  // Agrega el lote de diseños como UNA sola línea (única por __id, no se fusiona
+  // con otro lote del mismo producto). cantidad = número de archivos.
+  const handleAddToCartPersonalizado = () => {
+    const n = archivosPz.length;
+    if (n === 0) return;
+    addItem({
+      producto_id: producto.id,
+      nombre: producto.nombre,
+      precio: getQuantityPrice(n),
+      cantidad: n,
+      imagen: archivosPz[0]?.preview || mainImage?.url || "",
+      slug: producto.slug,
+      categoria_slug: categoriaSlug,
+      variante: {
+        ...(Object.keys(selectedVariants).length > 0 ? selectedVariants : {}),
+        __id: Math.random().toString(36).slice(2, 9),
+      },
+      precio_extra: precioExtra,
+      archivos: archivosPz,
+    });
+    setArchivosPz([]);
   };
 
   const handleAddToCartM2 = (config: ConfiguracionM2) => {
@@ -781,23 +806,39 @@ export default function ProductoPage() {
                 </div>
               )}
 
-              {/* Quantity + Add to cart */}
-              <div className="flex items-center gap-3 mb-3">
-                <QuantitySelector
-                  value={cantidad}
-                  onChange={setCantidad}
-                  max={producto.stock}
-                />
+              {/* Personalización: sube tus diseños (PNG/PDF, hasta 5) */}
+              <div className="mb-3">
+                <PersonalizadorArchivos archivos={archivosPz} onChange={setArchivosPz} />
+              </div>
+
+              {/* Add to cart — con archivos: 1 línea de N diseños; sin archivos: cantidad normal */}
+              {archivosPz.length > 0 ? (
                 <Button
-                  onClick={handleAddToCart}
-                  disabled={producto.stock === 0}
-                  className="flex-1 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6"
+                  onClick={handleAddToCartPersonalizado}
+                  className="w-full bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6 mb-3"
                   size="lg"
                 >
                   <ShoppingCart className="size-5 mr-2" />
-                  {producto.stock === 0 ? "Agotado" : "Agregar al Carrito"}
+                  Agregar {archivosPz.length} diseño{archivosPz.length > 1 ? "s" : ""} al carrito
                 </Button>
-              </div>
+              ) : (
+                <div className="flex items-center gap-3 mb-3">
+                  <QuantitySelector
+                    value={cantidad}
+                    onChange={setCantidad}
+                    max={producto.stock}
+                  />
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={producto.stock === 0}
+                    className="flex-1 bg-[#0f1115] hover:bg-[#000000] text-white font-bold py-6"
+                    size="lg"
+                  >
+                    <ShoppingCart className="size-5 mr-2" />
+                    {producto.stock === 0 ? "Agotado" : "Agregar al Carrito"}
+                  </Button>
+                </div>
+              )}
 
               {/* WhatsApp cotizar button - always visible like ChileImprime */}
               <a

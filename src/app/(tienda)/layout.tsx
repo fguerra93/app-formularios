@@ -60,9 +60,8 @@ const organizationSchema = {
     },
   ],
   sameAs: [
-    "https://www.facebook.com/printup.cl",
-    "https://www.instagram.com/printup.cl",
-    "https://www.tiktok.com/@printup.cl",
+    "https://www.instagram.com/printup.impresiones/",
+    "https://www.facebook.com/profile.php?id=61575800949071",
   ],
 };
 

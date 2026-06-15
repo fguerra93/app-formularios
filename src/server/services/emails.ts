@@ -243,7 +243,7 @@ export async function emailCarritoAbandonado(input: {
     <ul style="margin:0 0 14px;padding-left:18px;">${lista}${extra}</ul>
     <p style="font-size:18px;color:#0f1115;font-weight:bold;margin:0 0 18px;font-family:Consolas,Menlo,monospace;">Total: ${clp(input.total)} <span style="font-size:12px;font-weight:normal;color:#5b6472;">IVA incluido</span></p>
     <a href="${input.linkRecuperacion}" style="display:inline-block;background:#0f1115;color:#ffffff;text-decoration:none;padding:12px 22px;font-size:14px;font-weight:bold;">Retomar mi compra</a>
-    <p style="font-size:12px;color:#8b94a3;margin:16px 0 0;">¿Dudas con medidas o archivos? Respondemos al tiro por WhatsApp.</p>`;
+    <p style="font-size:12px;color:#8b94a3;margin:16px 0 0;">¿Dudas con medidas o archivos? Te respondemos rápido por WhatsApp.</p>`;
 
   return enviar(
     input.email,

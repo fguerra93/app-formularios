@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Hero } from "@/components/tienda/hero";
 import { CategoryCard } from "@/components/tienda/category-card";
 import { ProductCard } from "@/components/tienda/product-card";
-import { FeaturedProduct } from "@/components/tienda/featured-product";
 import { SectionHeader } from "@/components/tienda/section-header";
 import { StatsCounter } from "@/components/tienda/stats-counter";
 import { Testimonials } from "@/components/tienda/testimonials";
@@ -13,7 +12,7 @@ import { FaqAccordion } from "@/components/tienda/faq-accordion";
 import { CotizadorInline } from "@/components/tienda/cotizador";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Categoria, Producto, Trabajo, ClienteDestacado } from "@/lib/types";
-import { ArrowRight, Image as ImageIcon } from "lucide-react";
+import { ArrowRight, Image as ImageIcon, Clock, Package, Eye, Truck } from "lucide-react";
 import { StaggerContainer, StaggerItem } from "@/components/tienda/motion";
 
 const verCatalogoLink = (
@@ -49,6 +48,44 @@ export default function HomePage() {
     <>
       <Hero />
 
+      {/* Transición amable banner → contenido: guiño CMYK fino + degradado a off-white */}
+      <div aria-hidden="true">
+        <div
+          className="h-[3px] w-full"
+          style={{ background: "linear-gradient(90deg,#00B4D8,#1B2A6B,#E91E8C,#FF9710)", opacity: 0.6 }}
+        />
+        <div
+          className="h-16 md:h-24"
+          style={{ background: "linear-gradient(180deg,#0a0b0d 0%,#11131a 35%,#f5f6f9 100%)" }}
+        />
+      </div>
+
+      <div style={{ background: "#f5f6f9" }}>
+      {/* Qué resolvemos — el porqué, reforzado */}
+      <section className="max-w-7xl mx-auto px-4 pt-16 md:pt-20">
+        <SectionHeader
+          eyebrow="Por qué PrintUp"
+          title="Imprimir, sin dolores de cabeza"
+          sub="Lo que más nos agradecen quienes ya imprimen con nosotros."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { icon: Clock, pain: "¿Cotizaciones que tardan días?", sol: "Te respondemos en minutos por WhatsApp, no en 48 horas." },
+            { icon: Package, pain: "¿Mínimos imposibles?", sol: "Imprimimos desde 1 unidad. Una polera o cien, da igual." },
+            { icon: Eye, pain: "¿No sabes preparar el archivo?", sol: "Pruébalo en la ficha y lo revisamos antes de imprimir." },
+            { icon: Truck, pain: "¿Lo necesitas ya?", sol: "Sale del taller en 24–48 h. Retiro en Doñihue o despacho." },
+          ].map((c) => (
+            <div key={c.pain} className="rounded-2xl border bg-white p-5 transition-shadow hover:shadow-[0_10px_30px_-16px_rgba(15,17,21,.25)]" style={{ borderColor: "var(--mc-line)" }}>
+              <div className="flex size-10 items-center justify-center rounded-xl mb-3" style={{ background: "var(--mc-accent-soft)" }}>
+                <c.icon className="size-5" style={{ color: "var(--mc-accent-ink)" }} />
+              </div>
+              <p className="text-sm font-bold" style={{ color: "var(--mc-ink)" }}>{c.pain}</p>
+              <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--mc-ink-2)" }}>{c.sol}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Categorías */}
       <section className="max-w-7xl mx-auto px-4 py-16 md:py-20">
         <SectionHeader
@@ -64,15 +101,22 @@ export default function HomePage() {
           </div>
         ) : (
           <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:auto-rows-[210px]">
-            {categorias.map((cat, idx) => (
-              <StaggerItem key={cat.id} className={idx === 0 ? "col-span-2 lg:row-span-2 h-full" : "h-full"}>
-                <CategoryCard
-                  categoria={cat}
-                  featured={idx === 0}
-                  productCount={(cat as Categoria & { product_count?: number }).product_count}
-                />
-              </StaggerItem>
-            ))}
+            {(() => {
+              // Gráfica Publicitaria es la protagonista: ocupa la celda grande.
+              const grafica = categorias.find((c) => c.slug === "grafica-publicitaria");
+              const ordenadas = grafica
+                ? [grafica, ...categorias.filter((c) => c.id !== grafica.id)]
+                : categorias;
+              return ordenadas.map((cat, idx) => (
+                <StaggerItem key={cat.id} className={idx === 0 ? "col-span-2 lg:row-span-2 h-full" : "h-full"}>
+                  <CategoryCard
+                    categoria={cat}
+                    featured={idx === 0}
+                    productCount={(cat as Categoria & { product_count?: number }).product_count}
+                  />
+                </StaggerItem>
+              ));
+            })()}
           </StaggerContainer>
         )}
       </section>
@@ -86,23 +130,23 @@ export default function HomePage() {
             action={verCatalogoLink}
           />
           {loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:auto-rows-[235px]">
-              <Skeleton className="col-span-2 row-span-2 rounded-none min-h-[340px]" />
-              {[2, 3, 4, 5].map((i) => <Skeleton key={i} className="rounded-none min-h-[235px]" />)}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="rounded-2xl min-h-[360px]" />)}
             </div>
           ) : (
-            <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:auto-rows-[235px]">
-              {productos.slice(0, 5).map((prod, idx) =>
-                idx === 0 ? (
-                  <StaggerItem key={prod.id} className="col-span-2 lg:row-span-2 h-full">
-                    <FeaturedProduct producto={prod} />
-                  </StaggerItem>
-                ) : (
-                  <StaggerItem key={prod.id} className="h-full">
-                    <FeaturedProduct producto={prod} variant="compact" />
-                  </StaggerItem>
-                )
-              )}
+            <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+              {productos.slice(0, 4).map((prod, idx) => (
+                <StaggerItem key={prod.id} className="relative">
+                  <span
+                    className="absolute -top-2 -left-2 z-10 flex size-7 items-center justify-center rounded-full text-xs font-bold shadow-md"
+                    style={{ background: "var(--mc-ink)", color: "#fff" }}
+                    aria-hidden="true"
+                  >
+                    {idx + 1}
+                  </span>
+                  <ProductCard producto={prod} />
+                </StaggerItem>
+              ))}
             </StaggerContainer>
           )}
         </div>
@@ -266,6 +310,7 @@ export default function HomePage() {
         <SectionHeader eyebrow="Preguntas frecuentes" title="Resolvemos tus dudas" />
         <FaqAccordion limit={4} />
       </section>
+      </div>
     </>
   );
 }

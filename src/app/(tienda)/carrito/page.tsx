@@ -7,7 +7,7 @@ import { formatCLP } from "@/lib/format";
 import { Breadcrumb } from "@/components/tienda/breadcrumb";
 import { QuantitySelector } from "@/components/tienda/quantity-selector";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Trash2, Package, ChevronDown, ChevronUp, Tag, X } from "lucide-react";
+import { ShoppingBag, Trash2, Package, ChevronDown, ChevronUp, Tag, X, FileText } from "lucide-react";
 import { toast } from "sonner";
 import type { ZonaEnvio } from "@/lib/types";
 
@@ -192,23 +192,51 @@ export default function CarritoPage() {
                   >
                     {item.nombre}
                   </Link>
-                  {item.variante && Object.keys(item.variante).length > 0 && (
+                  {item.variante && Object.keys(item.variante).filter((k) => !k.startsWith("__")).length > 0 && (
                     <p className="text-xs text-[#5b6472] mt-0.5">
                       {Object.entries(item.variante)
+                        .filter(([k]) => !k.startsWith("__"))
                         .map(([k, v]) => `${k}: ${v}`)
                         .join(" | ")}
                     </p>
+                  )}
+                  {item.archivos && item.archivos.length > 0 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      {item.archivos.map((a, i) => (
+                        <span
+                          key={i}
+                          title={a.nombre + (a.nota ? ` — ${a.nota}` : "")}
+                          className="flex size-11 items-center justify-center overflow-hidden rounded-md border border-[#e8eaee] bg-white"
+                        >
+                          {a.preview ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={a.preview} alt={a.nombre} className="size-full object-contain" />
+                          ) : (
+                            <FileText className="size-5 text-[#0e7490]" />
+                          )}
+                        </span>
+                      ))}
+                      <span className="text-xs text-[#8b94a3]">
+                        {item.archivos.length} diseño{item.archivos.length > 1 ? "s" : ""} · 1 archivo = 1 impresión
+                      </span>
+                    </div>
                   )}
                   <p className="text-sm font-bold text-[#0f1115] mt-1">
                     {formatCLP(unitPrice)}
                   </p>
                   <div className="flex items-center gap-4 mt-3">
-                    <QuantitySelector
-                      value={item.cantidad}
-                      onChange={(q) =>
-                        updateQuantity(item.producto_id, q, item.variante)
-                      }
-                    />
+                    {item.archivos && item.archivos.length > 0 ? (
+                      <span className="text-sm font-medium text-[#0f1115]">
+                        {item.cantidad} {item.cantidad > 1 ? "unidades" : "unidad"}
+                      </span>
+                    ) : (
+                      <QuantitySelector
+                        value={item.cantidad}
+                        onChange={(q) =>
+                          updateQuantity(item.producto_id, q, item.variante)
+                        }
+                      />
+                    )}
                     <span className="text-sm font-semibold text-[#0f1115]">
                       {formatCLP(unitPrice * item.cantidad)}
                     </span>

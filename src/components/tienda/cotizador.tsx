@@ -53,9 +53,9 @@ export function CotizadorInline() {
               Orden de cotización
             </span>
             <h2 className="pl-poster text-4xl md:text-5xl text-white mt-3 mb-4">
-              Precio al tiro,
+              Cotiza rápido,
               <br />
-              <span style={{ color: "var(--mc-accent)" }}>no en 48 horas.</span>
+              <span style={{ color: "var(--mc-accent)" }}>responde en minutos.</span>
             </h2>
             <p className="text-white/60 max-w-md text-sm md:text-base leading-relaxed">
               Dinos qué necesitas y te respondemos por WhatsApp con precio y plazo.

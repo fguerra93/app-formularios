@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Minus, Plus, ShoppingBag } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, FileText } from "lucide-react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
@@ -76,46 +76,76 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                       <p className="text-sm font-semibold text-[#0f1115] truncate">
                         {item.nombre}
                       </p>
-                      {item.variante && Object.keys(item.variante).length > 0 && (
+                      {item.variante && Object.keys(item.variante).filter((k) => !k.startsWith("__")).length > 0 && (
                         <p className="text-xs text-[#5b6472]">
                           {Object.entries(item.variante)
+                            .filter(([k]) => !k.startsWith("__"))
                             .map(([k, v]) => `${k}: ${v}`)
                             .join(" | ")}
                         </p>
+                      )}
+                      {item.archivos && item.archivos.length > 0 && (
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          {item.archivos.map((a, i) => (
+                            <span
+                              key={i}
+                              title={a.nombre + (a.nota ? ` — ${a.nota}` : "")}
+                              className="flex size-9 items-center justify-center overflow-hidden rounded-md border border-[#e8eaee] bg-white"
+                            >
+                              {a.preview ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={a.preview} alt={a.nombre} className="size-full object-contain" />
+                              ) : (
+                                <FileText className="size-4 text-[#0e7490]" />
+                              )}
+                            </span>
+                          ))}
+                          <span className="text-[11px] text-[#8b94a3]">
+                            {item.archivos.length} diseño{item.archivos.length > 1 ? "s" : ""}
+                          </span>
+                        </div>
                       )}
                       <p className="text-sm font-bold text-[#0f1115] mt-1">
                         {formatCLP(unitPrice)}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
-                        <button
-                          onClick={() =>
-                            updateQuantity(
-                              item.producto_id,
-                              item.cantidad - 1,
-                              item.variante
-                            )
-                          }
-                          className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
-                          aria-label="Reducir cantidad"
-                        >
-                          <Minus className="size-3" />
-                        </button>
-                        <span className="text-sm font-medium w-6 text-center">
-                          {item.cantidad}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(
-                              item.producto_id,
-                              item.cantidad + 1,
-                              item.variante
-                            )
-                          }
-                          className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
-                          aria-label="Aumentar cantidad"
-                        >
-                          <Plus className="size-3" />
-                        </button>
+                        {item.archivos && item.archivos.length > 0 ? (
+                          <span className="text-sm font-medium text-[#0f1115]">
+                            {item.cantidad} {item.cantidad > 1 ? "unidades" : "unidad"}
+                          </span>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.producto_id,
+                                  item.cantidad - 1,
+                                  item.variante
+                                )
+                              }
+                              className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
+                              aria-label="Reducir cantidad"
+                            >
+                              <Minus className="size-3" />
+                            </button>
+                            <span className="text-sm font-medium w-6 text-center">
+                              {item.cantidad}
+                            </span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.producto_id,
+                                  item.cantidad + 1,
+                                  item.variante
+                                )
+                              }
+                              className="w-7 h-7 flex items-center justify-center rounded border border-[#e8eaee] hover:bg-gray-50"
+                              aria-label="Aumentar cantidad"
+                            >
+                              <Plus className="size-3" />
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={() =>
                             removeItem(item.producto_id, item.variante)

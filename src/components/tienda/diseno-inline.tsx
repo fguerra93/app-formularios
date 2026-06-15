@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ImagePlus, X, Move, Sparkles, Lock } from "lucide-react";
+import { ImagePlus, X, Move, Sparkles, Lock, ArrowRight, FileText } from "lucide-react";
 
 /**
  * Prueba-tu-diseño inline para la ficha de producto estándar.
@@ -21,16 +21,22 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
   const [scale, setScale] = useState(42); // ancho del diseño en % del lienzo
   const [pos, setPos] = useState({ x: 50, y: 40 }); // centro del diseño en %
   const [dragging, setDragging] = useState(false);
+  const [disenoEsPdf, setDisenoEsPdf] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ dx: number; dy: number } | null>(null);
 
+  // Solo PNG o PDF. El PDF no se previsualiza sobre el producto (se imprime tal cual).
   const procesarArchivo = (file?: File | null) => {
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file) return;
+    const esPng = file.type === "image/png" || /\.png$/i.test(file.name);
+    const esPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!esPng && !esPdf) return;
     setDiseno((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
     });
+    setDisenoEsPdf(esPdf);
     setPos({ x: 50, y: 40 });
     setScale(42);
   };
@@ -50,6 +56,7 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
   const quitar = () => {
     if (diseno) URL.revokeObjectURL(diseno);
     setDiseno(null);
+    setDisenoEsPdf(false);
   };
 
   // Arrastrar el diseño con pointer events (mouse + touch)
@@ -74,11 +81,32 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
 
   return (
     <div className="mb-4 rounded-2xl border p-4" style={{ borderColor: "var(--mc-line)" }}>
-      <div className="mb-3 flex items-center gap-2">
-        <Sparkles className="size-4" style={{ color: "var(--mc-accent)" }} />
-        <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>
-          Pruébalo con tu diseño
-        </p>
+      <div className="mb-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="size-4" style={{ color: "var(--mc-accent)" }} />
+          <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>
+            Pruébalo con tu diseño
+          </p>
+        </div>
+        {/* Cómo funciona, de un vistazo */}
+        <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px]" style={{ color: "var(--mc-ink-2)" }}>
+          {[
+            { n: "1", t: "Súbelo" },
+            { n: "2", t: "Arrástralo y escálalo" },
+            { n: "3", t: "Mira cómo queda" },
+          ].map((s, i) => (
+            <span key={s.n} className="inline-flex items-center gap-1.5">
+              {i > 0 && <ArrowRight className="size-3 opacity-40" />}
+              <span
+                className="inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold"
+                style={{ background: "var(--mc-accent-soft)", color: "var(--mc-accent-ink)" }}
+              >
+                {s.n}
+              </span>
+              {s.t}
+            </span>
+          ))}
+        </div>
       </div>
 
       {!diseno ? (
@@ -116,7 +144,7 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
               {dragging ? "Suelta para verlo sobre el producto" : "Míralo sobre el producto al instante"}
             </span>
             <span className="mt-2 flex flex-wrap items-center gap-1.5">
-              {["PNG", "JPG", "SVG"].map((f) => (
+              {["PNG", "PDF"].map((f) => (
                 <span key={f} className="mc-tech rounded-md border px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-ink-3)", borderColor: "var(--mc-line-2)" }}>{f}</span>
               ))}
               <span className="mc-tech ml-auto inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--mc-ink-3)" }}>
@@ -125,6 +153,22 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
             </span>
           </span>
         </button>
+      ) : disenoEsPdf ? (
+        <div className="flex items-center gap-3 rounded-xl border p-3" style={{ borderColor: "var(--mc-line-2)", background: "#fff" }}>
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-lg border" style={{ borderColor: "var(--mc-line-2)", background: "var(--mc-surface)" }}>
+            <FileText className="size-6" style={{ color: "var(--mc-accent-ink)" }} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>PDF cargado</p>
+            <p className="text-[12px]" style={{ color: "var(--mc-ink-3)" }}>Lo imprimimos tal cual. La vista previa sobre el producto es solo para imágenes.</p>
+          </div>
+          <button type="button" onClick={() => inputRef.current?.click()} className="mc-btn mc-btn-ghost gap-1.5 px-3 py-2 text-xs">
+            <ImagePlus className="size-3.5" /> Cambiar
+          </button>
+          <button type="button" onClick={quitar} aria-label="Quitar diseño" className="mc-btn mc-btn-ghost px-2.5 py-2">
+            <X className="size-4" />
+          </button>
+        </div>
       ) : (
         <>
           <div
@@ -203,7 +247,7 @@ export function DisenoInline({ productoImagen, productoNombre }: DisenoInlinePro
         </>
       )}
 
-      <input ref={inputRef} type="file" accept="image/*" onChange={cargar} className="hidden" />
+      <input ref={inputRef} type="file" accept=".png,.pdf,image/png,application/pdf" onChange={cargar} className="hidden" />
     </div>
   );
 }

@@ -101,43 +101,44 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Col 1: Brand */}
         <div>
-          <Logo tinta="#ffffff" className="h-11 w-auto" />
-          <p className="mt-3 text-sm text-white/70 leading-relaxed">
-            Tu impresión, nuestra huella. Servicios de impresión y publicidad en Doñihue, Región de O&apos;Higgins.
+          <span className="inline-block rounded-xl bg-white px-3 py-2 shadow-sm">
+            <Logo className="h-9 w-auto" />
+          </span>
+          <p className="mt-4 text-sm text-white/70 leading-relaxed">
+            Imprenta y publicidad en Doñihue, Región de O&apos;Higgins. Imprimimos en
+            nuestro taller y te respondemos rápido.
           </p>
           <div className="flex gap-3 mt-4">
             <a
-              href="https://www.facebook.com/printup.cl"
+              href="https://www.instagram.com/printup.impresiones/"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label="Facebook"
-            >
-              <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
-            <a
-              href="https://www.instagram.com/printup.cl"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label="Instagram"
+              aria-label="Instagram @printup.impresiones"
             >
               <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
               </svg>
             </a>
             <a
-              href="https://www.tiktok.com/@printup.cl"
+              href="https://www.facebook.com/profile.php?id=61575800949071"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-              aria-label="TikTok"
+              aria-label="Facebook PrintUp"
             >
               <svg className="size-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.48v-7.13a8.16 8.16 0 005.58 2.2v-3.45a4.85 4.85 0 01-2-.61z" />
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
+            </a>
+            <a
+              href="https://wa.me/56966126645"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#25D366] transition-colors"
+              aria-label="WhatsApp"
+            >
+              <svg className="size-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.638-1.467A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75c-2.17 0-4.207-.666-5.895-1.803l-.422-.262-2.753.871.912-2.686-.29-.44A9.712 9.712 0 012.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75z"/></svg>
             </a>
           </div>
         </div>
@@ -149,6 +150,11 @@ export function Footer() {
             <li>
               <Link href="/productos" className="text-sm text-white/70 hover:text-white transition-colors">
                 Productos
+              </Link>
+            </li>
+            <li>
+              <Link href="/como-comprar" className="text-sm text-white/70 hover:text-white transition-colors">
+                Cómo comprar
               </Link>
             </li>
             <li>
@@ -194,26 +200,34 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Col 3: Info */}
+        {/* Col 3: Horarios & ubicación (datos reales) */}
         <div>
-          <h3 className="font-bold text-sm uppercase tracking-wider mb-4">Informacion</h3>
-          <ul className="space-y-2.5">
-            <li className="flex items-start gap-2 text-sm text-white/70">
-              <Clock className="size-4 mt-0.5 shrink-0" />
-              Lun-Vie 9:00-18:00 / Sab 10:00-14:00
+          <h3 className="font-bold text-sm uppercase tracking-wider mb-4">Horarios &amp; ubicación</h3>
+          <div className="mb-3">
+            <ScheduleBadge showDetail={false} />
+          </div>
+          <ul className="space-y-3 text-sm text-white/70">
+            <li className="flex items-start gap-2">
+              <MapPin className="size-4 mt-0.5 shrink-0 text-[#38bdf8]" />
+              <span>
+                <span className="text-white font-medium">Tienda</span> — Errázuriz 09, Carretera H-30
+                <br />
+                <span className="text-white/55 text-[13px]">L–J 9–14 · 15:30–18 · V 9–12 · 13:30–18 · S 9–14</span>
+              </span>
             </li>
-            <li>
-              <ScheduleBadge showDetail={false} />
+            <li className="flex items-start gap-2">
+              <MapPin className="size-4 mt-0.5 shrink-0 text-[#38bdf8]" />
+              <span>
+                <span className="text-white font-medium">Taller</span> — Francisco Lira 082, Doñihue
+                <br />
+                <span className="text-white/55 text-[13px]">Retiro L–V 15:30–18</span>
+              </span>
             </li>
-            <li className="flex items-start gap-2 text-sm text-white/70">
-              <MapPin className="size-4 mt-0.5 shrink-0" />
-              Errazuriz 09 / Francisco Lira 082, Donihue
-            </li>
-            <li className="text-sm text-white/70">
-              Despachos: Miercoles y Viernes
-            </li>
-            <li className="text-sm text-white/70">
-              Envio gratis sobre $50.000
+            <li className="flex items-start gap-2">
+              <Clock className="size-4 mt-0.5 shrink-0 text-[#38bdf8]" />
+              <span>
+                <span className="text-white font-medium">Online</span> — L–V 10–18 · despachos Mié y Vie · envío gratis sobre $50.000
+              </span>
             </li>
           </ul>
         </div>
@@ -252,8 +266,28 @@ export function Footer() {
 
       {/* Bottom */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-white/50">
-          &copy; 2026 PrintUp - Servicios Graficos Spa - RUT 78.114.353-7
+        <div className="max-w-7xl mx-auto px-4 sm:pr-24 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Sello: proveedor del Estado — Mercado Público / ChileCompra */}
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center rounded-lg bg-white px-3 py-2 shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/img/chilecompra-mercadopublico.png"
+                alt="ChileCompra · Mercado Público"
+                width={595}
+                height={131}
+                className="h-7 w-auto"
+              />
+            </span>
+            <span className="text-xs leading-tight text-white/60">
+              Proveedor del Estado
+              <br />
+              en Mercado Público
+            </span>
+          </div>
+          <p className="text-center text-xs text-white/50 sm:text-right">
+            &copy; 2026 PrintUp · Servicios Gráficos Spa · RUT 78.114.353-7
+          </p>
         </div>
       </div>
     </footer>

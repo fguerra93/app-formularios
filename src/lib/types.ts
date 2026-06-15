@@ -178,6 +178,15 @@ export interface ItemCarrito {
   categoria_slug: string;
   variante: Record<string, string> | null;
   precio_extra: number;
+  /** Archivos de diseño subidos por el cliente (PNG/PDF). Cada lote = 1 línea. */
+  archivos?: ArchivoDiseno[];
+}
+
+export interface ArchivoDiseno {
+  nombre: string;
+  tipo: string; // MIME
+  preview: string | null; // dataURL miniatura (PNG); null para PDF
+  nota?: string; // talla / color / observación por archivo
 }
 
 // Fase 4: Cupones

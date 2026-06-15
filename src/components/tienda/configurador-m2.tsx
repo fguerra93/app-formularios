@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { ImagePlus, Minus, Plus, ShoppingCart, X, Ruler, Image as ImageIcon, Lock } from "lucide-react";
+import { ImagePlus, Minus, Plus, ShoppingCart, X, Ruler, Image as ImageIcon, Lock, ArrowRight, FileText } from "lucide-react";
 import { formatCLP } from "@/lib/format";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
 
@@ -287,17 +287,23 @@ export function ConfiguradorM2({
   const [material, setMaterial] = useState(materiales[0]?.nombre || "");
   const [terminaciones, setTerminaciones] = useState<string[]>([]);
   const [diseno, setDiseno] = useState<string | null>(null);
+  const [disenoEsPdf, setDisenoEsPdf] = useState(false);
   const [vista, setVista] = useState<"escala" | "fotos">("escala");
   const [dragging, setDragging] = useState(false);
   const disenoInputRef = useRef<HTMLInputElement>(null);
   const tieneFotos = imagenes.length > 0;
 
+  // Solo PNG o PDF. El PDF no se previsualiza (se imprime tal cual).
   const procesarArchivo = (file?: File | null) => {
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file) return;
+    const esPng = file.type === "image/png" || /\.png$/i.test(file.name);
+    const esPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!esPng && !esPdf) return;
     setDiseno((prev) => {
       if (prev) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
     });
+    setDisenoEsPdf(esPdf);
     setVista("escala"); // al subir, muestra el diseño colocado a escala
   };
 
@@ -355,6 +361,21 @@ export function ConfiguradorM2({
 
   return (
     <section id="configurador" className="grid lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-10 items-stretch">
+      {/* Cómo usarlo — paso a paso, de un vistazo */}
+      <div className="lg:col-span-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-xl border px-4 py-2.5 text-[12px]" style={{ borderColor: "var(--mc-line)", background: "var(--mc-surface)" }}>
+        <span className="font-semibold" style={{ color: "var(--mc-ink-2)" }}>Cómo usarlo</span>
+        {[
+          { n: "1", t: "Elige tu medida" },
+          { n: "2", t: "Sube tu diseño (PNG/PDF)" },
+          { n: "3", t: "Míralo a escala y agrégalo" },
+        ].map((s, i) => (
+          <span key={s.n} className="inline-flex items-center gap-1.5" style={{ color: "var(--mc-ink)" }}>
+            {i > 0 && <ArrowRight className="size-3 opacity-40" />}
+            <span className="inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold" style={{ background: "var(--mc-accent-soft)", color: "var(--mc-accent-ink)" }}>{s.n}</span>
+            {s.t}
+          </span>
+        ))}
+      </div>
       {/* Lienzo conmutable: Vista a escala (tu diseño) ⟷ Fotos del producto */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -381,7 +402,7 @@ export function ConfiguradorM2({
         </div>
 
         {vista === "escala" || !tieneFotos ? (
-          <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={diseno} />
+          <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={disenoEsPdf ? null : diseno} />
         ) : (
           <div className="rounded-2xl border p-4 md:p-5" style={{ borderColor: "var(--mc-line)", background: "var(--mc-surface)" }}>
             <ProductGallery images={imagenes} productName={productoNombre} />
@@ -392,7 +413,7 @@ export function ConfiguradorM2({
       {/* Controles + precio */}
       <div className="flex flex-col">
         {/* Sube tu diseño — moderno, a la derecha */}
-        <input ref={disenoInputRef} type="file" accept="image/*" onChange={cargarDiseno} className="hidden" />
+        <input ref={disenoInputRef} type="file" accept=".png,.pdf,image/png,application/pdf" onChange={cargarDiseno} className="hidden" />
         {!diseno ? (
           <button
             type="button"
@@ -428,7 +449,7 @@ export function ConfiguradorM2({
                 {dragging ? "Suelta para verlo a escala real" : "Velo a escala real sobre el producto, al instante"}
               </span>
               <span className="mt-2 flex flex-wrap items-center gap-1.5">
-                {["PNG", "JPG", "SVG"].map((f) => (
+                {["PNG", "PDF"].map((f) => (
                   <span key={f} className="mc-tech rounded-md border px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "#fff", color: "var(--mc-ink-3)", borderColor: "var(--mc-line-2)" }}>{f}</span>
                 ))}
                 <span className="mc-tech ml-auto inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--mc-ink-3)" }}>
@@ -439,11 +460,17 @@ export function ConfiguradorM2({
           </button>
         ) : (
           <div className="mb-5 flex items-center gap-3 rounded-2xl border p-2.5" style={{ borderColor: "var(--mc-line-2)", background: "#fff" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={diseno} alt="Tu diseño" className="size-12 shrink-0 rounded-lg border object-cover" style={{ borderColor: "var(--mc-line-2)" }} />
+            {disenoEsPdf ? (
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-lg border" style={{ borderColor: "var(--mc-line-2)", background: "var(--mc-surface)" }}>
+                <FileText className="size-6" style={{ color: "var(--mc-accent-ink)" }} />
+              </span>
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={diseno} alt="Tu diseño" className="size-12 shrink-0 rounded-lg border object-cover" style={{ borderColor: "var(--mc-line-2)" }} />
+            )}
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>Tu diseño cargado</p>
-              <p className="text-[12px]" style={{ color: "var(--mc-ink-3)" }}>Se ve en la vista a escala</p>
+              <p className="text-sm font-semibold" style={{ color: "var(--mc-ink)" }}>{disenoEsPdf ? "PDF cargado" : "Tu diseño cargado"}</p>
+              <p className="text-[12px]" style={{ color: "var(--mc-ink-3)" }}>{disenoEsPdf ? "Lo imprimimos tal cual a tu medida" : "Se ve en la vista a escala"}</p>
             </div>
             <button type="button" onClick={() => disenoInputRef.current?.click()} className="mc-btn mc-btn-ghost gap-1.5 px-3 py-2 text-xs">
               <ImagePlus className="size-3.5" /> Cambiar
@@ -451,7 +478,7 @@ export function ConfiguradorM2({
             <button
               type="button"
               aria-label="Quitar diseño"
-              onClick={() => { URL.revokeObjectURL(diseno); setDiseno(null); }}
+              onClick={() => { URL.revokeObjectURL(diseno); setDiseno(null); setDisenoEsPdf(false); }}
               className="mc-btn mc-btn-ghost px-2.5 py-2"
             >
               <X className="size-4" />

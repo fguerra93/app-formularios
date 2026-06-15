@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 /**
  * Hero "afiche de taller": fotografía REAL del trabajo a pantalla completa
@@ -35,6 +35,7 @@ export function Hero() {
       {/* Velo de tinta suave para asegurar la lectura del texto */}
       <div
         className="absolute inset-0"
+        aria-hidden="true"
         style={{
           background:
             "linear-gradient(102deg, rgba(10,11,13,.88) 0%, rgba(10,11,13,.55) 45%, rgba(10,11,13,0) 75%)",
@@ -48,18 +49,19 @@ export function Hero() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <p className="mc-tech text-[12px] uppercase tracking-[0.16em] mb-5" style={{ color: "var(--mc-accent)" }}>
-            Imprenta en Doñihue · Región de O&apos;Higgins
+            Imprenta propia en Doñihue · respondemos en minutos
           </p>
 
-          <h1 className="pl-poster text-white text-[17vw] sm:text-[13vw] lg:text-[7.2rem] xl:text-[8rem] max-w-5xl">
-            Tu impresión,
+          <h1 className="pl-poster text-white text-[15vw] sm:text-[11.5vw] lg:text-[6.6rem] xl:text-[7.2rem] max-w-5xl">
+            Que tu marca
             <br />
-            <span style={{ color: "var(--mc-accent)" }}>nuestra huella.</span>
+            <span style={{ color: "var(--mc-accent)" }}>se vea en serio.</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-white/70">
-            Pendones, DTF textil, poleras y gran formato impresos acá, en el taller.
-            Cotiza al tiro y tu trabajo sale en 24–48 horas.
+          <p className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-white/75">
+            Pendones, poleras, DTF y gran formato impresos en nuestro taller.
+            Súbenos tu archivo o pruébalo aquí mismo: cotizas en minutos y lo
+            tienes en 24–48&nbsp;h. Sin mínimos.
           </p>
 
           <div className="mt-9 flex flex-col sm:flex-row gap-3">
@@ -80,8 +82,20 @@ export function Hero() {
             </a>
           </div>
 
-          <p className="mc-tech mt-10 text-[12px] uppercase tracking-[0.1em] text-white/45">
-            +500 clientes · +2.000 trabajos entregados · retiro gratis en el taller
+          {/* Qué resuelve, en una línea */}
+          <div className="mt-7 flex flex-wrap gap-2.5">
+            {["Cotiza en minutos, no en 48 h", "Desde 1 unidad", "Retiro gratis o despacho"].map((t) => (
+              <span
+                key={t}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[12px] font-medium text-white/75"
+              >
+                <Check className="size-3.5" style={{ color: "var(--mc-accent)" }} /> {t}
+              </span>
+            ))}
+          </div>
+
+          <p className="mc-tech mt-8 text-[12px] uppercase tracking-[0.1em] text-white/45">
+            +500 clientes · +2.000 trabajos entregados · impreso en Doñihue
           </p>
         </motion.div>
       </div>
@@ -102,8 +116,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Registro CMYK: la firma del oficio cierra el pliego */}
-      <div className="mc-cmyk relative z-10" aria-hidden="true"><i /><i /><i /><i /></div>
     </section>
   );
 }
