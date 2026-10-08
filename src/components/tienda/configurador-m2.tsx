@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { ImagePlus, Minus, Plus, ShoppingCart, X, Ruler, Image as ImageIcon, Lock, ArrowRight, FileText } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ImagePlus, Minus, Plus, ShoppingCart, X, Ruler, Image as ImageIcon, Lock, ArrowRight, FileText, Copy } from "lucide-react";
 import { formatCLP } from "@/lib/format";
 import { ProductGallery } from "@/components/tienda/image-lightbox";
+import { miniatura } from "@/components/tienda/personalizador-archivos";
+import type { ArchivoDiseno } from "@/lib/types";
 
 /**
  * Configurador por m² — la herramienta ES la ficha.
@@ -23,7 +25,12 @@ export interface ConfiguracionM2 {
   terminaciones: string[];
   areaFacturada: number;
   total: number;
+  /** 1 diseño por unidad (PNG/PDF) — opcional */
+  archivos?: ArchivoDiseno[];
 }
+
+/** Slot de diseño por unidad: objectURL para preview + miniatura para el carrito. */
+type SlotDiseno = { nombre: string; tipo: string; esPdf: boolean; url: string; preview: string | null };
 
 interface ConfiguradorM2Props {
   precioM2: number;
@@ -286,38 +293,73 @@ export function ConfiguradorM2({
   const [cantidad, setCantidad] = useState(1);
   const [material, setMaterial] = useState(materiales[0]?.nombre || "");
   const [terminaciones, setTerminaciones] = useState<string[]>([]);
-  const [diseno, setDiseno] = useState<string | null>(null);
-  const [disenoEsPdf, setDisenoEsPdf] = useState(false);
   const [vista, setVista] = useState<"escala" | "fotos">("escala");
-  const [dragging, setDragging] = useState(false);
-  const disenoInputRef = useRef<HTMLInputElement>(null);
+  // 1 diseño por unidad: la lista se sincroniza con la cantidad.
+  const [disenos, setDisenos] = useState<(SlotDiseno | null)[]>([null]);
+  const slotInputRef = useRef<HTMLInputElement>(null);
+  const slotTarget = useRef<number | "all">(0);
   const tieneFotos = imagenes.length > 0;
+  const cargados = disenos.filter(Boolean).length;
+
+  // La cantidad manda: ajusta cuántos slots de diseño hay (1 por unidad).
+  useEffect(() => {
+    setDisenos((prev) => {
+      const n = Math.max(1, cantidad);
+      if (prev.length === n) return prev;
+      prev.slice(n).forEach((s) => s && URL.revokeObjectURL(s.url));
+      return Array.from({ length: n }, (_, i) => prev[i] ?? null);
+    });
+  }, [cantidad]);
 
   // Solo PNG o PDF. El PDF no se previsualiza (se imprime tal cual).
-  const procesarArchivo = (file?: File | null) => {
-    if (!file) return;
+  const procesar = async (file: File): Promise<SlotDiseno | null> => {
     const esPng = file.type === "image/png" || /\.png$/i.test(file.name);
     const esPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-    if (!esPng && !esPdf) return;
-    setDiseno((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return URL.createObjectURL(file);
-    });
-    setDisenoEsPdf(esPdf);
-    setVista("escala"); // al subir, muestra el diseño colocado a escala
+    if (!esPng && !esPdf) return null;
+    return {
+      nombre: file.name,
+      tipo: file.type || (esPdf ? "application/pdf" : "image/png"),
+      esPdf,
+      url: URL.createObjectURL(file),
+      preview: esPdf ? null : await miniatura(file),
+    };
   };
 
-  const cargarDiseno = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const abrirSelector = (target: number | "all") => {
+    slotTarget.current = target;
+    slotInputRef.current?.click();
+  };
+
+  const onPickFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
-    procesarArchivo(file);
+    if (!file) return;
+    const slot = await procesar(file);
+    if (!slot) return;
+    setVista("escala");
+    const target = slotTarget.current;
+    setDisenos((prev) => {
+      if (target === "all") {
+        prev.forEach((s) => s && URL.revokeObjectURL(s.url));
+        URL.revokeObjectURL(slot.url);
+        // mismo diseño en todas: miniatura compartida, objectURL propio por slot
+        return prev.map(() => ({ ...slot, url: URL.createObjectURL(file) }));
+      }
+      const next = [...prev];
+      const idx = target as number;
+      if (next[idx]) URL.revokeObjectURL(next[idx]!.url);
+      next[idx] = slot;
+      return next;
+    });
   };
 
-  const onDropDiseno = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    procesarArchivo(e.dataTransfer.files?.[0]);
-  };
+  const limpiarSlot = (i: number) =>
+    setDisenos((prev) => {
+      const next = [...prev];
+      if (next[i]) URL.revokeObjectURL(next[i]!.url);
+      next[i] = null;
+      return next;
+    });
 
   const w = parseFloat(anchoCm) || 0;
   const h = parseFloat(altoCm) || 0;
@@ -348,6 +390,11 @@ export function ConfiguradorM2({
 
   const agregarAlCarrito = () => {
     if (!calculo || !onAddToCart) return;
+    const archivos = disenos
+      .map((d, i) =>
+        d ? { nombre: d.nombre, tipo: d.tipo, preview: d.preview, nota: `Unidad ${i + 1}` } : null,
+      )
+      .filter((a): a is ArchivoDiseno => a !== null);
     onAddToCart({
       ancho: w,
       alto: h,
@@ -356,6 +403,7 @@ export function ConfiguradorM2({
       terminaciones,
       areaFacturada: calculo.areaFacturada,
       total: calculo.total,
+      archivos: archivos.length ? archivos : undefined,
     });
   };
 
@@ -402,7 +450,7 @@ export function ConfiguradorM2({
         </div>
 
         {vista === "escala" || !tieneFotos ? (
-          <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={disenoEsPdf ? null : diseno} />
+          <PreviewEscala w={w} h={h} cantidad={cantidad} vertical={vertical} error={excedeAncho} diseno={disenos[0] && !disenos[0].esPdf ? disenos[0].url : null} />
         ) : (
           <div className="rounded-2xl border p-4 md:p-5" style={{ borderColor: "var(--mc-line)", background: "var(--mc-surface)" }}>
             <ProductGallery images={imagenes} productName={productoNombre} />

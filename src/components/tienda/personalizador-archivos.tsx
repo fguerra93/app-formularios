@@ -16,7 +16,7 @@ import type { ArchivoDiseno } from "@/lib/types";
 
 const MIME_OK = ["image/png", "application/pdf"];
 
-async function miniatura(file: File): Promise<string | null> {
+export async function miniatura(file: File): Promise<string | null> {
   if (file.type !== "image/png") return null; // PDF → sello, no miniatura
   return new Promise((resolve) => {
     const img = new Image();
